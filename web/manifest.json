@@ -1,6 +1,6 @@
 {
-    "name": "company_man",
-    "short_name": "company_man",
+    "name": "smallbusiness",
+    "short_name": "smallbusiness",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

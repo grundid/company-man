@@ -1,4 +1,4 @@
-package de.grundid.company_man
+package de.grundid.smallbusiness
 
 import io.flutter.embedding.android.FlutterActivity
 
