@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterfire_ui/i10n.dart';
 import 'package:intl/intl_standalone.dart';
+import 'package:smallbusiness/reusable/loader.dart';
+import 'auth/cubit/auth_cubit.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -14,7 +18,27 @@ void main() {
 class SmallBusinessApp extends StatelessWidget {
   const SmallBusinessApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        supportedLocales: const [Locale("de")],
+        title: "Small Business App",
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        theme: ThemeData(
+          primarySwatch: Colors.teal,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: FirebaseInitWidget());
+  }
+}
+
+class FirebaseInitWidget extends StatelessWidget {
+  const FirebaseInitWidget({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<FirebaseApp>(
@@ -22,41 +46,50 @@ class SmallBusinessApp extends StatelessWidget {
           options: DefaultFirebaseOptions.currentPlatform,
         ),
         builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
-          return MaterialApp(
-            supportedLocales: const [Locale("de")],
-            title: "Small Business App",
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            theme: ThemeData(
-              primarySwatch: Colors.teal,
-            ),
-            debugShowCheckedModeBanner: false,
-            home: const MyHomePage(title: "Small Business App"),
-          );
+          if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Text('Error initializing Firebase\n${snapshot.error}',
+                    style: Theme.of(context).textTheme.bodyText1),
+              ),
+            );
+          } else if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
+            return FirebaseAppWidget(firebaseApp: snapshot.data!);
+          } else {
+            return LoadingAnimationScaffold();
+          }
         });
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+class FirebaseAppWidget extends StatelessWidget {
+  final FirebaseApp firebaseApp;
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+  const FirebaseAppWidget({Key? key, required this.firebaseApp})
+      : super(key: key);
 
-class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Text("Willkommen"),
+    return RepositoryProvider.value(
+      value: firebaseApp,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthCubit>(
+              create: (_) =>
+                  AuthCubit(FirebaseAuth.instanceFor(app: firebaseApp))),
+        ],
+        child: BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) => state is AuthInitialized
+                ? Scaffold(
+                    appBar: AppBar(
+                      title: Text("Small Business App"),
+                    ),
+                    body: Center(
+                      child: Text("Willkommen ${state.user.uid}"),
+                    ),
+                  )
+                : LoadingAnimationScaffold()),
       ),
     );
   }
