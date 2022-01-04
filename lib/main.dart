@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterfire_ui/i10n.dart';
 import 'package:intl/intl_standalone.dart';
+import 'package:smallbusiness/auth/sign_in_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'auth/cubit/auth_cubit.dart';
 import 'firebase_options.dart';
@@ -80,16 +81,25 @@ class FirebaseAppWidget extends StatelessWidget {
                   AuthCubit(FirebaseAuth.instanceFor(app: firebaseApp))),
         ],
         child: BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) => state is AuthInitialized
-                ? Scaffold(
-                    appBar: AppBar(
-                      title: Text("Small Business App"),
-                    ),
-                    body: Center(
-                      child: Text("Willkommen ${state.user.uid}"),
-                    ),
+          builder: (context, state) => Scaffold(
+            appBar: AppBar(
+              title: Text("Small Business App"),
+            ),
+            body: state is AuthInitialized
+                ? Center(
+                    child: Text("Willkommen ${state.sbmContext.user.uid}"),
                   )
-                : LoadingAnimationScaffold()),
+                : state is AuthNotLoggedIn
+                    ? SignInWidget(
+                        onSignIn: () {
+                          context.read<AuthCubit>().signIn();
+                        },
+                      )
+                    : LoadingAnimationScreen(
+                        delay: Duration.zero,
+                      ),
+          ),
+        ),
       ),
     );
   }

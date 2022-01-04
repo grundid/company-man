@@ -5,8 +5,10 @@ abstract class AuthState {}
 
 class AuthInProgress extends AuthState {}
 
-class AuthInitialized extends AuthState {
-  final User user;
+class AuthNotLoggedIn extends AuthState {}
 
-  AuthInitialized(this.user);
+class AuthInitialized extends AuthState {
+  final SbmContext sbmContext;
+
+  AuthInitialized(this.sbmContext);
 }
