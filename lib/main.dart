@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterfire_ui/i10n.dart';
+import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:smallbusiness/auth/sign_in_widget.dart';
+import 'package:smallbusiness/company/no_roles_card_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'auth/cubit/auth_cubit.dart';
 import 'firebase_options.dart';
@@ -28,6 +30,7 @@ class SmallBusinessApp extends StatelessWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
+          FormBuilderLocalizations.delegate,
         ],
         theme: ThemeData(
           primarySwatch: Colors.teal,
@@ -86,8 +89,9 @@ class FirebaseAppWidget extends StatelessWidget {
               title: Text("Small Business App"),
             ),
             body: state is AuthInitialized
-                ? Center(
-                    child: Text("Willkommen ${state.sbmContext.user.uid}"),
+                ? NoRolesCardWidget(
+                    onCreateCompany: () {},
+                    onJoinCompany: (inviteId) {},
                   )
                 : state is AuthNotLoggedIn
                     ? SignInWidget(
