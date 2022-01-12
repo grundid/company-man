@@ -1,20 +1,30 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterfire_ui/i10n.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:intl/intl_standalone.dart';
+import 'package:routemaster/routemaster.dart';
+import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/auth/sign_in_widget.dart';
+import 'package:smallbusiness/company/company_edit_widget.dart';
 import 'package:smallbusiness/company/no_roles_card_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'auth/cubit/auth_cubit.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
+const String appTitle = "Small Business App";
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   findSystemLocale().then((locale) {
-    runApp(const SmallBusinessApp());
+    runApp(ChangeNotifierProvider<SbmContext>(
+      create: (context) => SbmContext(),
+      child: const SmallBusinessApp(),
+    ));
   });
 }
 
@@ -23,20 +33,54 @@ class SmallBusinessApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        supportedLocales: const [Locale("de")],
-        title: "Small Business App",
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          FormBuilderLocalizations.delegate,
-        ],
-        theme: ThemeData(
-          primarySwatch: Colors.teal,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: FirebaseInitWidget());
+    return MaterialApp.router(
+      routerDelegate: RoutemasterDelegate(
+        routesBuilder: (context) => RouteMap(routes: {
+          '/': (RouteData routeData) =>
+              MaterialPage(child: FirebaseInitWidget()),
+          '/company/edit': (RouteData routeData) => MaterialPage(
+                  child: CompanyEditWidget(
+                companyId: routeData.queryParameters["id"],
+              )),
+        }),
+      ),
+      routeInformationParser: RoutemasterParser(),
+      supportedLocales: const [Locale("de")],
+      title: appTitle,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        FormBuilderLocalizations.delegate,
+      ],
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+      ),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class MainWidget extends StatelessWidget {
+  final SbmContext sbmContext;
+
+  const MainWidget({Key? key, required this.sbmContext}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(appTitle),
+      ),
+      body: sbmContext.user.hasCompany
+          ? Text("OK")
+          : NoRolesCardWidget(
+              onCreateCompany: () {
+                Routemaster.of(context).push("/company/edit");
+              },
+              onJoinCompany: (inviteId) {},
+            ),
+    );
   }
 }
 
@@ -59,52 +103,36 @@ class FirebaseInitWidget extends StatelessWidget {
             );
           } else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
-            return FirebaseAppWidget(firebaseApp: snapshot.data!);
+            return BlocProvider(
+              create: (context) => AuthCubit(
+                  Provider.of<SbmContext>(context, listen: false),
+                  FirebaseAuth.instanceFor(app: snapshot.data!)),
+              child: BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, state) {
+                  if (state is AuthInitialized) {
+                    return MainWidget(
+                      sbmContext: state.sbmContext,
+                    );
+                  } else if (state is AuthNotLoggedIn) {
+                    return Scaffold(
+                      appBar: AppBar(
+                        title: Text(appTitle),
+                      ),
+                      body: SignInWidget(
+                        onSignIn: () {
+                          context.read<AuthCubit>().signIn();
+                        },
+                      ),
+                    );
+                  } else {
+                    return LoadingAnimationScaffold();
+                  }
+                },
+              ),
+            );
           } else {
             return LoadingAnimationScaffold();
           }
         });
-  }
-}
-
-class FirebaseAppWidget extends StatelessWidget {
-  final FirebaseApp firebaseApp;
-
-  const FirebaseAppWidget({Key? key, required this.firebaseApp})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: firebaseApp,
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthCubit>(
-              create: (_) =>
-                  AuthCubit(FirebaseAuth.instanceFor(app: firebaseApp))),
-        ],
-        child: BlocBuilder<AuthCubit, AuthState>(
-          builder: (context, state) => Scaffold(
-            appBar: AppBar(
-              title: Text("Small Business App"),
-            ),
-            body: state is AuthInitialized
-                ? NoRolesCardWidget(
-                    onCreateCompany: () {},
-                    onJoinCompany: (inviteId) {},
-                  )
-                : state is AuthNotLoggedIn
-                    ? SignInWidget(
-                        onSignIn: () {
-                          context.read<AuthCubit>().signIn();
-                        },
-                      )
-                    : LoadingAnimationScreen(
-                        delay: Duration.zero,
-                      ),
-          ),
-        ),
-      ),
-    );
   }
 }

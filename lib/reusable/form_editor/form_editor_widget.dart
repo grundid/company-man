@@ -97,7 +97,7 @@ class FormEditorWidget<C extends FormEditorBloc> extends StatelessWidget {
 
   handleEditorError(BuildContext context, FormEditorError state) async {
     await showErrorMessage(context, state.errorMessage);
-    context.read<FormEditorBloc>().add(FormEditorClearErrorEvent());
+    context.read<C>().add(FormEditorClearErrorEvent());
   }
 
   Widget _createConfirmDialog(
@@ -158,12 +158,12 @@ class FormEditorWidget<C extends FormEditorBloc> extends StatelessWidget {
               context, formEditorAction, mainFormValues, state),
         );
         if (result != null) {
-          context.read<FormEditorBloc>().add(formEditorAction.event
+          context.read<C>().add(formEditorAction.event
               .withValues(formValues: mainFormValues, confirmValues: result));
         }
       } else {
         context
-            .read<FormEditorBloc>()
+            .read<C>()
             .add(formEditorAction.event.withValues(formValues: mainFormValues));
       }
     } else {

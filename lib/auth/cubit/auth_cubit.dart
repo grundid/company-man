@@ -7,16 +7,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/reusable/object_role.dart';
 import 'package:smallbusiness/reusable/query_builder.dart';
+import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/user_actions/sign_in_user.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final FirebaseAuth auth;
+  final SbmContext sbmContext;
   late StreamSubscription _authStateChanges;
 
-  AuthCubit(this.auth) : super(AuthInProgress()) {
+  AuthCubit(this.sbmContext, this.auth) : super(AuthInProgress()) {
     _authStateChanges = auth.authStateChanges().listen((User? user) async {
       log("User changed: uid: ${user?.uid}");
       if (user != null) {
@@ -25,19 +28,27 @@ class AuthCubit extends Cubit<AuthState> {
         QueryBuilder queryBuilder = QueryBuilder(firestore: firestore);
 
         //user.getIdToken(true);
-
-        DocumentReference userRef =
+        ObjectRole? objectRole;
+        DocumentReference<DynamicMap> userRef =
             queryBuilder.usersCollection().doc(user.uid);
-        DocumentSnapshot userSnapshot = await userRef.get();
+        DocumentSnapshot<DynamicMap> userSnapshot = await userRef.get();
         if (userSnapshot.exists) {
-          // read user
+          DocumentReference? companyRef = userSnapshot.data()!["companyRef"];
+          if (companyRef != null) {
+            DocumentSnapshot<ObjectRole> objectRoleSnapshot =
+                await queryBuilder.objectRoleRef(userRef, companyRef).get();
+            if (objectRoleSnapshot.exists) {
+              objectRole = objectRoleSnapshot.data()!;
+            }
+          }
         } else {
           SignInUserAction action = SignInUserAction(firestore, userRef);
           await action.performAction(SignInUserModel(userRef));
         }
 
-        emit(AuthInitialized(
-            SbmContext(user: SbmUser(user), firestore: firestore)));
+        sbmContext.init(SbmUser(userRef, objectRole, user), queryBuilder);
+
+        emit(AuthInitialized(sbmContext));
       } else {
         emit(AuthNotLoggedIn());
       }
@@ -45,12 +56,14 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   signIn() {
+    emit(AuthInProgress());
     log("Sign in now");
     auth.signInAnonymously();
   }
 
   @override
   Future<void> close() async {
+    log("authcubit closed");
     await _authStateChanges.cancel();
     return super.close();
   }

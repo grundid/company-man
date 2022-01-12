@@ -589,7 +589,7 @@ packages:
     source: hosted
     version: "1.5.0"
   provider:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: provider
       url: "https://pub.dartlang.org"
@@ -623,6 +623,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  routemaster:
+    dependency: "direct main"
+    description:
+      name: routemaster
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.10.0-dev5"
   shelf:
     dependency: transitive
     description:
