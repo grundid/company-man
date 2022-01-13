@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smallbusiness/reusable/object_role.dart';
 import 'package:smallbusiness/reusable/query_builder.dart';
+import 'package:smallbusiness/reusable/user_actions/models.dart';
 
 class SbmUser {
   final DocumentReference userRef;
@@ -27,6 +28,7 @@ class SbmContext extends ChangeNotifier {
 
   DocumentReference get userRef => user.userRef;
   FirebaseFirestore get firestore => queryBuilder.firestore;
+  DocumentReference<DynamicMap>? get companyRef => user.objectRole?.companyRef;
 
   init(SbmUser user, QueryBuilder queryBuilder) {
     this.user = user;

@@ -7,26 +7,24 @@ part 'object_role.g.dart';
 @JsonSerializable()
 class ObjectRole {
   @JsonKey(toJson: refConverter, fromJson: refConverter)
-  final DocumentReference companyRef;
+  final DocumentReference<DynamicMap> companyRef;
   @JsonKey(toJson: refConverter, fromJson: refConverter)
-  final DocumentReference objectRef;
+  final DocumentReference<DynamicMap> objectRef;
+  @JsonKey(toJson: refConverter, fromJson: refConverter)
+  final DocumentReference<DynamicMap> employeeRef;
   bool manager;
   bool employee;
 
   ObjectRole({
     required this.companyRef,
     required this.objectRef,
+    required this.employeeRef,
     required this.manager,
     required this.employee,
   });
 
-  factory ObjectRole.fromMap(DynamicMap data) {
-    return _$ObjectRoleFromJson(data);
-  }
-
-  DynamicMap toMap() {
-    return _$ObjectRoleToJson(this);
-  }
+  factory ObjectRole.fromJson(DynamicMap data) => _$ObjectRoleFromJson(data);
+  DynamicMap toJson() => _$ObjectRoleToJson(this);
 }
 
 dynamic refConverter(dynamic value) => value;

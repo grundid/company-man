@@ -35,10 +35,10 @@ class AuthCubit extends Cubit<AuthState> {
         if (userSnapshot.exists) {
           DocumentReference? companyRef = userSnapshot.data()!["companyRef"];
           if (companyRef != null) {
-            DocumentSnapshot<ObjectRole> objectRoleSnapshot =
+            DocumentSnapshot<DynamicMap> objectRoleSnapshot =
                 await queryBuilder.objectRoleRef(userRef, companyRef).get();
             if (objectRoleSnapshot.exists) {
-              objectRole = objectRoleSnapshot.data()!;
+              objectRole = ObjectRole.fromJson(objectRoleSnapshot.data()!);
             }
           }
         } else {

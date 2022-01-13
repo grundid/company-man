@@ -5,7 +5,7 @@ import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/reusable/user_actions/user_action.dart';
 
 class CompanySaveModel {
-  final DocumentReference? companyRef;
+  final DocumentReference<DynamicMap>? companyRef;
   final Company company;
 
   CompanySaveModel(this.companyRef, this.company);
@@ -18,12 +18,23 @@ class CompanySaveAction extends UserAction<CompanySaveModel> {
 
   @override
   Future<ActionResult> performActionInternal(CompanySaveModel action) async {
-    DocumentReference companyRef =
+    DocumentReference<DynamicMap> companyRef =
         action.companyRef ?? queryBuilder.companiesCollection().doc();
     DynamicMap data = action.company.toMap();
     await addSetDataToBatch(companyRef, data, merge: true);
 
     if (action.companyRef == null) {
+      Employee employee = Employee(
+          employeeNo: "1",
+          person: Person(firstName: "Ich", lastName: ""),
+          address: Address(street: "", no: "", postalCode: "", city: ""),
+          email: null,
+          phone: null);
+
+      DocumentReference<DynamicMap> employeeRef =
+          queryBuilder.employeesCollection(companyRef).doc();
+      await addSetDataToBatch(employeeRef, employee.toJson());
+
       DocumentReference objectRoleRef =
           queryBuilder.objectRoleRef(userRef, companyRef);
 
@@ -32,9 +43,10 @@ class CompanySaveAction extends UserAction<CompanySaveModel> {
           ObjectRole(
                   companyRef: companyRef,
                   objectRef: companyRef,
+                  employeeRef: employeeRef,
                   manager: true,
                   employee: true)
-              .toMap());
+              .toJson());
       DynamicMap userData = {"companyRef": companyRef};
       await addUpdateToBatch(userRef, userData);
     }

@@ -17,7 +17,6 @@ class CompanyEditWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SbmContext sbmContext = context.watch<SbmContext>();
-    log("$sbmContext");
     DocumentReference<DynamicMap>? editingRef = companyId != null
         ? sbmContext.queryBuilder.companyRef(companyId!)
         : null;

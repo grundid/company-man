@@ -21,20 +21,26 @@ class QueryBuilder {
     return firestore.collection(usersPath);
   }
 
-  DocumentReference<ObjectRole> objectRoleRef(
+  DocumentReference<DynamicMap> objectRoleRef(
       DocumentReference userRef, DocumentReference objectRef) {
-    return userRef.collection("objectRoles").doc(objectRef.id).withConverter(
-          fromFirestore: (snapshot, options) =>
-              ObjectRole.fromMap(snapshot.data()!),
-          toFirestore: (value, options) => value.toMap(),
-        );
+    return userRef.collection("objectRoles").doc(objectRef.id);
   }
 
   CollectionReference<DynamicMap> companiesCollection() {
     return firestore.collection("companies");
   }
 
+  CollectionReference<DynamicMap> employeesCollection(
+      DocumentReference<DynamicMap> companyRef) {
+    return companyRef.collection("employees");
+  }
+
   DocumentReference<DynamicMap> companyRef(String id) {
     return companiesCollection().doc(id);
+  }
+
+  DocumentReference<DynamicMap> employeeRef(
+      DocumentReference<DynamicMap> companyRef, String id) {
+    return employeesCollection(companyRef).doc(id);
   }
 }

@@ -10,6 +10,10 @@ import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/auth/sign_in_widget.dart';
 import 'package:smallbusiness/company/company_edit_widget.dart';
+import 'package:smallbusiness/company/company_main_widget.dart';
+import 'package:smallbusiness/company/employee_edit_widget.dart';
+import 'package:smallbusiness/company/employee_list_widget.dart';
+import 'package:smallbusiness/company/employee_menu_widget.dart';
 import 'package:smallbusiness/company/no_roles_card_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'auth/cubit/auth_cubit.dart';
@@ -36,12 +40,28 @@ class SmallBusinessApp extends StatelessWidget {
     return MaterialApp.router(
       routerDelegate: RoutemasterDelegate(
         routesBuilder: (context) => RouteMap(routes: {
-          '/': (RouteData routeData) =>
+          "/": (RouteData routeData) =>
               MaterialPage(child: FirebaseInitWidget()),
-          '/company/edit': (RouteData routeData) => MaterialPage(
+          "/company/edit": (RouteData routeData) => MaterialPage(
                   child: CompanyEditWidget(
                 companyId: routeData.queryParameters["id"],
               )),
+          "/employeeList": (RouteData routeData) =>
+              MaterialPage(child: EmployeeListWidget()),
+          "/employeeList/employeeMenu": (RouteData routeData) => MaterialPage(
+                child: EmployeeMenuWidget(
+                  employeeId: routeData.queryParameters["employeeId"]!,
+                ),
+              ),
+          "/employeeList/employeeMenu/employeeEdit": (RouteData routeData) =>
+              MaterialPage(
+                child: EmployeeEditWidget(
+                  employeeId: routeData.queryParameters["employeeId"],
+                ),
+              ),
+          "/employeeList/employeeEdit": (RouteData routeData) => MaterialPage(
+                child: EmployeeEditWidget(),
+              ),
         }),
       ),
       routeInformationParser: RoutemasterParser(),
@@ -73,7 +93,7 @@ class MainWidget extends StatelessWidget {
         title: Text(appTitle),
       ),
       body: sbmContext.user.hasCompany
-          ? Text("OK")
+          ? CompanyMainWidget(sbmContext: sbmContext)
           : NoRolesCardWidget(
               onCreateCompany: () {
                 Routemaster.of(context).push("/company/edit");
