@@ -21,6 +21,25 @@ class QueryBuilder {
     return firestore.collection(usersPath);
   }
 
+  CollectionReference<DynamicMap> invitationsCollection() {
+    return firestore.collection("invitations");
+  }
+
+  Query<DynamicMap> invitationForEmployeeRef(
+      DocumentReference companyRef, DocumentReference employeeRef) {
+    return invitationsCollection()
+        .where("companyRef", isEqualTo: companyRef)
+        .where("employeeRef", isEqualTo: employeeRef);
+  }
+
+  Query<DynamicMap> objectRoleForEmployeeRef(
+      DocumentReference companyRef, DocumentReference employeeRef) {
+    return firestore
+        .collectionGroup("objectRoles")
+        .where("companyRef", isEqualTo: companyRef)
+        .where("employeeRef", isEqualTo: employeeRef);
+  }
+
   DocumentReference<DynamicMap> objectRoleRef(
       DocumentReference userRef, DocumentReference objectRef) {
     return userRef.collection("objectRoles").doc(objectRef.id);

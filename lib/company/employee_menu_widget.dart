@@ -44,6 +44,10 @@ class EmployeeMenuWidget extends StatelessWidget {
                         ),
                         ListTile(
                           title: Text("Benutzer und Berechtigungen"),
+                          onTap: () async {
+                            Routemaster.of(context).push(
+                                "/employeeList/employeeMenu/employeeUser?employeeId=${state.employee.employeeRef!.id}");
+                          },
                         ),
                       ],
                     ),

@@ -11,6 +11,7 @@ import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/auth/sign_in_widget.dart';
 import 'package:smallbusiness/company/company_edit_widget.dart';
 import 'package:smallbusiness/company/company_main_widget.dart';
+import 'package:smallbusiness/company/employee/employee_user_widget.dart';
 import 'package:smallbusiness/company/employee_edit_widget.dart';
 import 'package:smallbusiness/company/employee_list_widget.dart';
 import 'package:smallbusiness/company/employee_menu_widget.dart';
@@ -57,6 +58,12 @@ class SmallBusinessApp extends StatelessWidget {
               MaterialPage(
                 child: EmployeeEditWidget(
                   employeeId: routeData.queryParameters["employeeId"],
+                ),
+              ),
+          "/employeeList/employeeMenu/employeeUser": (RouteData routeData) =>
+              MaterialPage(
+                child: EmployeeUserWidget(
+                  employeeId: routeData.queryParameters["employeeId"]!,
                 ),
               ),
           "/employeeList/employeeEdit": (RouteData routeData) => MaterialPage(
