@@ -63,7 +63,7 @@ class SignInWidget extends StatelessWidget {
                               onSignIn();
                             }
                           },
-                          child: Text("Anzeptieren"))
+                          child: Text("Akzeptieren"))
                     ],
                   )
                 ],

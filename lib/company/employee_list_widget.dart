@@ -5,6 +5,7 @@ import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/company/employee_list_cubit.dart';
 import 'package:provider/provider.dart';
 import 'package:smallbusiness/company/models.dart';
+import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 
 class EmployeeListWidget extends StatelessWidget {
@@ -31,8 +32,8 @@ class EmployeeListWidget extends StatelessWidget {
                             "${employee.person.firstName} ${employee.person.lastName} (${employee.employeeNo})"),
                         onTap: () async {
                           await Routemaster.of(context)
-                              .push(
-                                  "/employeeList/employeeMenu?employeeId=${employee.employeeRef!.id}")
+                              .push(RouteNames.employeeMenu +
+                                  "?employeeId=${employee.employeeRef!.id}")
                               .result;
                           context.read<EmployeeListCubit>().refresh();
                         },
@@ -45,7 +46,7 @@ class EmployeeListWidget extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
           icon: Icon(Icons.person_add),
           onPressed: () {
-            Routemaster.of(context).push("/employeeList/employeeEdit");
+            Routemaster.of(context).push(RouteNames.employeeEdit);
           },
           label: Text("Neuer Mitarbeiter")),
     );

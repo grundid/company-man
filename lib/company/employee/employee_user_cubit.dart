@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/company/models.dart';
 import 'package:smallbusiness/reusable/object_role.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/user_actions/invite_save.dart';
@@ -52,10 +53,18 @@ class EmployeeUserCubit extends Cubit<EmployeeUserState> {
 
   Future<void> createInvite(DynamicMap values) async {
     emit(EmployeeUserInProgress());
+    DocumentSnapshot<DynamicMap> companySnapshot =
+        await sbmContext.companyRef!.get();
+    Company company = Company.fromMap(companySnapshot.data()!);
+
     InviteSaveAction saveAction =
         InviteSaveAction(sbmContext.firestore, sbmContext.userRef);
-    InviteSaveModel saveModel = InviteSaveModel(sbmContext.companyRef!,
-        employeeRef, true == values["employee"], true == values["manager"]);
+    InviteSaveModel saveModel = InviteSaveModel(
+        sbmContext.companyRef!,
+        employeeRef,
+        true == values["employee"],
+        true == values["manager"],
+        company.companyLabel);
 
     await saveAction.performAction(saveModel);
     _init();

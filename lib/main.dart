@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +14,7 @@ import 'package:smallbusiness/company/employee_edit_widget.dart';
 import 'package:smallbusiness/company/employee_list_widget.dart';
 import 'package:smallbusiness/company/employee_menu_widget.dart';
 import 'package:smallbusiness/company/no_roles_card_widget.dart';
+import 'package:smallbusiness/invitation/invitation_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'auth/cubit/auth_cubit.dart';
 import 'firebase_options.dart';
@@ -33,6 +32,15 @@ void main() {
   });
 }
 
+class RouteNames {
+  static String companyEdit = "/company/edit";
+  static String employeeEdit = "/employee/edit";
+  static String employeeList = "/employee/list";
+  static String employeeMenu = "/employee/menu";
+  static String employeeUser = "/employee/user";
+  static String invitation = "/invitation";
+}
+
 class SmallBusinessApp extends StatelessWidget {
   const SmallBusinessApp({Key? key}) : super(key: key);
 
@@ -43,31 +51,32 @@ class SmallBusinessApp extends StatelessWidget {
         routesBuilder: (context) => RouteMap(routes: {
           "/": (RouteData routeData) =>
               MaterialPage(child: FirebaseInitWidget()),
-          "/company/edit": (RouteData routeData) => MaterialPage(
+          RouteNames.companyEdit: (RouteData routeData) => MaterialPage(
                   child: CompanyEditWidget(
                 companyId: routeData.queryParameters["id"],
               )),
-          "/employeeList": (RouteData routeData) =>
+          RouteNames.employeeList: (RouteData routeData) =>
               MaterialPage(child: EmployeeListWidget()),
-          "/employeeList/employeeMenu": (RouteData routeData) => MaterialPage(
+          RouteNames.employeeMenu: (RouteData routeData) => MaterialPage(
                 child: EmployeeMenuWidget(
                   employeeId: routeData.queryParameters["employeeId"]!,
                 ),
               ),
-          "/employeeList/employeeMenu/employeeEdit": (RouteData routeData) =>
-              MaterialPage(
+          RouteNames.employeeEdit: (RouteData routeData) => MaterialPage(
                 child: EmployeeEditWidget(
                   employeeId: routeData.queryParameters["employeeId"],
                 ),
               ),
-          "/employeeList/employeeMenu/employeeUser": (RouteData routeData) =>
-              MaterialPage(
+          RouteNames.employeeUser: (RouteData routeData) => MaterialPage(
                 child: EmployeeUserWidget(
                   employeeId: routeData.queryParameters["employeeId"]!,
                 ),
               ),
-          "/employeeList/employeeEdit": (RouteData routeData) => MaterialPage(
-                child: EmployeeEditWidget(),
+          RouteNames.invitation: (RouteData routeData) => MaterialPage(
+                child: InvitationWidget(
+                  sbmContext: Provider.of<SbmContext>(context, listen: false),
+                  invitationId: routeData.queryParameters["invitationId"]!,
+                ),
               ),
         }),
       ),
@@ -103,9 +112,12 @@ class MainWidget extends StatelessWidget {
           ? CompanyMainWidget(sbmContext: sbmContext)
           : NoRolesCardWidget(
               onCreateCompany: () {
-                Routemaster.of(context).push("/company/edit");
+                Routemaster.of(context).push(RouteNames.companyEdit);
               },
-              onJoinCompany: (inviteId) {},
+              onJoinCompany: (inviteId) {
+                Routemaster.of(context)
+                    .push(RouteNames.invitation + "?invitationId=$inviteId");
+              },
             ),
     );
   }

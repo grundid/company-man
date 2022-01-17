@@ -11,7 +11,7 @@ class ActionResult {
   /// Data content can be returned to the caller of the action.
   final dynamic data;
   final String? actionType;
-  final DocumentReference? actionReference;
+  final DocumentReference<DynamicMap>? actionReference;
 
   /// Content will be stored with the log.
   final DynamicMap? actionContent;

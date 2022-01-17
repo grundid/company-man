@@ -119,12 +119,14 @@ class _InvitationAvailableWidget extends StatelessWidget {
         Text("Für den Benutzer ist bereits eine Einladungs-ID erstellt. "
             "Bitte schicken Sie die Einladungs-ID an den Mitarbeiter per Mail, SMS oder WhatsApp."),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               "Einladungs-ID: $inviteId",
               style: Theme.of(context).textTheme.headline6,
             ),
-            IconButton(
+            ElevatedButton.icon(
+              label: Text("Kopieren"),
               icon: Icon(Icons.copy),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: inviteId));

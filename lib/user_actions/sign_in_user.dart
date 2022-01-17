@@ -3,19 +3,19 @@ import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/reusable/user_actions/user_action.dart';
 
 class SignInUserModel {
-  final DocumentReference userRef;
+  final DocumentReference<DynamicMap> userRef;
 
   SignInUserModel(this.userRef);
 }
 
 class SignInUserAction extends UserAction<SignInUserModel> {
   SignInUserAction(
-      FirebaseFirestore firestore, DocumentReference<Object?> userRef)
+      FirebaseFirestore firestore, DocumentReference<DynamicMap?> userRef)
       : super(firestore, userRef);
 
   @override
   Future<ActionResult> performActionInternal(SignInUserModel action) async {
-    DocumentReference userRef = action.userRef;
+    final userRef = action.userRef;
     DynamicMap data = {
       "termsAccepted": Timestamp.now(),
       "privacyAccepted": Timestamp.now()

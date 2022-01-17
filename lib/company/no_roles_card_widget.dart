@@ -54,10 +54,10 @@ class NoRolesCardWidget extends StatelessWidget {
                                 onPressed: () {
                                   if (formKey.currentState!.saveAndValidate()) {
                                     onJoinCompany(formKey
-                                        .currentState!.value["invoiceId"]);
+                                        .currentState!.value["inviteId"]);
                                   }
                                 },
-                                child: Text("Firma beitreten"))
+                                child: Text("Einladung ansehen"))
                           ],
                         ),
                       ],

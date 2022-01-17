@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/company/employee_menu_cubit.dart';
+import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'package:provider/provider.dart';
 
@@ -36,8 +37,8 @@ class EmployeeMenuWidget extends StatelessWidget {
                           title: Text("Stammdaten"),
                           onTap: () async {
                             await Routemaster.of(context)
-                                .push(
-                                    "/employeeList/employeeMenu/employeeEdit?employeeId=${state.employee.employeeRef!.id}")
+                                .push(RouteNames.employeeEdit +
+                                    "?employeeId=${state.employee.employeeRef!.id}")
                                 .result;
                             context.read<EmployeeMenuCubit>().refresh();
                           },
@@ -45,8 +46,9 @@ class EmployeeMenuWidget extends StatelessWidget {
                         ListTile(
                           title: Text("Benutzer und Berechtigungen"),
                           onTap: () async {
-                            Routemaster.of(context).push(
-                                "/employeeList/employeeMenu/employeeUser?employeeId=${state.employee.employeeRef!.id}");
+                            Routemaster.of(context).push(RouteNames
+                                    .employeeUser +
+                                "?employeeId=${state.employee.employeeRef!.id}");
                           },
                         ),
                       ],

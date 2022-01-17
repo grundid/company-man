@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/main.dart';
 
 class CompanyMainWidget extends StatelessWidget {
   final SbmContext sbmContext;
@@ -17,7 +18,7 @@ class CompanyMainWidget extends StatelessWidget {
             title: Text("Mitarbeiterverwaltung"),
             subtitle: Text("Erfassen und Verwalten Sie hier Ihre Mitarbeiter"),
             onTap: () {
-              Routemaster.of(context).push("/employeeList");
+              Routemaster.of(context).push(RouteNames.employeeList);
             },
           ),
         ),

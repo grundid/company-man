@@ -25,6 +25,10 @@ class QueryBuilder {
     return firestore.collection("invitations");
   }
 
+  CollectionReference<DynamicMap> invitationResponsesCollection() {
+    return firestore.collection("invitationResponses");
+  }
+
   Query<DynamicMap> invitationForEmployeeRef(
       DocumentReference companyRef, DocumentReference employeeRef) {
     return invitationsCollection()
