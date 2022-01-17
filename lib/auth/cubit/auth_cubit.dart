@@ -33,10 +33,14 @@ class AuthCubit extends Cubit<AuthState> {
             queryBuilder.usersCollection().doc(user.uid);
         DocumentSnapshot<DynamicMap> userSnapshot = await userRef.get();
         if (userSnapshot.exists) {
+          // wir belassen companyRef um eventuell die companyRef
+          // zu wechseln, falls es mehrere objectRoles gibt
           DocumentReference? companyRef = userSnapshot.data()!["companyRef"];
           if (companyRef != null) {
+            final userObjectRoleRef =
+                queryBuilder.objectRoleRef(userRef, companyRef);
             DocumentSnapshot<DynamicMap> objectRoleSnapshot =
-                await queryBuilder.objectRoleRef(userRef, companyRef).get();
+                await userObjectRoleRef.get();
             if (objectRoleSnapshot.exists) {
               objectRole = ObjectRole.fromJson(objectRoleSnapshot.data()!);
             }
@@ -53,6 +57,22 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthNotLoggedIn());
       }
     });
+  }
+
+  updateUser() async {
+    final userSnapshot = await sbmContext.userRef.get();
+    DocumentReference? companyRef = userSnapshot.data()!["companyRef"];
+    if (companyRef != null) {
+      DocumentSnapshot<DynamicMap> objectRoleSnapshot = await sbmContext
+          .queryBuilder
+          .objectRoleRef(sbmContext.userRef, companyRef)
+          .get();
+      if (objectRoleSnapshot.exists) {
+        sbmContext.user.objectRole =
+            ObjectRole.fromJson(objectRoleSnapshot.data()!);
+        emit(AuthInitialized(sbmContext));
+      }
+    }
   }
 
   signIn() {

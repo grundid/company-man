@@ -13,12 +13,12 @@ class LoadingAnimationScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: SingleColumnBody(children: [CircularProgressIndicator()]),
         appBar: titleText != null
             ? AppBar(
                 title: Text(titleText!),
               )
             : null,
+        body: LoadingAnimationScreen(),
       );
 }
 

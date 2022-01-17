@@ -28,25 +28,28 @@ class InvitationWidget extends StatelessWidget {
           },
           builder: (context, state) {
             return state is InvitationInitialized
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Sie haben eine Einladung für ${state.invitation.companyLabel}.\nMöchten Sie die Einladung annehmen?",
-                          textAlign: TextAlign.center,
-                        ),
-                        ButtonBar(
-                          alignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  context.read<InvitationCubit>().accept();
-                                },
-                                child: Text("Annehmen"))
-                          ],
-                        )
-                      ],
+                ? Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Sie haben eine Einladung von ${state.invitation.companyLabel} erhalten.\nMöchten Sie die Einladung annehmen?",
+                            textAlign: TextAlign.center,
+                          ),
+                          ButtonBar(
+                            alignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    context.read<InvitationCubit>().accept();
+                                  },
+                                  child: Text("Annehmen"))
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   )
                 : state is InvitationNotFound

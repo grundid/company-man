@@ -6,8 +6,8 @@ import 'package:smallbusiness/reusable/query_builder.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 
 class SbmUser {
-  final DocumentReference userRef;
-  final ObjectRole? objectRole;
+  final DocumentReference<DynamicMap> userRef;
+  ObjectRole? objectRole;
   final User _user;
 
   String get uid => _user.uid;
@@ -26,7 +26,7 @@ class SbmContext extends ChangeNotifier {
   late QueryBuilder queryBuilder;
   SbmContext();
 
-  DocumentReference get userRef => user.userRef;
+  DocumentReference<DynamicMap> get userRef => user.userRef;
   FirebaseFirestore get firestore => queryBuilder.firestore;
   DocumentReference<DynamicMap>? get companyRef => user.objectRole?.companyRef;
 
