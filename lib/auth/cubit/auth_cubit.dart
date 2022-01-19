@@ -77,7 +77,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   signIn() {
     emit(AuthInProgress());
-    log("Sign in now");
     auth.signInAnonymously();
   }
 

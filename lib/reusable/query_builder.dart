@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:smallbusiness/reusable/object_role.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 
 class QueryBuilder {
@@ -27,6 +26,19 @@ class QueryBuilder {
 
   CollectionReference<DynamicMap> invitationResponsesCollection() {
     return firestore.collection("invitationResponses");
+  }
+
+  CollectionReference<DynamicMap> timeRecordingsCollection() {
+    return firestore.collection("timeRecordings");
+  }
+
+  Query<DynamicMap> latestTimeRecordingForEmployeeRef(
+      DocumentReference companyRef, DocumentReference employeeRef) {
+    return timeRecordingsCollection()
+        .where("companyRef", isEqualTo: companyRef)
+        .where("employeeRef", isEqualTo: employeeRef)
+        .where("finalized", isEqualTo: false)
+        .orderBy("from");
   }
 
   Query<DynamicMap> invitationForEmployeeRef(

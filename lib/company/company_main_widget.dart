@@ -27,7 +27,9 @@ class CompanyMainWidget extends StatelessWidget {
           child: ListTile(
             title: Text("Arbeitszeiterfassung"),
             subtitle: Text("Erfassen Sie Ihre Arbeitszeit"),
-            onTap: () {},
+            onTap: () {
+              Routemaster.of(context).push(RouteNames.timeRecording);
+            },
           ),
         )
     ]);

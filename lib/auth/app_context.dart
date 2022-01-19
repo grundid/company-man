@@ -29,6 +29,8 @@ class SbmContext extends ChangeNotifier {
   DocumentReference<DynamicMap> get userRef => user.userRef;
   FirebaseFirestore get firestore => queryBuilder.firestore;
   DocumentReference<DynamicMap>? get companyRef => user.objectRole?.companyRef;
+  DocumentReference<DynamicMap>? get employeeRef =>
+      user.objectRole?.employeeRef;
 
   init(SbmUser user, QueryBuilder queryBuilder) {
     this.user = user;

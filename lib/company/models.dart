@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -59,6 +57,7 @@ class Address {
 
 @JsonSerializable(explicitToJson: true)
 class Employee {
+  @JsonKey(ignore: true)
   DocumentReference? employeeRef;
   final String employeeNo;
   final Person person;

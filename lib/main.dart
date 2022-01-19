@@ -16,6 +16,7 @@ import 'package:smallbusiness/company/employee_menu_widget.dart';
 import 'package:smallbusiness/company/no_roles_card_widget.dart';
 import 'package:smallbusiness/invitation/invitation_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:smallbusiness/time_recording/time_recording_widget.dart';
 import 'auth/cubit/auth_cubit.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -39,6 +40,7 @@ class RouteNames {
   static String employeeMenu = "/employee/menu";
   static String employeeUser = "/employee/user";
   static String invitation = "/invitation";
+  static String timeRecording = "/timeRecording";
 }
 
 class SmallBusinessApp extends StatelessWidget {
@@ -76,6 +78,11 @@ class SmallBusinessApp extends StatelessWidget {
                 child: InvitationWidget(
                   sbmContext: Provider.of<SbmContext>(context, listen: false),
                   invitationId: routeData.queryParameters["invitationId"]!,
+                ),
+              ),
+          RouteNames.timeRecording: (RouteData routeData) => MaterialPage(
+                child: TimeRecordingWidget(
+                  sbmContext: Provider.of<SbmContext>(context, listen: false),
                 ),
               ),
         }),

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smallbusiness/reusable/converter.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 
 part 'object_role.g.dart';
@@ -26,5 +27,3 @@ class ObjectRole {
   factory ObjectRole.fromJson(DynamicMap data) => _$ObjectRoleFromJson(data);
   DynamicMap toJson() => _$ObjectRoleToJson(this);
 }
-
-dynamic refConverter(dynamic value) => value;
