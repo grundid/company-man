@@ -24,12 +24,27 @@ class CompanyMainWidget extends StatelessWidget {
         ),
       if (sbmContext.user.isEmployee)
         Card(
-          child: ListTile(
-            title: Text("Arbeitszeiterfassung"),
-            subtitle: Text("Erfassen Sie Ihre Arbeitszeit"),
-            onTap: () {
-              Routemaster.of(context).push(RouteNames.timeRecording);
-            },
+          child: Column(
+            children: [
+              ListTile(
+                title: Text("Arbeitszeiterfassung"),
+                subtitle: Text("Erfassen Sie Ihre Arbeitszeit"),
+                onTap: () {
+                  Routemaster.of(context).push(RouteNames.timeRecording);
+                },
+              ),
+              ButtonBar(
+                alignment: MainAxisAlignment.start,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Routemaster.of(context)
+                            .push(RouteNames.timeRecordingList);
+                      },
+                      child: Text("Historie"))
+                ],
+              )
+            ],
           ),
         )
     ]);
