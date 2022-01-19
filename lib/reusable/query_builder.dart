@@ -41,6 +41,14 @@ class QueryBuilder {
         .orderBy("from");
   }
 
+  Query<DynamicMap> timeRecordingForEmployeeRef(
+      {required DocumentReference companyRef,
+      required DocumentReference employeeRef}) {
+    return timeRecordingsCollection()
+        .where("companyRef", isEqualTo: companyRef)
+        .where("employeeRef", isEqualTo: employeeRef);
+  }
+
   Query<DynamicMap> invitationForEmployeeRef(
       DocumentReference companyRef, DocumentReference employeeRef) {
     return invitationsCollection()

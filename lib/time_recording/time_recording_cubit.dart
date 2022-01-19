@@ -5,24 +5,13 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/time_recording/models.dart';
+import 'package:smallbusiness/time_recording/utils.dart';
 import 'package:smallbusiness/user_actions/time_recording_save.dart';
 
 part 'time_recording_state.dart';
 
 enum TimeType { from, to }
 const int minuteStep = 5;
-
-extension TimeOfDayCalc on TimeOfDay {
-  bool isBefore(TimeOfDay other) {
-    return minutesSinceMidnight < other.minutesSinceMidnight;
-  }
-
-  int get minutesSinceMidnight => hour * 60 + minute;
-
-  String getFormatted() {
-    return "${hour}h " + (minute < 10 ? "0" : "") + "${minute}m";
-  }
-}
 
 class TimeRecordingCubit extends Cubit<TimeRecordingState> {
   final SbmContext sbmContext;
@@ -67,11 +56,6 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
   DateTime nextDay(DateTime date) {
     DateTime lastHourOfDay = DateTime(date.year, date.month, date.day, 23);
     return lastHourOfDay.add(Duration(hours: 1));
-  }
-
-  TimeOfDay fromDuration(Duration duration) {
-    int inMinutes = duration.inMinutes;
-    return TimeOfDay(hour: (inMinutes / 60).floor(), minute: inMinutes % 60);
   }
 
   DateTime createFrom() {

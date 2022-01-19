@@ -16,7 +16,7 @@ import 'package:smallbusiness/company/employee_menu_widget.dart';
 import 'package:smallbusiness/company/no_roles_card_widget.dart';
 import 'package:smallbusiness/invitation/invitation_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
-import 'package:smallbusiness/time_recording/time_recording_list.dart';
+import 'package:smallbusiness/time_recording/time_recording_list_widget.dart';
 import 'package:smallbusiness/time_recording/time_recording_widget.dart';
 import 'auth/cubit/auth_cubit.dart';
 import 'firebase_options.dart';
