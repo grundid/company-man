@@ -18,12 +18,30 @@ class TimeRecordingListWidget extends StatelessWidget {
   TimeRecordingListWidget({Key? key, required this.sbmContext})
       : super(key: key);
 
+  _editTimeRecording(BuildContext context, {String? timeRecordingId}) async {
+    bool? result = await Routemaster.of(context)
+        .push<bool>(RouteNames.timeRecordingListEdit +
+            (timeRecordingId != null
+                ? "?timeRecordingId=$timeRecordingId"
+                : ""))
+        .result;
+    if (true == result) {
+      context.read<TimeRecordingListCubit>().update();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Arbeitszeitverlauf"),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            _editTimeRecording(context);
+          },
+          icon: Icon(Icons.more_time),
+          label: Text("Arbeitszeit erfassen")),
       body: BlocProvider(
         create: (context) => TimeRecordingListCubit(sbmContext),
         child: BlocBuilder<TimeRecordingListCubit, TimeRecordingListState>(
@@ -53,17 +71,9 @@ class TimeRecordingListWidget extends StatelessWidget {
                         trailing: toLabel == null
                             ? IconButton(
                                 onPressed: () async {
-                                  bool? result = await Routemaster.of(context)
-                                      .push<bool>(RouteNames
-                                              .timeRecordingListEdit +
-                                          "?timeRecordingId=${timeRecording.timeRecordingRef!.id}")
-                                      .result;
-                                  log("result: $result");
-                                  if (true == result) {
-                                    context
-                                        .read<TimeRecordingListCubit>()
-                                        .update();
-                                  }
+                                  _editTimeRecording(context,
+                                      timeRecordingId:
+                                          timeRecording.timeRecordingRef!.id);
                                 },
                                 icon: Icon(Icons.edit))
                             : null,

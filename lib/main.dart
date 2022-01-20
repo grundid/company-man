@@ -97,8 +97,7 @@ class SmallBusinessApp extends StatelessWidget {
               MaterialPage(
                 child: TimeRecordingWidget(
                   sbmContext: Provider.of<SbmContext>(context, listen: false),
-                  timeRecordingId:
-                      routeData.queryParameters["timeRecordingId"]!,
+                  timeRecordingId: routeData.queryParameters["timeRecordingId"],
                 ),
               ),
         }),
