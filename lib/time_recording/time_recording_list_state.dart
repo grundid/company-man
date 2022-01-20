@@ -6,7 +6,7 @@ abstract class TimeRecordingListState {}
 class TimeRecordingListInProgress extends TimeRecordingListState {}
 
 class TimeRecordingListInitialized extends TimeRecordingListState {
-  final List<TimeRecording> timeRecordings;
+  final List<GroupedTimeRecording> groups;
 
-  TimeRecordingListInitialized(this.timeRecordings);
+  TimeRecordingListInitialized(this.groups);
 }
