@@ -13,6 +13,8 @@ class TimeRecordingListCubit extends Cubit<TimeRecordingListState> {
   }
 
   _init() async {
+    emit(TimeRecordingListInProgress());
+
     final querySnapshot = await sbmContext.queryBuilder
         .timeRecordingForEmployeeRef(
             companyRef: sbmContext.companyRef!,
@@ -20,9 +22,13 @@ class TimeRecordingListCubit extends Cubit<TimeRecordingListState> {
         .get();
 
     List<TimeRecording> timeRecordings = querySnapshot.docs
-        .map((e) => TimeRecording.fromJson(e.data()))
+        .map((e) => TimeRecording.fromSnapshot(e.reference, e.data()))
         .toList();
     timeRecordings.sort((t1, t2) => t2.from.compareTo(t1.from));
     emit(TimeRecordingListInitialized(timeRecordings));
+  }
+
+  void update() {
+    _init();
   }
 }

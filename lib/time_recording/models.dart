@@ -28,6 +28,8 @@ class Pause {
 
 @JsonSerializable(explicitToJson: true)
 class TimeRecording {
+  @JsonKey(ignore: true)
+  DocumentReference<DynamicMap>? timeRecordingRef;
   @JsonKey(toJson: refConverter, fromJson: refConverter)
   final DocumentReference<DynamicMap> employeeRef;
   @JsonKey(toJson: refConverter, fromJson: refConverter)
@@ -49,8 +51,11 @@ class TimeRecording {
     required this.finalized,
   });
 
-  factory TimeRecording.fromJson(DynamicMap data) {
-    return _$TimeRecordingFromJson(data);
+  factory TimeRecording.fromSnapshot(
+      DocumentReference<DynamicMap> timeRecordingRef, DynamicMap data) {
+    TimeRecording result = _$TimeRecordingFromJson(data);
+    result.timeRecordingRef = timeRecordingRef;
+    return result;
   }
 
   DynamicMap toJson() {

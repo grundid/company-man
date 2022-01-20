@@ -43,6 +43,7 @@ class RouteNames {
   static String invitation = "/invitation";
   static String timeRecording = "/timeRecording";
   static String timeRecordingList = "/timeRecordingList";
+  static String timeRecordingListEdit = "/timeRecordingList/edit";
 }
 
 class SmallBusinessApp extends StatelessWidget {
@@ -90,6 +91,14 @@ class SmallBusinessApp extends StatelessWidget {
           RouteNames.timeRecordingList: (RouteData routeData) => MaterialPage(
                 child: TimeRecordingListWidget(
                   sbmContext: Provider.of<SbmContext>(context, listen: false),
+                ),
+              ),
+          RouteNames.timeRecordingListEdit: (RouteData routeData) =>
+              MaterialPage(
+                child: TimeRecordingWidget(
+                  sbmContext: Provider.of<SbmContext>(context, listen: false),
+                  timeRecordingId:
+                      routeData.queryParameters["timeRecordingId"]!,
                 ),
               ),
         }),

@@ -22,35 +22,59 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
   DocumentReference<DynamicMap>? timeRecordingRef;
   DynamicMap formValues = {};
 
-  TimeRecordingCubit(this.sbmContext) : super(TimeRecordingInProgress()) {
+  TimeRecordingCubit(this.sbmContext, {String? timeRecordingId})
+      : super(TimeRecordingInProgress()) {
+    if (timeRecordingId != null) {
+      timeRecordingRef = sbmContext.queryBuilder
+          .timeRecordingsCollection()
+          .doc(timeRecordingId);
+    }
     _init();
   }
 
   _init() async {
-    QuerySnapshot<DynamicMap> querySnapshot = await sbmContext.queryBuilder
-        .latestTimeRecordingForEmployeeRef(
-            sbmContext.companyRef!, sbmContext.employeeRef!)
-        .get();
-    if (querySnapshot.size == 0) {
-      fromDate = DateTime.now();
-      int hour = fromDate.hour;
-      int minute = (fromDate.minute / 5).floor() * 5;
-      from = TimeOfDay(hour: hour, minute: minute);
-      emitInitialized();
+    if (timeRecordingRef != null) {
+      final documentSnapshot = await timeRecordingRef!.get();
+      if (documentSnapshot.exists) {
+        _initFromSnapshot(timeRecordingRef!, documentSnapshot.data()!);
+      } else {
+        _initNew();
+      }
     } else {
-      final documentSnapshot = querySnapshot.docs.first;
-      timeRecordingRef = documentSnapshot.reference;
-      TimeRecording timeRecording =
-          TimeRecording.fromJson(documentSnapshot.data());
-      fromDate = DateTime(timeRecording.from.year, timeRecording.from.month,
-          timeRecording.from.day);
-      from = TimeOfDay.fromDateTime(timeRecording.from);
-      to = timeRecording.to != null
-          ? TimeOfDay.fromDateTime(timeRecording.to!)
-          : null;
-      formValues["message"] = timeRecording.message;
-      emitInitialized();
+      QuerySnapshot<DynamicMap> querySnapshot = await sbmContext.queryBuilder
+          .latestTimeRecordingForEmployeeRef(
+              sbmContext.companyRef!, sbmContext.employeeRef!)
+          .get();
+      if (querySnapshot.size == 0) {
+        _initNew();
+      } else {
+        final documentSnapshot = querySnapshot.docs.first;
+        timeRecordingRef = documentSnapshot.reference;
+        _initFromSnapshot(documentSnapshot.reference, documentSnapshot.data());
+      }
     }
+  }
+
+  void _initNew() {
+    fromDate = DateTime.now();
+    int hour = fromDate.hour;
+    int minute = (fromDate.minute / 5).floor() * 5;
+    from = TimeOfDay(hour: hour, minute: minute);
+    emitInitialized();
+  }
+
+  void _initFromSnapshot(
+      DocumentReference<DynamicMap> timeRecordingRef, DynamicMap data) {
+    TimeRecording timeRecording =
+        TimeRecording.fromSnapshot(timeRecordingRef, data);
+    fromDate = DateTime(timeRecording.from.year, timeRecording.from.month,
+        timeRecording.from.day);
+    from = TimeOfDay.fromDateTime(timeRecording.from);
+    to = timeRecording.to != null
+        ? TimeOfDay.fromDateTime(timeRecording.to!)
+        : null;
+    formValues["message"] = timeRecording.message;
+    emitInitialized();
   }
 
   DateTime nextDay(DateTime date) {
@@ -68,7 +92,7 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
     if (to.isBefore(from)) {
       myTo = nextDay(myTo);
     }
-    return DateTime(myTo.year, myTo.month, myTo.day, to!.hour, to!.minute);
+    return DateTime(myTo.year, myTo.month, myTo.day, to.hour, to.minute);
   }
 
   void emitInitialized({String? errorMessage}) {

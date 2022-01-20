@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_cubit.dart';
@@ -48,7 +52,20 @@ class TimeRecordingListWidget extends StatelessWidget {
                         subtitle: subtitle != null ? Text(subtitle) : null,
                         trailing: toLabel == null
                             ? IconButton(
-                                onPressed: () {}, icon: Icon(Icons.edit))
+                                onPressed: () async {
+                                  bool? result = await Routemaster.of(context)
+                                      .push<bool>(RouteNames
+                                              .timeRecordingListEdit +
+                                          "?timeRecordingId=${timeRecording.timeRecordingRef!.id}")
+                                      .result;
+                                  log("result: $result");
+                                  if (true == result) {
+                                    context
+                                        .read<TimeRecordingListCubit>()
+                                        .update();
+                                  }
+                                },
+                                icon: Icon(Icons.edit))
                             : null,
                       );
                     },

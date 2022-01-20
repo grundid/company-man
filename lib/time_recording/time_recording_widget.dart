@@ -10,8 +10,11 @@ import 'package:smallbusiness/time_recording/time_recording_cubit.dart';
 
 class TimeRecordingWidget extends StatelessWidget {
   final SbmContext sbmContext;
+  final String? timeRecordingId;
 
-  TimeRecordingWidget({Key? key, required this.sbmContext}) : super(key: key);
+  TimeRecordingWidget(
+      {Key? key, required this.sbmContext, this.timeRecordingId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class TimeRecordingWidget extends StatelessWidget {
         child: BlocConsumer<TimeRecordingCubit, TimeRecordingState>(
           listener: (context, state) {
             if (state is TimeRecordingDone) {
-              Routemaster.of(context).pop();
+              Routemaster.of(context).pop(true);
             } else if (state is TimeRecordingInitialized &&
                 state.errorMessage != null) {
               ScaffoldMessenger.of(context)
@@ -38,7 +41,6 @@ class TimeRecordingWidget extends StatelessWidget {
                       key: state.formKey,
                       initialValue: state.formValues,
                       child: Column(
-                        //crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           FormBuilderDateTimePicker(
                             name: "fromDate",
