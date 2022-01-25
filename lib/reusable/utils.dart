@@ -1,4 +1,23 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:universal_html/html.dart' as html;
+
+Future<String> findSystemLocale() {
+  try {
+    Intl.systemLocale = Intl.canonicalizedLocale(Platform.localeName);
+  } catch (e) {
+    if (kIsWeb) {
+      Intl.systemLocale =
+          Intl.canonicalizedLocale(html.window.navigator.language);
+    } else {
+      Intl.systemLocale = Intl.canonicalizedLocale("de_DE");
+    }
+  }
+  return Future.value(Intl.systemLocale);
+}
 
 Future<void> showErrorMessage(BuildContext context, String message) {
   return showDialog(

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterfire_ui/i10n.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
-import 'package:intl/intl_standalone.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/auth/sign_in_widget.dart';
@@ -16,6 +15,7 @@ import 'package:smallbusiness/company/employee_menu_widget.dart';
 import 'package:smallbusiness/company/no_roles_card_widget.dart';
 import 'package:smallbusiness/invitation/invitation_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:smallbusiness/reusable/utils.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_employee_widget.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_widget.dart';
 import 'package:smallbusiness/time_recording/time_recording_widget.dart';
@@ -25,9 +25,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
 const String appTitle = "Small Business App";
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  findSystemLocale().then((locale) {
+  findSystemLocale().then((_) {
     runApp(ChangeNotifierProvider<SbmContext>(
       create: (context) => SbmContext(),
       child: const SmallBusinessApp(),
