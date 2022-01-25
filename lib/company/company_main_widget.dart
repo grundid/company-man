@@ -38,11 +38,19 @@ class CompanyMainWidget extends StatelessWidget {
                   alignment: MainAxisAlignment.start,
                   children: [
                     TextButton(
-                        onPressed: () {
-                          Routemaster.of(context)
-                              .push(RouteNames.timeRecordingList);
-                        },
-                        child: Text("Historie"))
+                      onPressed: () {
+                        Routemaster.of(context)
+                            .push(RouteNames.timeRecordingList);
+                      },
+                      child: Text("Historie"),
+                    ),
+                    if (sbmContext.user.isManager)
+                      TextButton(
+                          onPressed: () {
+                            Routemaster.of(context)
+                                .push(RouteNames.timeRecordingListEmployee);
+                          },
+                          child: Text("Mitarbeiter-Auswertungen"))
                   ],
                 )
               ],

@@ -61,4 +61,12 @@ class TimeRecording {
   DynamicMap toJson() {
     return _$TimeRecordingToJson(this);
   }
+
+  Duration? duration() {
+    if (to != null) {
+      return to!.difference(from);
+    } else {
+      return null;
+    }
+  }
 }

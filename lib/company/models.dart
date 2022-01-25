@@ -83,4 +83,17 @@ class Employee {
   factory Employee.fromJson(DynamicMap data) => _$EmployeeFromJson(data);
 
   DynamicMap toJson() => _$EmployeeToJson(this);
+
+  String displayName() => "${person.firstName} ${person.lastName}";
+}
+
+sortEmployeeByName(Employee e1, Employee e2) {
+  int c = e1.person.lastName.compareTo(e2.person.lastName);
+  if (c == 0) {
+    c = e1.person.firstName.compareTo(e2.person.firstName);
+    if (c == 0) {
+      c = e1.employeeNo.compareTo(e2.employeeNo);
+    }
+  }
+  return c;
 }

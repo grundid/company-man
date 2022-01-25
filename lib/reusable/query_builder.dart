@@ -49,6 +49,12 @@ class QueryBuilder {
         .where("employeeRef", isEqualTo: employeeRef);
   }
 
+  Query<DynamicMap> timeRecordingsForCompanyRef(
+      {required DocumentReference companyRef}) {
+    return timeRecordingsCollection()
+        .where("companyRef", isEqualTo: companyRef);
+  }
+
   Query<DynamicMap> invitationForEmployeeRef(
       DocumentReference companyRef, DocumentReference employeeRef) {
     return invitationsCollection()

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 extension TimeOfDayCalc on TimeOfDay {
   bool isBefore(TimeOfDay other) {
@@ -11,6 +12,8 @@ extension TimeOfDayCalc on TimeOfDay {
     return "${hour}h " + (minute < 10 ? "0" : "") + "${minute}m";
   }
 }
+
+DateFormat monthYearFormatter = DateFormat.yMMMM();
 
 TimeOfDay fromDuration(Duration duration) {
   int inMinutes = duration.inMinutes;

@@ -100,12 +100,10 @@ class TimeRecordingListWidget extends StatelessWidget {
 
 class TimeRecordingEntryWidget extends StatelessWidget {
   final TimeRecording timeRecording;
-  final Function() onEditTimeRecording;
+  final Function()? onEditTimeRecording;
 
   const TimeRecordingEntryWidget(
-      {Key? key,
-      required this.timeRecording,
-      required this.onEditTimeRecording})
+      {Key? key, required this.timeRecording, this.onEditTimeRecording})
       : super(key: key);
 
   @override
@@ -126,7 +124,7 @@ class TimeRecordingEntryWidget extends StatelessWidget {
     return ListTile(
       title: Text(titleLabel),
       subtitle: subtitle != null ? Text(subtitle) : null,
-      trailing: toLabel == null
+      trailing: toLabel == null && onEditTimeRecording != null
           ? IconButton(onPressed: onEditTimeRecording, icon: Icon(Icons.edit))
           : null,
     );

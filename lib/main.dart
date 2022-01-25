@@ -16,6 +16,7 @@ import 'package:smallbusiness/company/employee_menu_widget.dart';
 import 'package:smallbusiness/company/no_roles_card_widget.dart';
 import 'package:smallbusiness/invitation/invitation_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:smallbusiness/time_recording/time_recording_list_employee_widget.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_widget.dart';
 import 'package:smallbusiness/time_recording/time_recording_widget.dart';
 import 'auth/cubit/auth_cubit.dart';
@@ -43,6 +44,7 @@ class RouteNames {
   static String invitation = "/invitation";
   static String timeRecording = "/timeRecording";
   static String timeRecordingList = "/timeRecordingList";
+  static String timeRecordingListEmployee = "/timeRecordingListEmployee";
   static String timeRecordingListEdit = "/timeRecordingList/edit";
 }
 
@@ -90,6 +92,12 @@ class SmallBusinessApp extends StatelessWidget {
               ),
           RouteNames.timeRecordingList: (RouteData routeData) => MaterialPage(
                 child: TimeRecordingListWidget(
+                  sbmContext: Provider.of<SbmContext>(context, listen: false),
+                ),
+              ),
+          RouteNames.timeRecordingListEmployee: (RouteData routeData) =>
+              MaterialPage(
+                child: TimeRecordingListEmployeeWidget(
                   sbmContext: Provider.of<SbmContext>(context, listen: false),
                 ),
               ),
