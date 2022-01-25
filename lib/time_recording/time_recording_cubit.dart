@@ -236,7 +236,9 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
         to: to != null ? createTo(to!) : null,
         pauses: [],
         message: formKey.currentState!.value["message"],
-        finalized: finalized);
+        finalized: finalized,
+        created: DateTime.now(),
+        finalizedDate: finalized ? DateTime.now() : null);
     return timeRecording;
   }
 

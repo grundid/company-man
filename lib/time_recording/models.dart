@@ -41,6 +41,10 @@ class TimeRecording {
   List<Pause> pauses;
   String? message;
   bool finalized;
+  @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
+  late DateTime created;
+  @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
+  DateTime? finalizedDate;
   TimeRecording({
     required this.employeeRef,
     required this.companyRef,
@@ -49,6 +53,8 @@ class TimeRecording {
     required this.pauses,
     required this.message,
     required this.finalized,
+    required this.created,
+    required this.finalizedDate,
   });
 
   factory TimeRecording.fromSnapshot(

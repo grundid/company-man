@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smallbusiness/share/share_cubit.dart';
@@ -17,6 +20,16 @@ class ShareWidget extends StatelessWidget {
   const ShareWidget({Key? key, required this.shareableBuilder})
       : super(key: key);
 
+  IconData decideIcon() {
+    if (kIsWeb) {
+      return Icons.download;
+    } else if (Platform.isIOS) {
+      return Icons.ios_share;
+    } else {
+      return Icons.share;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -27,7 +40,7 @@ class ShareWidget extends StatelessWidget {
               onPressed: () {
                 context.read<ShareCubit>().share();
               },
-              icon: Icon(Icons.share));
+              icon: Icon(decideIcon()));
         },
       ),
     );

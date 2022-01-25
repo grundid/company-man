@@ -101,11 +101,20 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
   exportArchive.addCsvFile(
       "vergütung-mitarbeiter-gesamt-$monthLabel.csv", summaryFile);
 
+  DateFormat fullDateFormat = DateFormat.yMMMd().add_Hms();
   DateFormat dateFormat = DateFormat.yMMMEd();
   DateFormat hourFormat = DateFormat.Hm();
   for (MonthlySummaryPerEmployee perEmployee in monthlySummary.employees) {
     List<List<String>> employeeFile = [];
-    employeeFile.add(["Datum", "Von", "Bis", "Arbeitszeit"]);
+    employeeFile.add([
+      "Datum",
+      "Von",
+      "Bis",
+      "Arbeitszeit",
+      "Pause",
+      "Erfassung begonnen",
+      "Erfassung beendet"
+    ]);
     for (TimeRecording timeRecording in perEmployee.timeRecordings) {
       if (timeRecording.to != null) {
         Duration duration = timeRecording.duration()!;
@@ -113,7 +122,12 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
           dateFormat.format(timeRecording.from),
           hourFormat.format(timeRecording.from),
           hourFormat.format(timeRecording.to!),
-          HoursMinutes.fromDuration(duration).toCsv()
+          HoursMinutes.fromDuration(duration).toCsv(),
+          "",
+          fullDateFormat.format(timeRecording.created),
+          timeRecording.finalizedDate != null
+              ? fullDateFormat.format(timeRecording.finalizedDate!)
+              : ""
         ]);
       }
     }
