@@ -5,6 +5,7 @@ import 'package:flutterfire_ui/i10n.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/auth/phone_signin_widget.dart';
 import 'package:smallbusiness/auth/sign_in_widget.dart';
 import 'package:smallbusiness/company/company_edit_widget.dart';
 import 'package:smallbusiness/company/company_main_widget.dart';
@@ -15,6 +16,7 @@ import 'package:smallbusiness/company/employee_menu_widget.dart';
 import 'package:smallbusiness/company/no_roles_card_widget.dart';
 import 'package:smallbusiness/invitation/invitation_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:smallbusiness/reusable/utils.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_employee_widget.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_widget.dart';
@@ -47,6 +49,7 @@ class RouteNames {
   static String timeRecordingList = "/timeRecordingList";
   static String timeRecordingListEmployee = "/timeRecordingListEmployee";
   static String timeRecordingListEdit = "/timeRecordingList/edit";
+  static String signInWithPhoneNumber = "/signInWithPhoneNumber";
 }
 
 class SmallBusinessApp extends StatelessWidget {
@@ -109,6 +112,13 @@ class SmallBusinessApp extends StatelessWidget {
                   timeRecordingId: routeData.queryParameters["timeRecordingId"],
                 ),
               ),
+          RouteNames.signInWithPhoneNumber: (RouteData routeData) =>
+              MaterialPage(
+                child: PhoneSignInWidget(
+                  sbmContext: Provider.of<SbmContext>(context, listen: false),
+                  phoneNumber: routeData.queryParameters["phoneNumber"]!,
+                ),
+              ),
         }),
       ),
       routeInformationParser: RoutemasterParser(),
@@ -140,20 +150,25 @@ class MainWidget extends StatelessWidget {
         title: Text(appTitle),
       ),
       body: sbmContext.user.hasCompany
-          ? CompanyMainWidget(sbmContext: sbmContext)
-          : NoRolesCardWidget(
-              onCreateCompany: () {
-                Routemaster.of(context).push(RouteNames.companyEdit);
-              },
-              onJoinCompany: (inviteId) async {
-                bool? result = await Routemaster.of(context)
-                    .push<bool>(
-                        RouteNames.invitation + "?invitationId=$inviteId")
-                    .result;
-                if (true == result) {
-                  context.read<AuthCubit>().updateUser();
-                }
-              },
+          ? ResponsiveBody(
+              addPadding: false,
+              child: CompanyMainWidget(sbmContext: sbmContext))
+          : ResponsiveBody(
+              addPadding: false,
+              child: NoRolesCardWidget(
+                onCreateCompany: () {
+                  Routemaster.of(context).push(RouteNames.companyEdit);
+                },
+                onJoinCompany: (inviteId) async {
+                  bool? result = await Routemaster.of(context)
+                      .push<bool>(
+                          RouteNames.invitation + "?invitationId=$inviteId")
+                      .result;
+                  if (true == result) {
+                    context.read<AuthCubit>().updateUser();
+                  }
+                },
+              ),
             ),
     );
   }

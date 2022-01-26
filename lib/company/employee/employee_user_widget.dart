@@ -57,6 +57,7 @@ class _UserInitializedWidget extends StatelessWidget {
   final GlobalKey<FormBuilderState> formKey = GlobalKey();
   final DynamicMap formValues;
   final Function(DynamicMap values) onChangeRights;
+
   _UserInitializedWidget({
     Key? key,
     required this.formValues,

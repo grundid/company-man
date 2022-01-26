@@ -28,12 +28,15 @@ class SingleColumnBody extends StatelessWidget {
 
 class ResponsiveBody extends StatelessWidget {
   final Widget child;
+  final bool addPadding;
 
-  const ResponsiveBody({Key? key, required this.child}) : super(key: key);
+  const ResponsiveBody({Key? key, required this.child, this.addPadding = true})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding:
+          addPadding ? EdgeInsets.symmetric(horizontal: 16, vertical: 8) : null,
       child: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(

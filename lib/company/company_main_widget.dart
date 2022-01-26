@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:routemaster/routemaster.dart';
+import 'package:smallbusiness/auth/anon_reminder_widget.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/main.dart';
 
@@ -56,7 +57,8 @@ class CompanyMainWidget extends StatelessWidget {
               ],
             ),
           ),
-        )
+        ),
+      AnonReminderWidget(sbmContext: sbmContext)
     ]);
   }
 }
