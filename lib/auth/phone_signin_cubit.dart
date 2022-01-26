@@ -15,7 +15,7 @@ class PhoneSigninCubit extends Cubit<PhoneSignInState> {
 
   PhoneSigninCubit(this.sbmContext, this.phoneNumber)
       : super(PhoneSignInInProgress()) {
-    //_signInWithPhoneNumber();
+    _signInWithPhoneNumber();
   }
 
   _signInWithPhoneNumber() {
@@ -58,7 +58,8 @@ class PhoneSigninCubit extends Cubit<PhoneSignInState> {
       log(e.toString());
       if (e.code == "credential-already-in-use") {
         emit(PhoneSignInAlreadyInUse(credential));
-      } else if (e.code == "invalid-verification-code") {
+      } else if (e.code == "invalid-verification-code" ||
+          e.code == "session-expired") {
         emit(PhoneSignInInvalidCode(forceResendingToken));
       } else {
         emit(PhoneSignInError(e.toString()));
