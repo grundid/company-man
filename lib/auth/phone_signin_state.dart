@@ -1,21 +1,37 @@
 part of 'phone_signin_cubit.dart';
 
 @immutable
-abstract class PhoneSigninState {}
+abstract class PhoneSignInState {}
 
-class PhoneSigninInProgress extends PhoneSigninState {}
+class PhoneSignInInProgress extends PhoneSignInState {}
 
-class PhoneSigninVerified extends PhoneSigninState {}
+class PhoneSignInVerified extends PhoneSignInState {
+  final bool linked;
 
-class PhoneSigninError extends PhoneSigninState {
-  final String message;
-
-  PhoneSigninError(this.message);
+  PhoneSignInVerified(this.linked);
 }
 
-class PhoneSigninCodeSent extends PhoneSigninState {
+class PhoneSignInAlreadyInUse extends PhoneSignInState {
+  final PhoneAuthCredential credential;
+
+  PhoneSignInAlreadyInUse(this.credential);
+}
+
+class PhoneSignInInvalidCode extends PhoneSignInState {
+  final int? forceResendingToken;
+
+  PhoneSignInInvalidCode(this.forceResendingToken);
+}
+
+class PhoneSignInError extends PhoneSignInState {
+  final String message;
+
+  PhoneSignInError(this.message);
+}
+
+class PhoneSignInCodeSent extends PhoneSignInState {
   final String verificationId;
   final int? forceResendingToken;
 
-  PhoneSigninCodeSent(this.verificationId, this.forceResendingToken);
+  PhoneSignInCodeSent(this.verificationId, this.forceResendingToken);
 }

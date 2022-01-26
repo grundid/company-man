@@ -23,53 +23,60 @@ class PhoneSignInWidget extends StatelessWidget {
         appBar: AppBar(
           title: Text("$phoneNumber verifizieren"),
         ),
-        body: BlocBuilder<PhoneSigninCubit, PhoneSigninState>(
+        body: BlocBuilder<PhoneSigninCubit, PhoneSignInState>(
           builder: (context, state) {
-            return ResponsiveBody(
-                addPadding: false,
-                child: state is PhoneSigninCodeSent
-                    ? VerificationCodeWidget(
-                        phoneNumber: phoneNumber,
-                        onCodeResend: () {},
-                        onCodeSubmit: (code) {
-                          context
-                              .read<PhoneSigninCubit>()
-                              .verifyCode(state.verificationId, code);
-                        },
-                      )
-                    : state is PhoneSigninVerified
-                        ? Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              children: [
-                                Text(
-                                    "Die Nummer wurde erfolgreich geprüft und Ihr Account verknüpft. "
-                                    "Sie können sich jetzt und in Zukunft direkt mit Ihrer Telefonnummer einloggen um auf Ihre Daten zugreifen zu können."),
-                                ButtonBar(
-                                  alignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          Routemaster.of(context).pop();
-                                        },
-                                        child: Text("Fertig"))
-                                  ],
-                                )
-                              ],
-                            ),
+            return state is PhoneSignInInProgress
+                ? LoadingAnimationScreen(
+                    timeout: Duration(seconds: 30),
+                  )
+                : ResponsiveBody(
+                    child: state is PhoneSignInCodeSent
+                        ? VerificationCodeWidget(
+                            phoneNumber: phoneNumber,
+                            onCodeResend: state.forceResendingToken != null
+                                ? () {
+                                    context
+                                        .read<PhoneSigninCubit>()
+                                        .resendCode(state.forceResendingToken!);
+                                  }
+                                : null,
+                            onCodeSubmit: (code) {
+                              context
+                                  .read<PhoneSigninCubit>()
+                                  .verifyCode(state.verificationId, code);
+                            },
                           )
-                        : state is PhoneSigninError
-                            ? Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("Fehler bei der Verifizierung:"),
-                                    Text(state.message)
-                                  ],
-                                ),
+                        : state is PhoneSignInVerified
+                            ? _CodeVerifiedWidget(
+                                linked: state.linked,
                               )
-                            : LoadingAnimationScreen());
+                            : state is PhoneSignInInvalidCode
+                                ? _InvalidCodeWidget(
+                                    forceResendingToken:
+                                        state.forceResendingToken,
+                                    onResend: (forceResendingToken) {
+                                      context
+                                          .read<PhoneSigninCubit>()
+                                          .resendCode(forceResendingToken);
+                                    },
+                                  )
+                                : state is PhoneSignInAlreadyInUse
+                                    ? _AlreadyInUseWidget(
+                                        onRelogin: () {
+                                          context
+                                              .read<PhoneSigninCubit>()
+                                              .signOutAndRelogin(
+                                                  state.credential);
+                                        },
+                                      )
+                                    : state is PhoneSignInError
+                                        ? _VerificationErrorWidget(
+                                            message: state.message,
+                                          )
+                                        : LoadingAnimationScreen(
+                                            timeout: Duration(seconds: 30),
+                                          ),
+                  );
           },
         ),
       ),
@@ -77,10 +84,118 @@ class PhoneSignInWidget extends StatelessWidget {
   }
 }
 
+class _VerificationErrorWidget extends StatelessWidget {
+  final String message;
+  const _VerificationErrorWidget({
+    Key? key,
+    required this.message,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [Text("Fehler bei der Verifizierung:"), Text(message)],
+    );
+  }
+}
+
+class _AlreadyInUseWidget extends StatelessWidget {
+  final Function() onRelogin;
+
+  const _AlreadyInUseWidget({
+    Key? key,
+    required this.onRelogin,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text("Die Telefonnummer ist bereits mit einem Account verknüpft. "
+            "Sie können sich jetzt abmelden und bei dem existierenden Account anmelden.\n\n"
+            "Bitte beachten Sie, dass Sie beim Abmelden Zugriff auf die aktuellen Daten verlieren."),
+        ButtonBar(
+          alignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+                onPressed: onRelogin, child: Text("Abmelden und Anmelden"))
+          ],
+        )
+      ],
+    );
+  }
+}
+
+class _InvalidCodeWidget extends StatelessWidget {
+  final int? forceResendingToken;
+  final Function(int forceResendingToken) onResend;
+
+  const _InvalidCodeWidget({
+    Key? key,
+    this.forceResendingToken,
+    required this.onResend,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text("Der eingegebene Code ist ungültig.\n"),
+        if (forceResendingToken != null) ...[
+          Text(
+              "Bitte lassen Sie sich einen neuen Code zusenden und probieren Sie es erneut."),
+          ButtonBar(
+            children: [
+              TextButton(
+                  onPressed: () {
+                    onResend(forceResendingToken!);
+                  },
+                  child: Text("Erneut senden"))
+            ],
+          )
+        ]
+      ],
+    );
+  }
+}
+
+class _CodeVerifiedWidget extends StatelessWidget {
+  final bool linked;
+  const _CodeVerifiedWidget({
+    Key? key,
+    required this.linked,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (linked)
+          Text(
+              "Die Nummer wurde erfolgreich geprüft und Ihr Account verknüpft. "
+              "Sie können sich jetzt und in Zukunft direkt mit Ihrer Telefonnummer "
+              "einloggen um auf Ihre Daten zugreifen zu können."),
+        if (!linked) Text("Sie haben sich erfolgreich angemeldet."),
+        ButtonBar(
+          alignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  Routemaster.of(context).pop();
+                },
+                child: Text("Weiter"))
+          ],
+        )
+      ],
+    );
+  }
+}
+
 class VerificationCodeWidget extends StatelessWidget {
   final String phoneNumber;
   final Function(String code) onCodeSubmit;
-  final Function() onCodeResend;
+  final Function()? onCodeResend;
   final GlobalKey<FormBuilderState> formKey = GlobalKey();
 
   VerificationCodeWidget({
@@ -94,40 +209,38 @@ class VerificationCodeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return FormBuilder(
       key: formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-                "An die Telefonnummer $phoneNumber wurde ein Bestätigungscode geschickt. "
-                "Bitte diesen Code in das folgende Feld eingeben:"),
-            FormBuilderTextField(
-              name: "code",
-              autofocus: true,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(label: Text("Bestätigungscode")),
-              validator: FormBuilderValidators.compose([
-                FormBuilderValidators.required(context),
-                FormBuilderValidators.maxLength(context, 6),
-                FormBuilderValidators.minLength(context, 6),
-              ]),
-            ),
-            ButtonBar(
-              alignment: MainAxisAlignment.spaceBetween,
-              children: [
+      child: Column(
+        children: [
+          Text(
+              "An die Telefonnummer $phoneNumber wurde ein Bestätigungscode geschickt. "
+              "Bitte diesen Code in das folgende Feld eingeben:"),
+          FormBuilderTextField(
+            name: "code",
+            autofocus: true,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(label: Text("Bestätigungscode")),
+            validator: FormBuilderValidators.compose([
+              FormBuilderValidators.required(context),
+              FormBuilderValidators.maxLength(context, 6),
+              FormBuilderValidators.minLength(context, 6),
+            ]),
+          ),
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (onCodeResend != null)
                 TextButton(
                     onPressed: onCodeResend, child: Text("Erneut senden")),
-                ElevatedButton(
-                    onPressed: () {
-                      if (formKey.currentState!.saveAndValidate()) {
-                        onCodeSubmit(formKey.currentState!.value["code"]);
-                      }
-                    },
-                    child: Text("Prüfen"))
-              ],
-            )
-          ],
-        ),
+              ElevatedButton(
+                  onPressed: () {
+                    if (formKey.currentState!.saveAndValidate()) {
+                      onCodeSubmit(formKey.currentState!.value["code"]);
+                    }
+                  },
+                  child: Text("Prüfen"))
+            ],
+          )
+        ],
       ),
     );
   }

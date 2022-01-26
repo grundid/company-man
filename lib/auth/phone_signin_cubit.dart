@@ -7,32 +7,35 @@ import 'package:smallbusiness/auth/app_context.dart';
 
 part 'phone_signin_state.dart';
 
-class PhoneSigninCubit extends Cubit<PhoneSigninState> {
+class PhoneSigninCubit extends Cubit<PhoneSignInState> {
   final SbmContext sbmContext;
   final String phoneNumber;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  int? forceResendingToken;
+
   PhoneSigninCubit(this.sbmContext, this.phoneNumber)
-      : super(PhoneSigninInProgress()) {
-    _signInWithPhoneNumber();
+      : super(PhoneSignInInProgress()) {
+    //_signInWithPhoneNumber();
   }
 
   _signInWithPhoneNumber() {
-    FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: (phoneAuthCredential) {
-        _linkWithCredential(phoneAuthCredential);
-      },
-      verificationFailed: (error) {
-        log(error.toString());
-        emit(PhoneSigninError(error.toString()));
-      },
-      codeSent: (verificationId, forceResendingToken) {
-        emit(PhoneSigninCodeSent(verificationId, forceResendingToken));
-      },
-      codeAutoRetrievalTimeout: (verificationId) {
-        log("codeAutoRetrievalTimeout");
-        // emit(PhoneSigninCodeSent(verificationId, null));
-      },
-    );
+    auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (phoneAuthCredential) {
+          _linkWithCredential(phoneAuthCredential);
+        },
+        verificationFailed: (error) {
+          log(error.toString());
+          emit(PhoneSignInError(error.toString()));
+        },
+        codeSent: (verificationId, forceResendingToken) {
+          this.forceResendingToken = forceResendingToken;
+          emit(PhoneSignInCodeSent(verificationId, forceResendingToken));
+        },
+        codeAutoRetrievalTimeout: (verificationId) {
+          log("codeAutoRetrievalTimeout");
+        },
+        forceResendingToken: forceResendingToken);
   }
 
   void verifyCode(String verificationId, String code) {
@@ -41,14 +44,37 @@ class PhoneSigninCubit extends Cubit<PhoneSigninState> {
     _linkWithCredential(credential);
   }
 
-  _linkWithCredential(PhoneAuthCredential credential) {
+  _linkWithCredential(PhoneAuthCredential credential) async {
     try {
-      FirebaseAuth.instance.currentUser!.linkWithCredential(credential);
-      emit(PhoneSigninVerified());
+      emit(PhoneSignInInProgress());
+      if (auth.currentUser != null) {
+        await auth.currentUser!.linkWithCredential(credential);
+        emit(PhoneSignInVerified(true));
+      } else {
+        await auth.signInWithCredential(credential);
+        emit(PhoneSignInVerified(false));
+      }
     } on FirebaseAuthException catch (e) {
       log(e.toString());
-      if (e.code == "credential-already-in-use") {}
-      emit(PhoneSigninError(e.toString()));
+      if (e.code == "credential-already-in-use") {
+        emit(PhoneSignInAlreadyInUse(credential));
+      } else if (e.code == "invalid-verification-code") {
+        emit(PhoneSignInInvalidCode(forceResendingToken));
+      } else {
+        emit(PhoneSignInError(e.toString()));
+      }
     }
+  }
+
+  signOutAndRelogin(PhoneAuthCredential credential) async {
+    emit(PhoneSignInInProgress());
+    await auth.signOut();
+    _linkWithCredential(credential);
+  }
+
+  resendCode(int forceResendingToken) {
+    emit(PhoneSignInInProgress());
+    this.forceResendingToken = forceResendingToken;
+    _signInWithPhoneNumber();
   }
 }

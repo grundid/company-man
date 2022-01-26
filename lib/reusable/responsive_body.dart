@@ -35,8 +35,9 @@ class ResponsiveBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding:
-          addPadding ? EdgeInsets.symmetric(horizontal: 16, vertical: 8) : null,
+      padding: addPadding
+          ? EdgeInsets.symmetric(horizontal: 16, vertical: 16)
+          : null,
       child: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(

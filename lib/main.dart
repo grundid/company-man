@@ -212,6 +212,11 @@ class FirebaseInitWidget extends StatelessWidget {
                         onSignIn: () {
                           context.read<AuthCubit>().signIn();
                         },
+                        onSignInWithPhoneNumber: (phoneNumber) {
+                          Routemaster.of(context).push(RouteNames
+                                  .signInWithPhoneNumber +
+                              "?phoneNumber=${Uri.encodeComponent(phoneNumber)}");
+                        },
                       ),
                     );
                   } else {
