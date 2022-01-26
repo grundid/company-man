@@ -264,17 +264,22 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
       if (timeRecording.to!.isAfter(DateTime.now().add(Duration(hours: 1)))) {
         emitInitialized(
             errorMessage:
-                "Die Ende-Zeit darf nicht mehr als 1h in der Zukunft liegen");
+                "Die Ende-Zeit darf nicht mehr als 1h in der Zukunft liegen.");
       }
+      if (timeRecording.duration()!.inMinutes < 1) {
+        emitInitialized(
+            errorMessage:
+                "Die Arbeitszeit darf nicht weniger als 1 Minute betragen.");
+      } else {
+        TimeRecordingSaveModel model =
+            TimeRecordingSaveModel(timeRecordingRef, timeRecording);
 
-      TimeRecordingSaveModel model =
-          TimeRecordingSaveModel(timeRecordingRef, timeRecording);
+        TimeRecordingSaveAction action =
+            TimeRecordingSaveAction(sbmContext.firestore, sbmContext.userRef);
 
-      TimeRecordingSaveAction action =
-          TimeRecordingSaveAction(sbmContext.firestore, sbmContext.userRef);
-
-      await action.performAction(model);
-      emit(TimeRecordingDone());
+        await action.performAction(model);
+        emit(TimeRecordingDone());
+      }
     } else {
       emitInitialized(
           errorMessage:
