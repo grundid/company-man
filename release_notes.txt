@@ -1,1 +1,2 @@
-- Erste Testversion
+- App Icon für Android verbessert
+- Warnung für Anonymen Account geändert
