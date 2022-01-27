@@ -136,6 +136,6 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
         employeeFile);
   }
 
-  return ShareableContent("arbeitszeiten-export-$monthLabel.csv".toLowerCase(),
+  return ShareableContent("arbeitszeiten-export-$monthLabel.zip".toLowerCase(),
       exportArchive.getEncodedZip());
 }
