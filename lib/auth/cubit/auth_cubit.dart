@@ -4,12 +4,14 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/reusable/converter.dart';
 import 'package:smallbusiness/reusable/object_role.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
+import 'package:smallbusiness/user_actions/notification_token_save.dart';
 import 'package:smallbusiness/user_actions/sign_in_user.dart';
 
 part 'auth_state.dart';
@@ -53,11 +55,35 @@ class AuthCubit extends Cubit<AuthState> {
           await action.performAction(SignInUserModel(userRef, anonReminder));
         }
         sbmContext.init(SbmUser(userRef, objectRole, user, anonReminder));
+        await _initNotifications();
         emit(AuthInitialized(sbmContext));
       } else {
         emit(AuthNotLoggedIn());
       }
     });
+  }
+
+  _initNotifications() async {
+    if (!kIsWeb) {
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      NotificationSettings settings = await messaging.requestPermission();
+      log(settings.authorizationStatus.toString());
+      String? token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        await _updateTokenIfNecessary(sbmContext.userRef, token);
+      }
+      FirebaseMessaging.instance.onTokenRefresh.listen((String token) {
+        _updateTokenIfNecessary(sbmContext.userRef, token);
+      });
+    }
+  }
+
+  Future _updateTokenIfNecessary(
+      DocumentReference userRef, String token) async {
+    NotificationTokenSaveAction notificationTokenSave =
+        NotificationTokenSaveAction(sbmContext.firestore, sbmContext.userRef);
+    await notificationTokenSave
+        .performAction(NotificationTokenSaveModel(token));
   }
 
   updateUser() async {
