@@ -4,8 +4,8 @@ import 'package:smallbusiness/reusable/user_actions/user_action.dart';
 
 class SignInUserModel {
   final DocumentReference<DynamicMap> userRef;
-
-  SignInUserModel(this.userRef);
+  final DateTime anonReminder;
+  SignInUserModel(this.userRef, this.anonReminder);
 }
 
 class SignInUserAction extends UserAction<SignInUserModel> {
@@ -18,7 +18,8 @@ class SignInUserAction extends UserAction<SignInUserModel> {
     final userRef = action.userRef;
     DynamicMap data = {
       "termsAccepted": Timestamp.now(),
-      "privacyAccepted": Timestamp.now()
+      "privacyAccepted": Timestamp.now(),
+      "anonReminder": Timestamp.fromDate(action.anonReminder)
     };
     await addSetDataToBatch(userRef, data);
 

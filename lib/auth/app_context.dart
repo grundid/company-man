@@ -9,6 +9,7 @@ class SbmUser {
   final DocumentReference<DynamicMap> userRef;
   ObjectRole? objectRole;
   final User _user;
+  final DateTime anonReminder;
 
   String get uid => _user.uid;
   bool get isAnonymous => _user.isAnonymous;
@@ -18,7 +19,7 @@ class SbmUser {
 
   bool get hasCompany => isManager || isEmployee;
 
-  SbmUser(this.userRef, this.objectRole, this._user);
+  SbmUser(this.userRef, this.objectRole, this._user, this.anonReminder);
 }
 
 class SbmContext extends ChangeNotifier {

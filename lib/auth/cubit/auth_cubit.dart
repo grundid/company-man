@@ -7,8 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/reusable/converter.dart';
 import 'package:smallbusiness/reusable/object_role.dart';
-import 'package:smallbusiness/reusable/query_builder.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/user_actions/sign_in_user.dart';
 
@@ -25,12 +25,15 @@ class AuthCubit extends Cubit<AuthState> {
       if (user != null) {
         emit(AuthInProgress());
 
-        //user.getIdToken(true);
         ObjectRole? objectRole;
         DocumentReference<DynamicMap> userRef =
             sbmContext.queryBuilder.usersCollection().doc(user.uid);
         DocumentSnapshot<DynamicMap> userSnapshot = await userRef.get();
+        DateTime anonReminder;
         if (userSnapshot.exists) {
+          DynamicMap userData = userSnapshot.data()!;
+          anonReminder =
+              fromTimeStamp(userData["anonReminder"]) ?? DateTime.now();
           // wir belassen companyRef um eventuell die companyRef
           // zu wechseln, falls es mehrere objectRoles gibt
           DocumentReference? companyRef = userSnapshot.data()!["companyRef"];
@@ -44,13 +47,12 @@ class AuthCubit extends Cubit<AuthState> {
             }
           }
         } else {
+          anonReminder = DateTime.now().add(Duration(days: 7));
           SignInUserAction action =
               SignInUserAction(sbmContext.firestore, userRef);
-          await action.performAction(SignInUserModel(userRef));
+          await action.performAction(SignInUserModel(userRef, anonReminder));
         }
-
-        sbmContext.init(SbmUser(userRef, objectRole, user));
-
+        sbmContext.init(SbmUser(userRef, objectRole, user, anonReminder));
         emit(AuthInitialized(sbmContext));
       } else {
         emit(AuthNotLoggedIn());
