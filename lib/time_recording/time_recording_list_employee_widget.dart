@@ -25,56 +25,65 @@ class TimeRecordingListEmployeeWidget extends StatelessWidget {
             TimeRecordingListEmployeeState>(
           builder: (context, state) => state
                   is TimeRecordingListEmployeeInitialized
-              ? SingleChildScrollView(
-                  child: ExpansionPanelList(
-                    expansionCallback: (panelIndex, isExpanded) {
-                      context
-                          .read<TimeRecordingListEmployeeCubit>()
-                          .setExpanded(panelIndex, isExpanded);
-                    },
-                    children: state.monthlySummaries
-                        .map(
-                          (monthlySummary) => ExpansionPanel(
-                            canTapOnHeader: true,
-                            isExpanded: monthlySummary.expanded,
-                            headerBuilder: (context, isExpanded) => ListTile(
-                              title: Text(
-                                monthlySummary.label,
+              ? state.monthlySummaries.isNotEmpty
+                  ? SingleChildScrollView(
+                      child: ExpansionPanelList(
+                        expansionCallback: (panelIndex, isExpanded) {
+                          context
+                              .read<TimeRecordingListEmployeeCubit>()
+                              .setExpanded(panelIndex, isExpanded);
+                        },
+                        children: state.monthlySummaries
+                            .map(
+                              (monthlySummary) => ExpansionPanel(
+                                canTapOnHeader: true,
+                                isExpanded: monthlySummary.expanded,
+                                headerBuilder: (context, isExpanded) =>
+                                    ListTile(
+                                  title: Text(
+                                    monthlySummary.label,
+                                  ),
+                                  trailing: ShareWidget(
+                                    shareableBuilder: () async {
+                                      return exportMonthlySummary(
+                                          monthlySummary);
+                                    },
+                                  ),
+                                ),
+                                body: Column(
+                                  children: monthlySummary.employees
+                                      .map((perEmployee) => ListTile(
+                                            title: Text(perEmployee.employee
+                                                .displayName()),
+                                            subtitle: Text(perEmployee
+                                                .hoursMinutes
+                                                .toString()),
+                                            onTap: () {
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EmployeeTimeRecodingsWidget(
+                                                        employee: perEmployee
+                                                            .employee,
+                                                        monthYear:
+                                                            monthlySummary
+                                                                .month,
+                                                        timeRecordings:
+                                                            perEmployee
+                                                                .timeRecordings),
+                                              ));
+                                            },
+                                          ))
+                                      .toList(),
+                                ),
                               ),
-                              trailing: ShareWidget(
-                                shareableBuilder: () async {
-                                  return exportMonthlySummary(monthlySummary);
-                                },
-                              ),
-                            ),
-                            body: Column(
-                              children: monthlySummary.employees
-                                  .map((perEmployee) => ListTile(
-                                        title: Text(
-                                            perEmployee.employee.displayName()),
-                                        subtitle: Text(perEmployee.hoursMinutes
-                                            .toString()),
-                                        onTap: () {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                            builder: (context) =>
-                                                EmployeeTimeRecodingsWidget(
-                                                    employee:
-                                                        perEmployee.employee,
-                                                    monthYear:
-                                                        monthlySummary.month,
-                                                    timeRecordings: perEmployee
-                                                        .timeRecordings),
-                                          ));
-                                        },
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                )
+                            )
+                            .toList(),
+                      ),
+                    )
+                  : Center(
+                      child: Text("Keine Mitarbeiter-Auswertungen verfügbar"),
+                    )
               : LoadingAnimationScreen(),
         ),
       ),
