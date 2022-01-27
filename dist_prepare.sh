@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# cider bump build
-# git commit -a -m "version increase for release"
-# git push
+cider bump build
+git commit -a -m "version increase for release"
+git push
 
 VERSION=$(cider version)
 
