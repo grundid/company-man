@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +16,9 @@ import 'package:smallbusiness/company/employee_list_widget.dart';
 import 'package:smallbusiness/company/employee_menu_widget.dart';
 import 'package:smallbusiness/company/no_roles_card_widget.dart';
 import 'package:smallbusiness/invitation/invitation_widget.dart';
+import 'package:smallbusiness/reusable/app_status/app_status_widget.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:smallbusiness/reusable/query_builder.dart';
 import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:smallbusiness/reusable/utils.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_employee_widget.dart';
@@ -193,36 +196,44 @@ class FirebaseInitWidget extends StatelessWidget {
             );
           } else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
-            return BlocProvider(
-              create: (context) => AuthCubit(
-                  Provider.of<SbmContext>(context, listen: false),
-                  FirebaseAuth.instanceFor(app: snapshot.data!)),
-              child: BlocBuilder<AuthCubit, AuthState>(
-                builder: (context, state) {
-                  if (state is AuthInitialized) {
-                    return MainWidget(
-                      sbmContext: state.sbmContext,
-                    );
-                  } else if (state is AuthNotLoggedIn) {
-                    return Scaffold(
-                      appBar: AppBar(
-                        title: Text(appTitle),
-                      ),
-                      body: SignInWidget(
-                        onSignIn: () {
-                          context.read<AuthCubit>().signIn();
-                        },
-                        onSignInWithPhoneNumber: (phoneNumber) {
-                          Routemaster.of(context).push(RouteNames
-                                  .signInWithPhoneNumber +
-                              "?phoneNumber=${Uri.encodeComponent(phoneNumber)}");
-                        },
-                      ),
-                    );
-                  } else {
-                    return LoadingAnimationScaffold();
-                  }
-                },
+            SbmContext sbmContext =
+                Provider.of<SbmContext>(context, listen: false);
+            FirebaseFirestore firestore = FirebaseFirestore.instance;
+            sbmContext.initFirestore(QueryBuilder(firestore: firestore));
+
+            return AppStatusWidget(
+              sbmContext: sbmContext,
+              child: BlocProvider(
+                create: (context) => AuthCubit(
+                    Provider.of<SbmContext>(context, listen: false),
+                    FirebaseAuth.instanceFor(app: snapshot.data!)),
+                child: BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    if (state is AuthInitialized) {
+                      return MainWidget(
+                        sbmContext: state.sbmContext,
+                      );
+                    } else if (state is AuthNotLoggedIn) {
+                      return Scaffold(
+                        appBar: AppBar(
+                          title: Text(appTitle),
+                        ),
+                        body: SignInWidget(
+                          onSignIn: () {
+                            context.read<AuthCubit>().signIn();
+                          },
+                          onSignInWithPhoneNumber: (phoneNumber) {
+                            Routemaster.of(context).push(RouteNames
+                                    .signInWithPhoneNumber +
+                                "?phoneNumber=${Uri.encodeComponent(phoneNumber)}");
+                          },
+                        ),
+                      );
+                    } else {
+                      return LoadingAnimationScaffold();
+                    }
+                  },
+                ),
               ),
             );
           } else {

@@ -24,13 +24,11 @@ class AuthCubit extends Cubit<AuthState> {
       log("User changed: uid: ${user?.uid}");
       if (user != null) {
         emit(AuthInProgress());
-        FirebaseFirestore firestore = FirebaseFirestore.instance;
-        QueryBuilder queryBuilder = QueryBuilder(firestore: firestore);
 
         //user.getIdToken(true);
         ObjectRole? objectRole;
         DocumentReference<DynamicMap> userRef =
-            queryBuilder.usersCollection().doc(user.uid);
+            sbmContext.queryBuilder.usersCollection().doc(user.uid);
         DocumentSnapshot<DynamicMap> userSnapshot = await userRef.get();
         if (userSnapshot.exists) {
           // wir belassen companyRef um eventuell die companyRef
@@ -38,7 +36,7 @@ class AuthCubit extends Cubit<AuthState> {
           DocumentReference? companyRef = userSnapshot.data()!["companyRef"];
           if (companyRef != null) {
             final userObjectRoleRef =
-                queryBuilder.objectRoleRef(userRef, companyRef);
+                sbmContext.queryBuilder.objectRoleRef(userRef, companyRef);
             DocumentSnapshot<DynamicMap> objectRoleSnapshot =
                 await userObjectRoleRef.get();
             if (objectRoleSnapshot.exists) {
@@ -46,11 +44,12 @@ class AuthCubit extends Cubit<AuthState> {
             }
           }
         } else {
-          SignInUserAction action = SignInUserAction(firestore, userRef);
+          SignInUserAction action =
+              SignInUserAction(sbmContext.firestore, userRef);
           await action.performAction(SignInUserModel(userRef));
         }
 
-        sbmContext.init(SbmUser(userRef, objectRole, user), queryBuilder);
+        sbmContext.init(SbmUser(userRef, objectRole, user));
 
         emit(AuthInitialized(sbmContext));
       } else {

@@ -32,9 +32,12 @@ class SbmContext extends ChangeNotifier {
   DocumentReference<DynamicMap>? get employeeRef =>
       user.objectRole?.employeeRef;
 
-  init(SbmUser user, QueryBuilder queryBuilder) {
-    this.user = user;
+  initFirestore(QueryBuilder queryBuilder) {
     this.queryBuilder = queryBuilder;
+  }
+
+  init(SbmUser user) {
+    this.user = user;
     notifyListeners();
   }
 }

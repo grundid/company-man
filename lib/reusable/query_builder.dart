@@ -20,6 +20,10 @@ class QueryBuilder {
     return firestore.collection(usersPath);
   }
 
+  DocumentReference<DynamicMap> clientAppVersion(String appVersion) {
+    return firestore.collection("clients").doc(appVersion);
+  }
+
   CollectionReference<DynamicMap> invitationsCollection() {
     return firestore.collection("invitations");
   }
