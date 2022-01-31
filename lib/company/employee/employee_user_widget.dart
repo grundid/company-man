@@ -117,8 +117,12 @@ class _InvitationAvailableWidget extends StatelessWidget {
     return ResponsiveBody(
         child: Column(
       children: [
-        Text("Für den Benutzer ist bereits eine Einladungs-ID erstellt. "
-            "Bitte schicken Sie die Einladungs-ID an den Mitarbeiter per Mail, SMS oder WhatsApp."),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Text(
+              "Für den Benutzer ist bereits eine Einladungs-ID erstellt. "
+              "Bitte schicken Sie die Einladungs-ID an den Mitarbeiter per Mail, SMS oder WhatsApp."),
+        ),
         Column(
           children: [
             Text(
@@ -173,6 +177,7 @@ class _NoUserWidget extends StatelessWidget {
             ),
             FormBuilderCheckbox(
               name: "manager",
+              initialValue: false,
               title: Text("Manager-Berechtigung"),
               decoration: InputDecoration(
                   helperMaxLines: 3,
