@@ -265,8 +265,7 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
         emitInitialized(
             errorMessage:
                 "Die Ende-Zeit darf nicht mehr als 1h in der Zukunft liegen.");
-      }
-      if (timeRecording.duration()!.inMinutes < 1) {
+      } else if (timeRecording.duration()!.inMinutes < 1) {
         emitInitialized(
             errorMessage:
                 "Die Arbeitszeit darf nicht weniger als 1 Minute betragen.");
