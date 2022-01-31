@@ -8,18 +8,27 @@ import 'package:smallbusiness/reusable/user_actions/models.dart';
 class SbmUser {
   final DocumentReference<DynamicMap> userRef;
   ObjectRole? objectRole;
-  final User _user;
+  final User user;
   final DateTime anonReminder;
 
-  String get uid => _user.uid;
-  bool get isAnonymous => _user.isAnonymous;
+  String get uid => user.uid;
+  bool get isAnonymous => user.isAnonymous;
 
   bool get isManager => true == objectRole?.manager;
   bool get isEmployee => true == objectRole?.employee;
 
   bool get hasCompany => isManager || isEmployee;
 
-  SbmUser(this.userRef, this.objectRole, this._user, this.anonReminder);
+  final String? displayName;
+  final String? companyLabel;
+
+  SbmUser(
+      {required this.userRef,
+      this.companyLabel,
+      this.displayName,
+      this.objectRole,
+      required this.user,
+      required this.anonReminder});
 }
 
 class SbmContext extends ChangeNotifier {

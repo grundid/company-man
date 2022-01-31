@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/company/models.dart';
 import 'package:smallbusiness/reusable/converter.dart';
 import 'package:smallbusiness/reusable/object_role.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
@@ -32,6 +32,8 @@ class AuthCubit extends Cubit<AuthState> {
             sbmContext.queryBuilder.usersCollection().doc(user.uid);
         DocumentSnapshot<DynamicMap> userSnapshot = await userRef.get();
         DateTime anonReminder;
+        String? displayName;
+        String? companyLabel;
         if (userSnapshot.exists) {
           DynamicMap userData = userSnapshot.data()!;
           anonReminder =
@@ -46,6 +48,12 @@ class AuthCubit extends Cubit<AuthState> {
                 await userObjectRoleRef.get();
             if (objectRoleSnapshot.exists) {
               objectRole = ObjectRole.fromJson(objectRoleSnapshot.data()!);
+              final companySnapshot = await objectRole.companyRef.get();
+              final employeeSnapshot = await objectRole.employeeRef.get();
+              Company company = Company.fromMap(companySnapshot.data()!);
+              Employee employee = Employee.fromSnapshot(employeeSnapshot);
+              displayName = employee.displayName();
+              companyLabel = company.companyLabel;
             }
           }
         } else {
@@ -54,7 +62,13 @@ class AuthCubit extends Cubit<AuthState> {
               SignInUserAction(sbmContext.firestore, userRef);
           await action.performAction(SignInUserModel(userRef, anonReminder));
         }
-        sbmContext.init(SbmUser(userRef, objectRole, user, anonReminder));
+        sbmContext.init(SbmUser(
+            companyLabel: companyLabel,
+            displayName: displayName,
+            userRef: userRef,
+            objectRole: objectRole,
+            user: user,
+            anonReminder: anonReminder));
         await _initNotifications();
         emit(AuthInitialized(sbmContext));
       } else {
@@ -105,6 +119,11 @@ class AuthCubit extends Cubit<AuthState> {
   signIn() {
     emit(AuthInProgress());
     auth.signInAnonymously();
+  }
+
+  signOut() {
+    emit(AuthInProgress());
+    auth.signOut();
   }
 
   @override

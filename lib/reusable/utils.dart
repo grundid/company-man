@@ -63,3 +63,31 @@ Future<void> showInfoDialog(
     },
   );
 }
+
+Future<bool?> showQueryDialog(
+    BuildContext context, String title, String content) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        scrollable: true,
+        title: Text(title),
+        content: SingleChildScrollView(child: Text(content)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, false);
+            },
+            child: Text("Abbrechen"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            child: Text("Ok"),
+          )
+        ],
+      );
+    },
+  );
+}

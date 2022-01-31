@@ -6,6 +6,7 @@ import 'package:flutterfire_ui/i10n.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/auth/drawer_widget.dart';
 import 'package:smallbusiness/auth/phone_signin_widget.dart';
 import 'package:smallbusiness/auth/sign_in_widget.dart';
 import 'package:smallbusiness/company/company_edit_widget.dart';
@@ -151,6 +152,20 @@ class MainWidget extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(appTitle),
+      ),
+      drawer: SbmDrawer(
+        sbmContext: sbmContext,
+        onLogout: () async {
+          if (sbmContext.user.isAnonymous) {
+            bool? result = await showQueryDialog(context, "Anonymer Account",
+                "Sie verwenden einen anonymen Account. Wenn Sie sich jetzt ausloggen, gehen all Ihre Daten verloren.");
+            if (true == result) {
+              context.read<AuthCubit>().signOut();
+            }
+          } else {
+            context.read<AuthCubit>().signOut();
+          }
+        },
       ),
       body: sbmContext.user.hasCompany
           ? ResponsiveBody(
