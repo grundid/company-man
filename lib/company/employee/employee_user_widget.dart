@@ -119,8 +119,7 @@ class _InvitationAvailableWidget extends StatelessWidget {
       children: [
         Text("Für den Benutzer ist bereits eine Einladungs-ID erstellt. "
             "Bitte schicken Sie die Einladungs-ID an den Mitarbeiter per Mail, SMS oder WhatsApp."),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Column(
           children: [
             Text(
               "Einladungs-ID: $inviteId",
