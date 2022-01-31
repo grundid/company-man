@@ -6,6 +6,7 @@ import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'package:smallbusiness/reusable/responsive_body.dart';
+import 'package:smallbusiness/reusable/utils.dart';
 import 'package:smallbusiness/time_recording/time_recording_cubit.dart';
 
 class TimeRecordingWidget extends StatelessWidget {
@@ -18,25 +19,43 @@ class TimeRecordingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Zeiterfassung"),
-      ),
-      body: BlocProvider(
-        create: (context) => TimeRecordingCubit(sbmContext),
-        child: BlocConsumer<TimeRecordingCubit, TimeRecordingState>(
-          listener: (context, state) {
-            if (state is TimeRecordingDone) {
-              Routemaster.of(context).pop(true);
-            } else if (state is TimeRecordingInitialized &&
-                state.errorMessage != null) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-            }
-          },
-          builder: (context, state) {
-            return state is TimeRecordingInitialized
-                ? ResponsiveBody(
+    return BlocProvider(
+      create: (context) => TimeRecordingCubit(sbmContext),
+      child: BlocConsumer<TimeRecordingCubit, TimeRecordingState>(
+        listener: (context, state) {
+          if (state is TimeRecordingDone) {
+            Routemaster.of(context).pop(true);
+          } else if (state is TimeRecordingInitialized &&
+              state.errorMessage != null) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          }
+        },
+        builder: (context, state) {
+          return state is TimeRecordingInitialized
+              ? Scaffold(
+                  appBar: AppBar(
+                    title: Text("Zeiterfassung"),
+                    actions: [
+                      IconButton(
+                          onPressed: () async {
+                            if (state.finishable) {
+                              bool? result = await showQueryDialog(
+                                  context,
+                                  "Zeiterfassung",
+                                  "Soll die Zeiterfassung abgeschlossen werden?",
+                                  yesNo: true);
+                              if (true == result) {
+                                context.read<TimeRecordingCubit>().finish();
+                              }
+                            } else {
+                              context.read<TimeRecordingCubit>().save();
+                            }
+                          },
+                          icon: Icon(Icons.check))
+                    ],
+                  ),
+                  body: ResponsiveBody(
                     child: FormBuilder(
                       key: state.formKey,
                       initialValue: state.formValues,
@@ -108,23 +127,23 @@ class TimeRecordingWidget extends StatelessWidget {
                             style: Theme.of(context).textTheme.headline6!,
                           ),
 /*                          FormBuilderTextField(
-                            name: "cash",
-                            textAlign: TextAlign.right,
-                            decoration: InputDecoration(
-                                label: Text(
-                                  "Bargeld",
-                                ),
-                                suffixText: "EUR"),
-                          ),
-                          FormBuilderTextField(
-                            name: "mileage",
-                            textAlign: TextAlign.right,
-                            decoration: InputDecoration(
-                                label: Text(
-                                  "Kilometerstand am Ende der Schicht",
-                                ),
-                                suffixText: "KM"),
-                          ),*/
+                              name: "cash",
+                              textAlign: TextAlign.right,
+                              decoration: InputDecoration(
+                                  label: Text(
+                                    "Bargeld",
+                                  ),
+                                  suffixText: "EUR"),
+                            ),
+                            FormBuilderTextField(
+                              name: "mileage",
+                              textAlign: TextAlign.right,
+                              decoration: InputDecoration(
+                                  label: Text(
+                                    "Kilometerstand am Ende der Schicht",
+                                  ),
+                                  suffixText: "KM"),
+                            ),*/
                           FormBuilderTextField(
                             name: "message",
                             decoration: InputDecoration(
@@ -152,10 +171,10 @@ class TimeRecordingWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                  )
-                : LoadingAnimationScreen();
-          },
-        ),
+                  ),
+                )
+              : LoadingAnimationScaffold();
+        },
       ),
     );
   }
@@ -193,7 +212,7 @@ class TimeEnterWidget extends StatelessWidget {
           ),
           Text(
             ":",
-            style: Theme.of(context).textTheme.headline2!,
+            style: Theme.of(context).textTheme.headline4!,
           ),
           _NumberWidget(
             value: timeOfDay?.minute,
@@ -241,7 +260,7 @@ class _NumberWidget extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: Text(
             value != null ? _numberFormat.format(value) : "--",
-            style: Theme.of(context).textTheme.headline2!,
+            style: Theme.of(context).textTheme.headline4!,
           ),
         ),
         TextButton(

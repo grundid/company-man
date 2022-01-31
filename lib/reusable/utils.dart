@@ -65,7 +65,8 @@ Future<void> showInfoDialog(
 }
 
 Future<bool?> showQueryDialog(
-    BuildContext context, String title, String content) {
+    BuildContext context, String title, String content,
+    {bool yesNo = false}) {
   return showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -78,13 +79,13 @@ Future<bool?> showQueryDialog(
             onPressed: () {
               Navigator.pop(context, false);
             },
-            child: Text("Abbrechen"),
+            child: Text(yesNo ? "Nein" : "Abbrechen"),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context, true);
             },
-            child: Text("Ok"),
+            child: Text(yesNo ? "Ja" : "Ok"),
           )
         ],
       );

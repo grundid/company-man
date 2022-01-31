@@ -16,6 +16,8 @@ class TimeRecordingInitialized extends TimeRecordingState {
   final String workingTime;
   final String? errorMessage;
 
+  bool get finishable => to != null;
+
   TimeRecordingInitialized(
       {required this.formKey,
       required this.fromDate,
