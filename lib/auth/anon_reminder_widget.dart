@@ -30,6 +30,13 @@ class AnonReminderWidget extends StatelessWidget {
                   autofocus: true,
                   keyboardType: TextInputType.phone,
                   textInputAction: TextInputAction.done,
+                  onSubmitted: (value) {
+                    if (formKey.currentState!.saveAndValidate()) {
+                      String phoneNumber =
+                          formKey.currentState!.value["phoneNumber"];
+                      Navigator.pop(context, phoneNumber);
+                    }
+                  },
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(context),
                   ]),

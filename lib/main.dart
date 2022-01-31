@@ -126,7 +126,8 @@ class SmallBusinessApp extends StatelessWidget {
         }),
       ),
       routeInformationParser: RoutemasterParser(),
-      supportedLocales: const [Locale("de")],
+      supportedLocales: [Locale("de")],
+      locale: Locale("de"),
       title: appTitle,
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,

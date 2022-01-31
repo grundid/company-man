@@ -46,6 +46,13 @@ class NoRolesCardWidget extends StatelessWidget {
                             "Um einer Firma beizuteten benötigen Sie eine Einladungs-ID, die Sie von Ihrem Manager erhalten."),
                         FormBuilderTextField(
                           name: "inviteId",
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (value) {
+                            if (formKey.currentState!.saveAndValidate()) {
+                              onJoinCompany(
+                                  formKey.currentState!.value["inviteId"]);
+                            }
+                          },
                           decoration:
                               InputDecoration(label: Text("Einladungs-ID")),
                           valueTransformer: (value) => value?.trim(),

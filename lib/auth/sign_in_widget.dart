@@ -35,6 +35,12 @@ class PhoneQueryWidget extends StatelessWidget {
     required this.onSignInWithPhoneNumber,
   }) : super(key: key);
 
+  _submitForm() {
+    if (formKey.currentState!.saveAndValidate()) {
+      onSignInWithPhoneNumber(formKey.currentState!.value["phoneNumber"]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -51,6 +57,9 @@ class PhoneQueryWidget extends StatelessWidget {
                 name: "phoneNumber",
                 keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.done,
+                onSubmitted: (value) {
+                  _submitForm();
+                },
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(context),
                 ]),
@@ -58,13 +67,7 @@ class PhoneQueryWidget extends StatelessWidget {
               ButtonBar(
                 children: [
                   ElevatedButton(
-                      onPressed: () {
-                        if (formKey.currentState!.saveAndValidate()) {
-                          onSignInWithPhoneNumber(
-                              formKey.currentState!.value["phoneNumber"]);
-                        }
-                      },
-                      child: Text("Einloggen"))
+                      onPressed: _submitForm, child: Text("Einloggen"))
                 ],
               )
             ],

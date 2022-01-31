@@ -13,6 +13,10 @@ class EmployeeEditWidget extends StatelessWidget {
 
   const EmployeeEditWidget({Key? key, this.employeeId}) : super(key: key);
 
+  _defaultActionHandler(Function() execDefaultAction) {
+    return (value) => execDefaultAction();
+  }
+
   @override
   Widget build(BuildContext context) {
     SbmContext sbmContext = Provider.of<SbmContext>(context, listen: false);
@@ -23,7 +27,8 @@ class EmployeeEditWidget extends StatelessWidget {
     return FormEditorWidget(
       editorTitle: "Mitarbeiter bearbeiten",
       cubitCreator: (context) => EmployeeEditBloc(sbmContext, employeeRef),
-      formFieldsBuilder: (context, values, formKey, state) => [
+      formFieldsBuilder: (context, values, formKey, state, execDefaultAction) =>
+          [
         FormBuilderDropdown(
           name: "gender",
           items: [
@@ -37,14 +42,22 @@ class EmployeeEditWidget extends StatelessWidget {
         FormBuilderTextField(
           autofocus: true,
           name: "firstName",
+          textCapitalization: TextCapitalization.words,
           valueTransformer: valueTrimmer,
+          onSubmitted: execDefaultAction != null
+              ? _defaultActionHandler(execDefaultAction)
+              : null,
           decoration: InputDecoration(label: Text("Vorname")),
           validator: FormBuilderValidators.compose(
               [FormBuilderValidators.required(context)]),
         ),
         FormBuilderTextField(
           name: "lastName",
+          textCapitalization: TextCapitalization.words,
           valueTransformer: valueTrimmer,
+          onSubmitted: execDefaultAction != null
+              ? _defaultActionHandler(execDefaultAction)
+              : null,
           decoration: InputDecoration(label: Text("Nachname")),
           validator: FormBuilderValidators.compose(
               [FormBuilderValidators.required(context)]),
@@ -52,6 +65,10 @@ class EmployeeEditWidget extends StatelessWidget {
         FormBuilderTextField(
           name: "employeeNo",
           valueTransformer: valueTrimmer,
+          onSubmitted: execDefaultAction != null
+              ? _defaultActionHandler(execDefaultAction)
+              : null,
+          keyboardType: TextInputType.number,
           decoration: InputDecoration(label: Text("Mitarbeiternummer")),
           validator: FormBuilderValidators.compose(
               [FormBuilderValidators.required(context)]),
@@ -64,7 +81,11 @@ class EmployeeEditWidget extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 8.0),
                 child: FormBuilderTextField(
                   name: "street",
+                  textCapitalization: TextCapitalization.words,
                   valueTransformer: valueTrimmer,
+                  onSubmitted: execDefaultAction != null
+                      ? _defaultActionHandler(execDefaultAction)
+                      : null,
                   decoration: InputDecoration(label: Text("Straße")),
                 ),
               ),
@@ -74,6 +95,9 @@ class EmployeeEditWidget extends StatelessWidget {
               child: FormBuilderTextField(
                 name: "no",
                 valueTransformer: valueTrimmer,
+                onSubmitted: execDefaultAction != null
+                    ? _defaultActionHandler(execDefaultAction)
+                    : null,
                 decoration: InputDecoration(label: Text("Nummer")),
               ),
             )
@@ -81,7 +105,11 @@ class EmployeeEditWidget extends StatelessWidget {
         ),
         FormBuilderTextField(
           name: "additional",
+          textCapitalization: TextCapitalization.words,
           valueTransformer: valueTrimmer,
+          onSubmitted: execDefaultAction != null
+              ? _defaultActionHandler(execDefaultAction)
+              : null,
           decoration: InputDecoration(label: Text("Addresszusatz")),
         ),
         Row(
@@ -92,6 +120,7 @@ class EmployeeEditWidget extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 8.0),
                 child: FormBuilderTextField(
                   name: "postalCode",
+                  keyboardType: TextInputType.number,
                   valueTransformer: valueTrimmer,
                   decoration: InputDecoration(label: Text("PLZ")),
                 ),
@@ -101,7 +130,11 @@ class EmployeeEditWidget extends StatelessWidget {
               flex: 4,
               child: FormBuilderTextField(
                 name: "city",
+                textCapitalization: TextCapitalization.words,
                 valueTransformer: valueTrimmer,
+                onSubmitted: execDefaultAction != null
+                    ? _defaultActionHandler(execDefaultAction)
+                    : null,
                 decoration: InputDecoration(label: Text("Stadt")),
               ),
             )
@@ -110,12 +143,18 @@ class EmployeeEditWidget extends StatelessWidget {
         FormBuilderTextField(
           name: "email",
           valueTransformer: valueTrimmer,
+          onSubmitted: execDefaultAction != null
+              ? _defaultActionHandler(execDefaultAction)
+              : null,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(label: Text("E-Mail")),
         ),
         FormBuilderTextField(
           name: "phone",
           valueTransformer: valueTrimmer,
+          onSubmitted: execDefaultAction != null
+              ? _defaultActionHandler(execDefaultAction)
+              : null,
           keyboardType: TextInputType.phone,
           decoration: InputDecoration(label: Text("Telefon")),
         ),

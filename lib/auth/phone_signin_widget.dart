@@ -217,7 +217,13 @@ class VerificationCodeWidget extends StatelessWidget {
           FormBuilderTextField(
             name: "code",
             autofocus: true,
+            textInputAction: TextInputAction.done,
             keyboardType: TextInputType.number,
+            onSubmitted: (value) {
+              if (formKey.currentState!.saveAndValidate()) {
+                onCodeSubmit(formKey.currentState!.value["code"]);
+              }
+            },
             decoration: InputDecoration(label: Text("Bestätigungscode")),
             validator: FormBuilderValidators.compose([
               FormBuilderValidators.required(context),

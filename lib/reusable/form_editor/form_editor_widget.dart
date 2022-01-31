@@ -7,11 +7,11 @@ import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:smallbusiness/reusable/utils.dart';
 
 typedef FormFieldsBuilder = List<Widget> Function(
-  BuildContext context,
-  Map<String, dynamic> values,
-  GlobalKey<FormBuilderState> formKey,
-  FormEditorInitialized state,
-);
+    BuildContext context,
+    Map<String, dynamic> values,
+    GlobalKey<FormBuilderState> formKey,
+    FormEditorInitialized state,
+    Function()? execDefaultAction);
 
 String? valueTrimmer(String? value) => value?.trim();
 String? valueUpperCase(String? value) => value?.toUpperCase();
@@ -119,7 +119,11 @@ class FormEditorWidget<C extends FormEditorBloc> extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: formEditorAction.confirmFieldsBuilder!(
-              context, initialValue, additionFormKey, state),
+              context, initialValue, additionFormKey, state, () {
+            if (true == additionFormKey.currentState?.saveAndValidate()) {
+              Navigator.pop(context, additionFormKey.currentState!.value);
+            }
+          }),
         ),
       ),
       actions: [
@@ -183,7 +187,15 @@ class FormEditorWidget<C extends FormEditorBloc> extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ...formFieldsBuilder(
-                  context, state.formValues, state.formKey, state),
+                  context,
+                  state.formValues,
+                  state.formKey,
+                  state,
+                  state.editable
+                      ? () {
+                          _handleAction(context, state, defaultAction);
+                        }
+                      : null),
               ButtonBar(
                 alignment: MainAxisAlignment.end,
                 children: [
