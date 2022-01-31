@@ -36,22 +36,32 @@ class CompanyMainWidget extends StatelessWidget {
                   subtitle: Text("Erfassen Sie Ihre Arbeitszeit"),
                 ),
                 ButtonBar(
-                  alignment: MainAxisAlignment.start,
+                  alignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        Routemaster.of(context)
-                            .push(RouteNames.timeRecordingList);
-                      },
-                      child: Text("Historie"),
-                    ),
-                    if (sbmContext.user.isManager)
-                      TextButton(
+                    Row(
+                      children: [
+                        TextButton(
                           onPressed: () {
                             Routemaster.of(context)
-                                .push(RouteNames.timeRecordingListEmployee);
+                                .push(RouteNames.timeRecordingList);
                           },
-                          child: Text("Mitarbeiter-Auswertungen"))
+                          child: Text("Historie"),
+                        ),
+                        if (sbmContext.user.isManager)
+                          TextButton(
+                              onPressed: () {
+                                Routemaster.of(context)
+                                    .push(RouteNames.timeRecordingListEmployee);
+                              },
+                              child: Text("Mitarbeiter-Auswertungen")),
+                      ],
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Routemaster.of(context).push(RouteNames.timeRecording);
+                      },
+                      child: Text("Erfassen"),
+                    ),
                   ],
                 )
               ],
