@@ -1,2 +1,1 @@
-- App Icon für Android verbessert
-- Warnung für Anonymen Account geändert
+- Viele kleine Verbesserungen
