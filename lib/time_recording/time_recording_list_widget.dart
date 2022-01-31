@@ -121,7 +121,7 @@ class TimeRecordingEntryWidget extends StatelessWidget {
     String? subtitle;
     if (duration != null) {
       TimeOfDay timeOfDay = fromDuration(duration);
-      subtitle = "Dauer: ${timeOfDay.getFormatted()}";
+      subtitle = "Arbeitszeit: ${timeOfDay.getFormatted()}";
     }
     return ListTile(
       title: Row(
