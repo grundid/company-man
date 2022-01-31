@@ -11,6 +11,7 @@ import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_cubit.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
 
+final DateFormat _dateFormat = DateFormat.yMEd();
 final DateFormat _fromDateFormat = DateFormat.yMEd().add_Hm();
 final DateFormat _toDateFormat = DateFormat.Hm();
 
@@ -108,7 +109,8 @@ class TimeRecordingEntryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String fromLabel = _fromDateFormat.format(timeRecording.from);
+    String dateLabel = _dateFormat.format(timeRecording.from);
+    String fromLabel = _toDateFormat.format(timeRecording.from);
     String? toLabel = timeRecording.to != null
         ? _toDateFormat.format(timeRecording.to!)
         : null;
@@ -122,9 +124,14 @@ class TimeRecordingEntryWidget extends StatelessWidget {
       subtitle = "Dauer: ${timeOfDay.getFormatted()}";
     }
     return ListTile(
-      title: Text(titleLabel),
+      title: Row(
+        children: [
+          Expanded(child: Text(dateLabel)),
+          Expanded(child: Text(titleLabel)),
+        ],
+      ),
       subtitle: subtitle != null ? Text(subtitle) : null,
-      trailing: toLabel == null && onEditTimeRecording != null
+      trailing: !timeRecording.finalized && onEditTimeRecording != null
           ? IconButton(onPressed: onEditTimeRecording, icon: Icon(Icons.edit))
           : null,
     );
