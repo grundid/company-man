@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/company/models.dart';
@@ -97,6 +96,12 @@ class TimeRecordingListEmployeeCubit
     }
 
     monthlySummaries.sort((m1, m2) => m2.month.compareTo(m1.month));
+    for (var monthlySummary in monthlySummaries) {
+      for (var employee in monthlySummary.employees) {
+        employee.timeRecordings
+            .sort((tr1, tr2) => tr2.from.compareTo(tr1.from));
+      }
+    }
 
     emit(TimeRecordingListEmployeeInitialized(monthlySummaries));
   }
