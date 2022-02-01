@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignInWidget extends StatelessWidget {
@@ -13,7 +14,8 @@ class SignInWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return ResponsiveBody(
+      addPadding: false,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

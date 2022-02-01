@@ -7,6 +7,7 @@ import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_cubit.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
@@ -52,47 +53,49 @@ class TimeRecordingListWidget extends StatelessWidget {
                 label: Text("Arbeitszeit erfassen")),
             body: state is TimeRecordingListInitialized
                 ? state.groups.isNotEmpty
-                    ? SingleChildScrollView(
+                    ? ResponsiveBody(
+                        addPadding: false,
                         child: ExpansionPanelList(
-                        expansionCallback: (panelIndex, isExpanded) {
-                          context
-                              .read<TimeRecordingListCubit>()
-                              .setExpanded(panelIndex, isExpanded);
-                        },
-                        children: state.groups
-                            .map(
-                              (e) => ExpansionPanel(
-                                canTapOnHeader: true,
-                                isExpanded: e.expanded,
-                                headerBuilder: (context, isExpanded) => Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 16),
-                                      child: Text(e.label),
-                                    ),
-                                    Text(e.totalDuration.toString())
-                                  ],
+                          expansionCallback: (panelIndex, isExpanded) {
+                            context
+                                .read<TimeRecordingListCubit>()
+                                .setExpanded(panelIndex, isExpanded);
+                          },
+                          children: state.groups
+                              .map(
+                                (e) => ExpansionPanel(
+                                  canTapOnHeader: true,
+                                  isExpanded: e.expanded,
+                                  headerBuilder: (context, isExpanded) => Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 16),
+                                        child: Text(e.label),
+                                      ),
+                                      Text(e.totalDuration.toString())
+                                    ],
+                                  ),
+                                  body: Column(
+                                    children: e.timeRecordings
+                                        .map((timeRecoding) =>
+                                            TimeRecordingEntryWidget(
+                                                timeRecording: timeRecoding,
+                                                onEditTimeRecording: () {
+                                                  _editTimeRecording(context,
+                                                      timeRecordingId:
+                                                          timeRecoding
+                                                              .timeRecordingRef!
+                                                              .id);
+                                                }))
+                                        .toList(),
+                                  ),
                                 ),
-                                body: Column(
-                                  children: e.timeRecordings
-                                      .map((timeRecoding) =>
-                                          TimeRecordingEntryWidget(
-                                              timeRecording: timeRecoding,
-                                              onEditTimeRecording: () {
-                                                _editTimeRecording(context,
-                                                    timeRecordingId:
-                                                        timeRecoding
-                                                            .timeRecordingRef!
-                                                            .id);
-                                              }))
-                                      .toList(),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ))
+                              )
+                              .toList(),
+                        ))
                     : Center(
                         child: Text("Noch keine Zeiten erfasst"),
                       )

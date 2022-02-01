@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:smallbusiness/company/models.dart';
 import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:smallbusiness/reusable/responsive_body.dart';
 
 class EmployeeListWidget extends StatelessWidget {
   const EmployeeListWidget({Key? key}) : super(key: key);
@@ -23,22 +24,24 @@ class EmployeeListWidget extends StatelessWidget {
         child: BlocBuilder<EmployeeListCubit, EmployeeListState>(
           builder: (context, state) {
             return state is EmployeeListInitialized
-                ? ListView.builder(
-                    itemCount: state.employees.length,
-                    itemBuilder: (context, index) {
-                      Employee employee = state.employees[index];
-                      return ListTile(
-                        title: Text(
-                            "${employee.person.firstName} ${employee.person.lastName} (${employee.employeeNo})"),
-                        onTap: () async {
-                          await Routemaster.of(context)
-                              .push(RouteNames.employeeMenu +
-                                  "?employeeId=${employee.employeeRef!.id}")
-                              .result;
-                          context.read<EmployeeListCubit>().refresh();
-                        },
-                      );
-                    })
+                ? ResponsiveListViewElement(
+                    child: ListView.builder(
+                        itemCount: state.employees.length,
+                        itemBuilder: (context, index) {
+                          Employee employee = state.employees[index];
+                          return ListTile(
+                            title: Text(
+                                "${employee.person.firstName} ${employee.person.lastName} (${employee.employeeNo})"),
+                            onTap: () async {
+                              await Routemaster.of(context)
+                                  .push(RouteNames.employeeMenu +
+                                      "?employeeId=${employee.employeeRef!.id}")
+                                  .result;
+                              context.read<EmployeeListCubit>().refresh();
+                            },
+                          );
+                        }),
+                  )
                 : LoadingAnimationScreen();
           },
         ),

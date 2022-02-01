@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:smallbusiness/share/export_utils.dart';
 import 'package:smallbusiness/share/share_widget.dart';
 import 'package:smallbusiness/time_recording/employee_time_recodings_widget.dart';
@@ -26,7 +27,8 @@ class TimeRecordingListEmployeeWidget extends StatelessWidget {
           builder: (context, state) => state
                   is TimeRecordingListEmployeeInitialized
               ? state.monthlySummaries.isNotEmpty
-                  ? SingleChildScrollView(
+                  ? ResponsiveBody(
+                      addPadding: false,
                       child: ExpansionPanelList(
                         expansionCallback: (panelIndex, isExpanded) {
                           context

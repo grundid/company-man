@@ -6,6 +6,7 @@ import 'package:smallbusiness/company/employee_menu_cubit.dart';
 import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'package:provider/provider.dart';
+import 'package:smallbusiness/reusable/responsive_body.dart';
 
 class EmployeeMenuWidget extends StatelessWidget {
   final String employeeId;
@@ -30,7 +31,8 @@ class EmployeeMenuWidget extends StatelessWidget {
         body: BlocBuilder<EmployeeMenuCubit, EmployeeMenuState>(
           builder: (context, state) {
             return state is EmployeeMenuInitialized
-                ? SingleChildScrollView(
+                ? ResponsiveBody(
+                    addPadding: false,
                     child: Column(
                       children: [
                         ListTile(

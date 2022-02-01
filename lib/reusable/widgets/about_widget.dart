@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutWidget extends StatelessWidget {
@@ -8,7 +9,8 @@ class AboutWidget extends StatelessWidget {
       appBar: AppBar(
         title: Text("Über Small Business App"),
       ),
-      body: SingleChildScrollView(
+      body: ResponsiveBody(
+        addPadding: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
