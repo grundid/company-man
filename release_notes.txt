@@ -1,1 +1,2 @@
+- Verknüpfung mit Telefonnummer verbessert
 - Viele kleine Verbesserungen
