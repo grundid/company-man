@@ -167,6 +167,10 @@ class MainWidget extends StatelessWidget {
             context.read<AuthCubit>().signOut();
           }
         },
+        onSignInWithPhoneNumber: (phoneNumber) {
+          Routemaster.of(context).push(RouteNames.signInWithPhoneNumber +
+              "?phoneNumber=${Uri.encodeComponent(phoneNumber)}");
+        },
       ),
       body: sbmContext.user.hasCompany
           ? ResponsiveBody(

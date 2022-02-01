@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/auth/sign_in_widget.dart';
-import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/widgets/about_widget.dart';
 import 'package:smallbusiness/reusable/widgets/project_id_widget.dart';
 
 class SbmDrawer extends StatelessWidget {
   final SbmContext sbmContext;
   final Function() onLogout;
+  final Function(String phoneNumber) onSignInWithPhoneNumber;
 
-  const SbmDrawer({Key? key, required this.sbmContext, required this.onLogout})
+  const SbmDrawer(
+      {Key? key,
+      required this.sbmContext,
+      required this.onLogout,
+      required this.onSignInWithPhoneNumber})
       : super(key: key);
 
   _buildDrawerTile(IconData iconData, String text,
@@ -42,14 +45,6 @@ class SbmDrawer extends StatelessWidget {
                 ),
               ),
             );
-
-  _pushUserContextRoute(BuildContext context, Function builder) {
-    Navigator.pop(context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => builder()),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +114,7 @@ class SbmDrawer extends StatelessWidget {
                       },
                     );
                     if (phoneNumber != null) {
-                      Routemaster.of(context).push(RouteNames
-                              .signInWithPhoneNumber +
-                          "?phoneNumber=${Uri.encodeComponent(phoneNumber)}");
+                      onSignInWithPhoneNumber(phoneNumber);
                     }
                   },
                 ),
