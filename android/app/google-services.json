@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "582682220949",
+    "project_id": "smallbusiness-prd",
+    "storage_bucket": "smallbusiness-prd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:582682220949:android:17f646ad65f1747bad3e9c",
+        "android_client_info": {
+          "package_name": "de.grundid.smallbusiness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "582682220949-431tclaokjdb1qf0afsjkk21oo92k4ok.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.grundid.smallbusiness",
+            "certificate_hash": "0a9f4783b591ab5c56f4e76852acd7512e4a4033"
+          }
+        },
+        {
+          "client_id": "582682220949-e5jpf8d2367fp206pjd0ks6b28ed9aij.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.grundid.smallbusiness",
+            "certificate_hash": "ed8787c16c117bb171c873589879a8a1e51be472"
+          }
+        },
+        {
+          "client_id": "582682220949-v26soda4149157np75g5ccrehjc4btf0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApd5TD71ZxgljpIiDwd5hMEsMz0OxNUo8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "582682220949-v26soda4149157np75g5ccrehjc4btf0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "582682220949-3tcckfdt7aqnkv21d80um0efet1qklrr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "de.grundid.smallbusiness"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

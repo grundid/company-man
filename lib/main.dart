@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutterfire_ui/i10n.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
@@ -26,7 +26,6 @@ import 'package:smallbusiness/time_recording/time_recording_list_employee_widget
 import 'package:smallbusiness/time_recording/time_recording_list_widget.dart';
 import 'package:smallbusiness/time_recording/time_recording_widget.dart';
 import 'auth/cubit/auth_cubit.dart';
-import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
@@ -203,9 +202,7 @@ class FirebaseInitWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<FirebaseApp>(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
+        future: Firebase.initializeApp(),
         builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
