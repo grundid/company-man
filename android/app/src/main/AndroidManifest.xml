@@ -16,4 +16,16 @@
         <meta-data android:name="flutterEmbedding" android:value="2" />
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/notification_icon" />
     </application>
+    <queries>
+        <!-- If your app opens https URLs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <!-- If your app makes calls -->
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
+    </queries>
 </manifest>

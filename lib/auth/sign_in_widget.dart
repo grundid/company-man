@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignInWidget extends StatelessWidget {
   final Function onSignIn;
@@ -106,31 +107,59 @@ class _AnonSignInWidget extends StatelessWidget {
               Text(
                   "Um Fortzufahren akzeptieren Sie bitte die Datenschutzbestimmungen und die AGBs. "
                   "Im Anschluss wird für Sie ein anonymer Account erstellt und Sie können die App unverbindlich ausprobieren."),
-              FormBuilderCheckbox(
-                name: "privacy",
-                initialValue: false,
-                title: Text("Datenschutzbestimmungen"),
-                decoration: InputDecoration(errorMaxLines: 3),
-                validator: (value) {
-                  if (true != value) {
-                    return "Bitte bestätigen Sie, dass Sie mit den Datenschutzbestimmungen einverstanden sind.";
-                  } else {
-                    return null;
-                  }
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: FormBuilderCheckbox(
+                      name: "privacy",
+                      initialValue: false,
+                      title: Text("Datenschutzbestimmungen"),
+                      decoration: InputDecoration(errorMaxLines: 3),
+                      validator: (value) {
+                        if (true != value) {
+                          return "Bitte bestätigen Sie, dass Sie mit den Datenschutzbestimmungen einverstanden sind.";
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                  IconButton(
+                      onPressed: () async {
+                        if (await canLaunch("https://grundid.de/privacy")) {
+                          launch("https://grundid.de/privacy");
+                        }
+                      },
+                      icon: Icon(Icons.link))
+                ],
               ),
-              FormBuilderCheckbox(
-                name: "terms",
-                initialValue: false,
-                title: Text("AGBs"),
-                decoration: InputDecoration(errorMaxLines: 3),
-                validator: (value) {
-                  if (true != value) {
-                    return "Bitte bestätigen Sie, dass Sie mit den AGBs einverstanden sind.";
-                  } else {
-                    return null;
-                  }
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: FormBuilderCheckbox(
+                      name: "terms",
+                      initialValue: false,
+                      title: Text("AGBs"),
+                      decoration: InputDecoration(errorMaxLines: 3),
+                      validator: (value) {
+                        if (true != value) {
+                          return "Bitte bestätigen Sie, dass Sie mit den AGBs einverstanden sind.";
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                  IconButton(
+                      onPressed: () async {
+                        if (await canLaunch(
+                            "https://grundid.de/agb-smallbusiness-beta.html")) {
+                          launch(
+                              "https://grundid.de/agb-smallbusiness-beta.html");
+                        }
+                      },
+                      icon: Icon(Icons.link))
+                ],
               ),
               ButtonBar(
                 children: [
