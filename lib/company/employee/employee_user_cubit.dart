@@ -7,6 +7,7 @@ import 'package:smallbusiness/reusable/object_role.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/user_actions/invite_save.dart';
 import 'package:smallbusiness/user_actions/object_role_change.dart';
+import 'package:smallbusiness/user_actions/object_role_delete.dart';
 
 part 'employee_user_state.dart';
 
@@ -82,6 +83,16 @@ class EmployeeUserCubit extends Cubit<EmployeeUserState> {
         true == values["manager"]);
 
     await saveAction.performAction(saveModel);
+    _init();
+  }
+
+  deleteRights(DocumentReference<DynamicMap> objectRoleRef) async {
+    emit(EmployeeUserInProgress());
+    ObjectRoleDeleteAction action =
+        ObjectRoleDeleteAction(sbmContext.firestore, sbmContext.userRef);
+    ObjectRoleDeleteModel saveModel = ObjectRoleDeleteModel(objectRoleRef);
+
+    await action.performAction(saveModel);
     _init();
   }
 }

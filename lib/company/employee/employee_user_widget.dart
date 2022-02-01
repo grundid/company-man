@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
+import 'package:smallbusiness/reusable/utils.dart';
 
 class EmployeeUserWidget extends StatelessWidget {
   final String employeeId;
@@ -44,6 +45,11 @@ class EmployeeUserWidget extends StatelessWidget {
                                   .read<EmployeeUserCubit>()
                                   .changeRights(state.objectRoleRef, values);
                             },
+                            onDeleteRights: () {
+                              context
+                                  .read<EmployeeUserCubit>()
+                                  .deleteRights(state.objectRoleRef);
+                            },
                           )
                         : LoadingAnimationScreen();
           },
@@ -57,11 +63,13 @@ class _UserInitializedWidget extends StatelessWidget {
   final GlobalKey<FormBuilderState> formKey = GlobalKey();
   final DynamicMap formValues;
   final Function(DynamicMap values) onChangeRights;
+  final Function() onDeleteRights;
 
   _UserInitializedWidget({
     Key? key,
     required this.formValues,
     required this.onChangeRights,
+    required this.onDeleteRights,
   }) : super(key: key);
 
   @override
@@ -89,7 +97,23 @@ class _UserInitializedWidget extends StatelessWidget {
                     "Die Manager-Berechtigung erlaubt es dem Benutzer die komplette Firma und die Mitarbeiter zu verwalten."),
           ),
           ButtonBar(
+            alignment: MainAxisAlignment.spaceBetween,
             children: [
+              TextButton(
+                  onPressed: () async {
+                    bool? result = await showQueryDialog(
+                        context,
+                        "Berechtigungen",
+                        "Durch das Löschen der Berechtigungen verliert der "
+                            "Mitarbeiter Zugriff auf Ihre Firma. Sie können ihn jederzeit erneut einladen um Ihrer Firma beizutreten.");
+                    if (true == result) {
+                      onDeleteRights();
+                    }
+                  },
+                  child: Text(
+                    "Berechtigungen löschen",
+                    style: TextStyle(color: Colors.red),
+                  )),
               ElevatedButton(
                   onPressed: () {
                     if (formKey.currentState!.saveAndValidate()) {
@@ -164,6 +188,7 @@ class _NoUserWidget extends StatelessWidget {
         key: formKey,
         child: Column(
           children: [
+            Text("Der Mitarbeiter ist noch nicht eingeladen."),
             Text("Bitte legen Sie für den Mitarbeiter die Berechtigungen "
                 "fest und erstellen Sie eine Einladung."),
             FormBuilderCheckbox(
