@@ -3,6 +3,7 @@ import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/auth/sign_in_widget.dart';
 import 'package:smallbusiness/main.dart';
+import 'package:smallbusiness/reusable/widgets/about_widget.dart';
 import 'package:smallbusiness/reusable/widgets/project_id_widget.dart';
 
 class SbmDrawer extends StatelessWidget {
@@ -80,7 +81,7 @@ class SbmDrawer extends StatelessWidget {
                     () => ProfileMenuWidget(
                           appContext: appContext,
                         ));
-              }),
+              }),*/
               _buildDrawerTile(
                 Icons.info,
                 "Über die App",
@@ -91,7 +92,7 @@ class SbmDrawer extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (BuildContext context) => AboutWidget()));
                 },
-              ),*/
+              ),
               if (sbmContext.user.isAnonymous)
                 _buildDrawerTile(
                   Icons.admin_panel_settings_outlined,
