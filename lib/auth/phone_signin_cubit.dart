@@ -61,6 +61,9 @@ class PhoneSigninCubit extends Cubit<PhoneSignInState> {
       } else if (e.code == "invalid-verification-code" ||
           e.code == "session-expired") {
         emit(PhoneSignInInvalidCode(forceResendingToken));
+      } else if (e.code == "invalid-phone-number") {
+        emit(PhoneSignInError(
+            "Die Telefonnummer ist ungültig. Bitte geben Sie Ihre Telefonnummer im Format +49 123 1234567"));
       } else {
         emit(PhoneSignInError(e.toString()));
       }
