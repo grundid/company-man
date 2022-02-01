@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 
 class LoadingAnimationScaffold extends StatelessWidget {
   final String? titleText;
+  final Duration? timeout;
 
-  const LoadingAnimationScaffold({Key? key, this.titleText = ""})
+  const LoadingAnimationScaffold({Key? key, this.titleText = "", this.timeout})
       : super(key: key);
 
   @override
@@ -18,7 +19,9 @@ class LoadingAnimationScaffold extends StatelessWidget {
                 title: Text(titleText!),
               )
             : null,
-        body: LoadingAnimationScreen(),
+        body: LoadingAnimationScreen(
+          timeout: timeout,
+        ),
       );
 }
 

@@ -247,7 +247,9 @@ class FirebaseInitWidget extends StatelessWidget {
                         ),
                       );
                     } else {
-                      return LoadingAnimationScaffold();
+                      return LoadingAnimationScaffold(
+                        timeout: Duration(seconds: 30),
+                      );
                     }
                   },
                 ),
