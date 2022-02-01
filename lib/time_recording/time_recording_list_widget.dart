@@ -51,46 +51,51 @@ class TimeRecordingListWidget extends StatelessWidget {
                 icon: Icon(Icons.more_time),
                 label: Text("Arbeitszeit erfassen")),
             body: state is TimeRecordingListInitialized
-                ? SingleChildScrollView(
-                    child: ExpansionPanelList(
-                      expansionCallback: (panelIndex, isExpanded) {
-                        context
-                            .read<TimeRecordingListCubit>()
-                            .setExpanded(panelIndex, isExpanded);
-                      },
-                      children: state.groups
-                          .map(
-                            (e) => ExpansionPanel(
-                              canTapOnHeader: true,
-                              isExpanded: e.expanded,
-                              headerBuilder: (context, isExpanded) => Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 16),
-                                    child: Text(e.label),
-                                  ),
-                                  Text(e.totalDuration.toString())
-                                ],
+                ? state.groups.isNotEmpty
+                    ? SingleChildScrollView(
+                        child: ExpansionPanelList(
+                        expansionCallback: (panelIndex, isExpanded) {
+                          context
+                              .read<TimeRecordingListCubit>()
+                              .setExpanded(panelIndex, isExpanded);
+                        },
+                        children: state.groups
+                            .map(
+                              (e) => ExpansionPanel(
+                                canTapOnHeader: true,
+                                isExpanded: e.expanded,
+                                headerBuilder: (context, isExpanded) => Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 16),
+                                      child: Text(e.label),
+                                    ),
+                                    Text(e.totalDuration.toString())
+                                  ],
+                                ),
+                                body: Column(
+                                  children: e.timeRecordings
+                                      .map((timeRecoding) =>
+                                          TimeRecordingEntryWidget(
+                                              timeRecording: timeRecoding,
+                                              onEditTimeRecording: () {
+                                                _editTimeRecording(context,
+                                                    timeRecordingId:
+                                                        timeRecoding
+                                                            .timeRecordingRef!
+                                                            .id);
+                                              }))
+                                      .toList(),
+                                ),
                               ),
-                              body: Column(
-                                children: e.timeRecordings
-                                    .map((timeRecoding) =>
-                                        TimeRecordingEntryWidget(
-                                            timeRecording: timeRecoding,
-                                            onEditTimeRecording: () {
-                                              _editTimeRecording(context,
-                                                  timeRecordingId: timeRecoding
-                                                      .timeRecordingRef!.id);
-                                            }))
-                                    .toList(),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  )
+                            )
+                            .toList(),
+                      ))
+                    : Center(
+                        child: Text("Noch keine Zeiten erfasst"),
+                      )
                 : LoadingAnimationScreen(),
           );
         },
