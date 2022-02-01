@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/auth/sign_in_widget.dart';
+import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/widgets/project_id_widget.dart';
 
 class SbmDrawer extends StatelessWidget {
@@ -93,12 +96,32 @@ class SbmDrawer extends StatelessWidget {
                 _buildDrawerTile(
                   Icons.admin_panel_settings_outlined,
                   "Konto verknüpfen",
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
-                    /*Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) => AboutWidget()));*/
+                    String? phoneNumber = await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Konto verknüpfen"),
+                          content: PhoneQueryFormWidget(
+                            buttonLabel: "Verknüpfen",
+                            introduction:
+                                "Bitte geben Sie Ihre Telefonnummer ein um Ihr Konto zu verknüpfen.",
+                            onSignInWithPhoneNumber: (phoneNumber) {
+                              Navigator.pop(context, phoneNumber);
+                            },
+                            onCancel: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        );
+                      },
+                    );
+                    if (phoneNumber != null) {
+                      Routemaster.of(context).push(RouteNames
+                              .signInWithPhoneNumber +
+                          "?phoneNumber=${Uri.encodeComponent(phoneNumber)}");
+                    }
                   },
                 ),
               _buildDrawerTile(

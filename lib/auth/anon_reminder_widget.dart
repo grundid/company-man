@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/anon_reminder_cubit.dart';
 import 'package:smallbusiness/auth/app_context.dart';
+import 'package:smallbusiness/auth/sign_in_widget.dart';
 import 'package:smallbusiness/main.dart';
 
 class AnonReminderWidget extends StatelessWidget {
@@ -14,54 +13,21 @@ class AnonReminderWidget extends StatelessWidget {
       : super(key: key);
 
   Future<String?> askForPhoneNumber(BuildContext context) {
-    GlobalKey<FormBuilderState> formKey = GlobalKey();
-
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Telefonnummer"),
-        content: FormBuilder(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FormBuilderTextField(
-                  name: "phoneNumber",
-                  autofocus: true,
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (value) {
-                    if (formKey.currentState!.saveAndValidate()) {
-                      String phoneNumber =
-                          formKey.currentState!.value["phoneNumber"];
-                      Navigator.pop(context, phoneNumber);
-                    }
-                  },
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(context),
-                  ]),
-                ),
-                ButtonBar(
-                  alignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text("Abbrechen")),
-                    ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState!.saveAndValidate()) {
-                            String phoneNumber =
-                                formKey.currentState!.value["phoneNumber"];
-                            Navigator.pop(context, phoneNumber);
-                          }
-                        },
-                        child: Text("Verifizieren"))
-                  ],
-                )
-              ],
-            )),
+        title: Text("Konto verknüpfen"),
+        content: PhoneQueryFormWidget(
+          buttonLabel: "Verknüpfen",
+          introduction:
+              "Bitte geben Sie Ihre Telefonnummer ein um Ihr Konto zu verknüpfen.",
+          onSignInWithPhoneNumber: (phoneNumber) {
+            Navigator.pop(context, phoneNumber);
+          },
+          onCancel: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
     );
   }

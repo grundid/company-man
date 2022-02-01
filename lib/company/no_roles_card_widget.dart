@@ -80,10 +80,6 @@ class NoRolesCardWidget extends StatelessWidget {
               ),
             ),
           ),
-          PhoneQueryWidget(onSignInWithPhoneNumber: (String phoneNumber) {
-            Routemaster.of(context).push(RouteNames.signInWithPhoneNumber +
-                "?phoneNumber=${Uri.encodeComponent(phoneNumber)}");
-          })
         ],
       ),
     );

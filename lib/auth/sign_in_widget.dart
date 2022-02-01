@@ -29,12 +29,45 @@ class SignInWidget extends StatelessWidget {
 
 class PhoneQueryWidget extends StatelessWidget {
   final Function(String phoneNumber) onSignInWithPhoneNumber;
-  final GlobalKey<FormBuilderState> formKey = GlobalKey();
 
   PhoneQueryWidget({
     Key? key,
     required this.onSignInWithPhoneNumber,
   }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: PhoneQueryFormWidget(
+          onSignInWithPhoneNumber: onSignInWithPhoneNumber,
+          buttonLabel: "Einloggen",
+          title: "Account wiederherstellen",
+          introduction: "Falls Sie bereits über einen Account verfügen, "
+              "dann geben Sie bitte Ihre Telefonnummer ein um Ihren Account wiederherzustellen.",
+        ),
+      ),
+    );
+  }
+}
+
+class PhoneQueryFormWidget extends StatelessWidget {
+  final GlobalKey<FormBuilderState> formKey = GlobalKey();
+  final Function(String phoneNumber) onSignInWithPhoneNumber;
+  final String buttonLabel;
+  final Function()? onCancel;
+  final String introduction;
+  final String? title;
+
+  PhoneQueryFormWidget(
+      {Key? key,
+      required this.onSignInWithPhoneNumber,
+      required this.buttonLabel,
+      required this.introduction,
+      this.onCancel,
+      this.title})
+      : super(key: key);
 
   _submitForm() {
     if (formKey.currentState!.saveAndValidate()) {
@@ -44,36 +77,51 @@ class PhoneQueryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FormBuilder(
-          key: formKey,
-          child: Column(
-            children: [
-              Text("Account wiederherstellen\n"),
-              Text("Falls Sie bereits über einen Account verfügen, "
-                  "dann geben Sie bitte Ihre Telefonnummer ein um Ihren Account wiederherzustellen."),
-              FormBuilderTextField(
-                name: "phoneNumber",
-                keyboardType: TextInputType.phone,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (value) {
-                  _submitForm();
-                },
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(context),
-                ]),
-              ),
-              ButtonBar(
-                children: [
-                  ElevatedButton(
-                      onPressed: _submitForm, child: Text("Einloggen"))
-                ],
-              )
-            ],
+    return FormBuilder(
+      key: formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (title != null) Text("$title\n"),
+          Text(introduction),
+          FormBuilderTextField(
+            name: "phoneNumber",
+            keyboardType: TextInputType.phone,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (value) {
+              _submitForm();
+            },
+            valueTransformer: (value) {
+              if (value != null) {
+                return value.replaceAll(" ", "");
+              }
+            },
+            initialValue: "+49",
+            decoration: InputDecoration(
+                errorMaxLines: 2,
+                helperMaxLines: 2,
+                helperText: "Bitte verwenden Sie das Format +49 123 1234567."),
+            validator: FormBuilderValidators.compose([
+              FormBuilderValidators.required(context),
+              FormBuilderValidators.minLength(context, 10),
+              (value) {
+                if (value != null && !value.startsWith("+")) {
+                  return "Bitte die internationale Vorwahl, z.B. +49 123 1234567 verwenden.";
+                }
+              }
+            ]),
           ),
-        ),
+          ButtonBar(
+            alignment: onCancel != null
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.end,
+            children: [
+              if (onCancel != null)
+                TextButton(onPressed: onCancel, child: Text("Abbrechen")),
+              ElevatedButton(onPressed: _submitForm, child: Text(buttonLabel))
+            ],
+          )
+        ],
       ),
     );
   }
@@ -98,7 +146,7 @@ class _AnonSignInWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Willkommen beim Small Business Manager"),
+              Text("Willkommen beim Small Business App"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
