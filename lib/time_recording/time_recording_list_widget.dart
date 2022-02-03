@@ -15,7 +15,6 @@ import 'package:smallbusiness/time_recording/time_recording_list_employee_cubit.
 import 'package:smallbusiness/time_recording/utils.dart';
 
 final DateFormat _dateFormat = DateFormat.yMEd();
-final DateFormat _fromDateFormat = DateFormat.yMEd().add_Hm();
 final DateFormat _toDateFormat = DateFormat.Hm();
 
 class TimeRecordingListWidget extends StatelessWidget {
