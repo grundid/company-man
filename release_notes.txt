@@ -1,2 +1,3 @@
-- Verknüpfung mit Telefonnummer verbessert
+- Navigation in der Mitarbeiterverwaltung verbessert
+- Mitarbeitervergütung hinzugefügt
 - Viele kleine Verbesserungen
