@@ -21,7 +21,7 @@ class Company {
 }
 
 @JsonSerializable(explicitToJson: true)
-class Person {
+class Person implements Comparable<Person> {
   final String? gender;
   final String firstName;
   final String lastName;
@@ -34,6 +34,15 @@ class Person {
 
   factory Person.fromJson(DynamicMap data) => _$PersonFromJson(data);
   DynamicMap toJson() => _$PersonToJson(this);
+
+  @override
+  int compareTo(Person other) {
+    int c = lastName.compareTo(other.lastName);
+    if (c == 0) {
+      c = firstName.compareTo(other.firstName);
+    }
+    return c;
+  }
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -56,7 +65,7 @@ class Address {
 }
 
 @JsonSerializable(explicitToJson: true)
-class Employee {
+class Employee implements Comparable<Employee> {
   @JsonKey(ignore: true)
   DocumentReference? employeeRef;
   final String employeeNo;
@@ -85,6 +94,19 @@ class Employee {
   DynamicMap toJson() => _$EmployeeToJson(this);
 
   String displayName() => "${person.firstName} ${person.lastName}";
+
+  @override
+  int compareTo(Employee other) {
+    int c = person.compareTo(other.person);
+    if (c == 0) {
+      int? no = int.tryParse(employeeNo);
+      int? otherNo = int.tryParse(employeeNo);
+      if (no != null && otherNo != null) {
+        c = no - otherNo;
+      }
+    }
+    return c;
+  }
 }
 
 sortEmployeeByName(Employee e1, Employee e2) {

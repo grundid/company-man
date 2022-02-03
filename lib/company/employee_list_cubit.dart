@@ -23,6 +23,8 @@ class EmployeeListCubit extends Cubit<EmployeeListState> {
         .map((snapshot) => Employee.fromSnapshot(snapshot))
         .toList();
 
+    employees.sort((e1, e2) => e1.compareTo(e2));
+
     emit(EmployeeListInitialized(employees));
   }
 
