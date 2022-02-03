@@ -14,14 +14,14 @@ class EmployeeListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Mitarbeiterliste"),
-      ),
-      body: BlocProvider(
-        create: (context) =>
-            EmployeeListCubit(Provider.of<SbmContext>(context, listen: false)),
-        child: BlocBuilder<EmployeeListCubit, EmployeeListState>(
+    return BlocProvider(
+      create: (context) =>
+          EmployeeListCubit(Provider.of<SbmContext>(context, listen: false)),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Mitarbeiterliste"),
+        ),
+        body: BlocBuilder<EmployeeListCubit, EmployeeListState>(
           builder: (context, state) {
             return state is EmployeeListInitialized
                 ? ResponsiveListViewElement(
@@ -34,8 +34,8 @@ class EmployeeListWidget extends StatelessWidget {
                                 "${employee.person.firstName} ${employee.person.lastName} (${employee.employeeNo})"),
                             onTap: () async {
                               await Routemaster.of(context)
-                                  .push(RouteNames.employeeMenu +
-                                      "?employeeId=${employee.employeeRef!.id}")
+                                  .push(RouteNames.employeeMenu.replaceAll(
+                                      ":employeeId", employee.employeeRef!.id))
                                   .result;
                               context.read<EmployeeListCubit>().refresh();
                             },
@@ -45,13 +45,20 @@ class EmployeeListWidget extends StatelessWidget {
                 : LoadingAnimationScreen();
           },
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-          icon: Icon(Icons.person_add),
-          onPressed: () {
-            Routemaster.of(context).push(RouteNames.employeeEdit);
+        floatingActionButton: BlocBuilder<EmployeeListCubit, EmployeeListState>(
+          builder: (context, state) {
+            return FloatingActionButton.extended(
+                icon: Icon(Icons.person_add),
+                onPressed: () async {
+                  await Routemaster.of(context)
+                      .push(RouteNames.employeeNew)
+                      .result;
+                  context.read<EmployeeListCubit>().refresh();
+                },
+                label: Text("Neuer Mitarbeiter"));
           },
-          label: Text("Neuer Mitarbeiter")),
+        ),
+      ),
     );
   }
 }

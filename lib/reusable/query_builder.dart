@@ -88,6 +88,11 @@ class QueryBuilder {
     return companyRef.collection("employees");
   }
 
+  CollectionReference<DynamicMap> wagesCollection(
+      DocumentReference<DynamicMap> employeeRef) {
+    return employeeRef.collection("wages");
+  }
+
   DocumentReference<DynamicMap> companyRef(String id) {
     return companiesCollection().doc(id);
   }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smallbusiness/reusable/converter.dart';
 
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 
@@ -109,6 +110,7 @@ class Employee implements Comparable<Employee> {
   }
 }
 
+@Deprecated("use compareTo on employee")
 sortEmployeeByName(Employee e1, Employee e2) {
   int c = e1.person.lastName.compareTo(e2.person.lastName);
   if (c == 0) {
@@ -118,4 +120,30 @@ sortEmployeeByName(Employee e1, Employee e2) {
     }
   }
   return c;
+}
+
+@JsonSerializable(explicitToJson: true)
+class Wage {
+  @JsonKey(ignore: true)
+  DocumentReference<DynamicMap>? wageRef;
+  @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
+  final DateTime validFrom;
+  @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
+  final DateTime? validTo;
+  final int wageInCent;
+
+  Wage({
+    required this.validFrom,
+    this.validTo,
+    required this.wageInCent,
+  });
+
+  factory Wage.fromSnapshot(DocumentSnapshot<DynamicMap> snapshot) {
+    Wage wage = _$WageFromJson(snapshot.data()!);
+    wage.wageRef = snapshot.reference;
+    return wage;
+  }
+  factory Wage.fromJson(DynamicMap data) => _$WageFromJson(data);
+
+  DynamicMap toJson() => _$WageToJson(this);
 }

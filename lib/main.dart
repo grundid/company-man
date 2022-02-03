@@ -12,6 +12,7 @@ import 'package:smallbusiness/auth/sign_in_widget.dart';
 import 'package:smallbusiness/company/company_edit_widget.dart';
 import 'package:smallbusiness/company/company_main_widget.dart';
 import 'package:smallbusiness/company/employee/employee_user_widget.dart';
+import 'package:smallbusiness/company/employee/employee_wage_list_widget.dart';
 import 'package:smallbusiness/company/employee_edit_widget.dart';
 import 'package:smallbusiness/company/employee_list_widget.dart';
 import 'package:smallbusiness/company/employee_menu_widget.dart';
@@ -43,10 +44,13 @@ void main() {
 
 class RouteNames {
   static String companyEdit = "/company/edit";
-  static String employeeEdit = "/employee/edit";
-  static String employeeList = "/employee/list";
-  static String employeeMenu = "/employee/menu";
-  static String employeeUser = "/employee/user";
+
+  static String employeeNew = "/employees/newEmployee";
+  static String employeeEdit = "/employees/:employeeId/edit";
+  static String employeeList = "/employees";
+  static String employeeMenu = "/employees/:employeeId";
+  static String employeeWage = "/employees/:employeeId/wage";
+  static String employeeUser = "/employees/:employeeId/user";
   static String invitation = "/invitation";
   static String timeRecording = "/timeRecording";
   static String timeRecordingList = "/timeRecordingList";
@@ -71,19 +75,28 @@ class SmallBusinessApp extends StatelessWidget {
               )),
           RouteNames.employeeList: (RouteData routeData) =>
               MaterialPage(child: EmployeeListWidget()),
+          RouteNames.employeeNew: (RouteData routeData) => MaterialPage(
+                child: EmployeeEditWidget(),
+              ),
           RouteNames.employeeMenu: (RouteData routeData) => MaterialPage(
                 child: EmployeeMenuWidget(
-                  employeeId: routeData.queryParameters["employeeId"]!,
+                  employeeId: routeData.pathParameters["employeeId"]!,
                 ),
               ),
           RouteNames.employeeEdit: (RouteData routeData) => MaterialPage(
                 child: EmployeeEditWidget(
-                  employeeId: routeData.queryParameters["employeeId"],
+                  employeeId: routeData.pathParameters["employeeId"],
                 ),
               ),
           RouteNames.employeeUser: (RouteData routeData) => MaterialPage(
                 child: EmployeeUserWidget(
-                  employeeId: routeData.queryParameters["employeeId"]!,
+                  employeeId: routeData.pathParameters["employeeId"]!,
+                ),
+              ),
+          RouteNames.employeeWage: (RouteData routeData) => MaterialPage(
+                child: EmployeeWageListWidget(
+                  sbmContext: Provider.of<SbmContext>(context, listen: false),
+                  employeeId: routeData.pathParameters["employeeId"]!,
                 ),
               ),
           RouteNames.invitation: (RouteData routeData) => MaterialPage(
