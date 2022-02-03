@@ -59,12 +59,14 @@ Map<String, dynamic> _$EmployeeToJson(Employee instance) => <String, dynamic>{
     };
 
 Wage _$WageFromJson(Map<String, dynamic> json) => Wage(
+      companyRef: refConverter(json['companyRef']),
       validFrom: fromTimeStamp(json['validFrom']),
-      validTo: fromTimeStamp(json['validTo']),
       wageInCent: json['wageInCent'] as int,
+      validTo: fromTimeStamp(json['validTo']),
     );
 
 Map<String, dynamic> _$WageToJson(Wage instance) => <String, dynamic>{
+      'companyRef': refConverter(instance.companyRef),
       'validFrom': toTimeStamp(instance.validFrom),
       'validTo': toTimeStamp(instance.validTo),
       'wageInCent': instance.wageInCent,

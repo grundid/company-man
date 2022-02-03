@@ -47,7 +47,6 @@ class EmployeeWageListCubit extends Cubit<EmployeeWageListState> {
     }
     Wage? previousWage = wages.length > 1 ? wages[1] : null;
 
-    log("PreviousWage: ${previousWage?.validFrom}");
     emit(EmployeeWageListInitialized(
         wages, firstDate, initialDate, last, previousWage));
   }
@@ -60,6 +59,7 @@ class EmployeeWageListCubit extends Cubit<EmployeeWageListState> {
     emit(EmployeeWageListInProgress());
 
     Wage wage = Wage(
+        companyRef: sbmContext.companyRef!,
         validFrom: formValues["validFrom"],
         wageInCent: userInputToCent(formValues["wageInCent"])!);
 

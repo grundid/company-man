@@ -93,6 +93,12 @@ class QueryBuilder {
     return employeeRef.collection("wages");
   }
 
+  Query<DynamicMap> wagesForCompany(DocumentReference<DynamicMap> companyRef) {
+    return firestore
+        .collectionGroup("wages")
+        .where("companyRef", isEqualTo: companyRef);
+  }
+
   DocumentReference<DynamicMap> companyRef(String id) {
     return companiesCollection().doc(id);
   }

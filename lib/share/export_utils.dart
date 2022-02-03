@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:archive/archive.dart';
 import 'package:csv/csv.dart';
 import 'package:intl/intl.dart';
+import 'package:smallbusiness/reusable/formatters.dart';
 import 'package:smallbusiness/share/share_widget.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_employee_cubit.dart';
@@ -112,18 +113,31 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
       "Bis",
       "Arbeitszeit",
       "Pause",
+      "Stundensatz in EUR",
+      "Vergütung in EUR",
       "Erfassung begonnen",
       "Erfassung beendet"
     ]);
-    for (TimeRecording timeRecording in perEmployee.timeRecordings) {
+    for (TimeRecordingWithWage timeRecordingWithWage
+        in perEmployee.timeRecordings) {
+      TimeRecording timeRecording = timeRecordingWithWage.timeRecording;
       if (timeRecording.to != null) {
-        Duration duration = timeRecording.duration()!;
+        HoursMinutes duration =
+            HoursMinutes.fromDuration(timeRecording.duration()!);
         employeeFile.add([
           dateFormat.format(timeRecording.from),
           hourFormat.format(timeRecording.from),
           hourFormat.format(timeRecording.to!),
-          HoursMinutes.fromDuration(duration).toCsv(),
+          duration.toCsv(),
           "",
+          timeRecordingWithWage.wage != null
+              ? centToUserOutput(timeRecordingWithWage.wage!.wageInCent)!
+              : "",
+          timeRecordingWithWage.wage != null
+              ? centToUserOutput((duration.durationDecimal *
+                      timeRecordingWithWage.wage!.wageInCent)
+                  .round())!
+              : "",
           fullDateFormat.format(timeRecording.created),
           timeRecording.finalizedDate != null
               ? fullDateFormat.format(timeRecording.finalizedDate!)

@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/company/models.dart';
+import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
 
@@ -16,16 +18,23 @@ class MonthlySummary {
   MonthlySummary(this.month, this.label, {this.expanded = false});
 }
 
+class TimeRecordingWithWage {
+  final TimeRecording timeRecording;
+  final Wage? wage;
+
+  TimeRecordingWithWage(this.timeRecording, this.wage);
+}
+
 class MonthlySummaryPerEmployee {
   final Employee employee;
   final HoursMinutes hoursMinutes = HoursMinutes.zero();
-  final List<TimeRecording> timeRecordings = [];
+  final List<TimeRecordingWithWage> timeRecordings = [];
 
   MonthlySummaryPerEmployee(this.employee);
 
-  void addTimeRecording(TimeRecording timeRecording) {
-    timeRecordings.add(timeRecording);
-    Duration? duration = timeRecording.duration();
+  void addTimeRecording(TimeRecordingWithWage timeRecordingWithWage) {
+    timeRecordings.add(timeRecordingWithWage);
+    Duration? duration = timeRecordingWithWage.timeRecording.duration();
     if (duration != null) {
       hoursMinutes.add(HoursMinutes.fromDuration(duration));
     }
@@ -43,12 +52,8 @@ class TimeRecordingListEmployeeCubit
   }
 
   _init() async {
-    final queryEmployees = await sbmContext.queryBuilder
-        .employeesCollection(sbmContext.companyRef!)
-        .get();
-
-    List<Employee> employees =
-        queryEmployees.docs.map((e) => Employee.fromSnapshot(e)).toList();
+    List<Employee> employees = await _readEmployees();
+    Map<String, List<Wage>> wagesPerEmployeePath = await _readWages();
 
     final queryTimeRecordings = await sbmContext.queryBuilder
         .timeRecordingsForCompanyRef(companyRef: sbmContext.companyRef!)
@@ -86,24 +91,69 @@ class TimeRecordingListEmployeeCubit
         if (employee != null) {
           MonthlySummaryPerEmployee perEmployee =
               MonthlySummaryPerEmployee(employee);
-          employeeEntry.value.forEach(perEmployee.addTimeRecording);
+          for (TimeRecording timeRecording in employeeEntry.value) {
+            Wage? wageForTimeRecording;
+            List<Wage>? employeeWages =
+                wagesPerEmployeePath[employee.employeeRef!.path];
+            if (employeeWages != null) {
+              for (Wage wage in employeeWages) {
+                if (wage.validFrom.isBefore(timeRecording.from) &&
+                    (wage.validTo == null ||
+                        wage.validTo!.isAfter(timeRecording.from))) {
+                  wageForTimeRecording = wage;
+                }
+              }
+            }
+            perEmployee.addTimeRecording(
+                TimeRecordingWithWage(timeRecording, wageForTimeRecording));
+          }
           monthlySummary.employees.add(perEmployee);
         }
       }
       monthlySummary.employees
-          .sort((m1, m2) => sortEmployeeByName(m1.employee, m2.employee));
+          .sort((m1, m2) => m1.employee.compareTo(m2.employee));
       monthlySummaries.add(monthlySummary);
     }
 
     monthlySummaries.sort((m1, m2) => m2.month.compareTo(m1.month));
     for (var monthlySummary in monthlySummaries) {
       for (var employee in monthlySummary.employees) {
-        employee.timeRecordings
-            .sort((tr1, tr2) => tr2.from.compareTo(tr1.from));
+        employee.timeRecordings.sort((tr1, tr2) =>
+            tr2.timeRecording.from.compareTo(tr1.timeRecording.from));
       }
     }
 
     emit(TimeRecordingListEmployeeInitialized(monthlySummaries));
+  }
+
+  Future<Map<String, List<Wage>>> _readWages() async {
+    final queryWages = await sbmContext.queryBuilder
+        .wagesForCompany(sbmContext.companyRef!)
+        .get();
+
+    List<Wage> wages =
+        queryWages.docs.map((e) => Wage.fromSnapshot(e)).toList();
+
+    Map<String, List<Wage>> wagesPerEmployeePath = {};
+
+    for (Wage wage in wages) {
+      DocumentReference<DynamicMap> employeeRef = wage.wageRef!.parent.parent!;
+      wagesPerEmployeePath.putIfAbsent(employeeRef.path, () => []).add(wage);
+    }
+    for (List<Wage> employeeWages in wagesPerEmployeePath.values) {
+      employeeWages.sort((w1, w2) => w1.validFrom.compareTo(w2.validFrom));
+    }
+    return wagesPerEmployeePath;
+  }
+
+  Future<List<Employee>> _readEmployees() async {
+    final queryEmployees = await sbmContext.queryBuilder
+        .employeesCollection(sbmContext.companyRef!)
+        .get();
+
+    List<Employee> employees =
+        queryEmployees.docs.map((e) => Employee.fromSnapshot(e)).toList();
+    return employees;
   }
 
   void setExpanded(int panelIndex, bool isExpanded) {

@@ -126,6 +126,9 @@ sortEmployeeByName(Employee e1, Employee e2) {
 class Wage {
   @JsonKey(ignore: true)
   DocumentReference<DynamicMap>? wageRef;
+
+  @JsonKey(toJson: refConverter, fromJson: refConverter)
+  DocumentReference<DynamicMap> companyRef;
   @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
   final DateTime validFrom;
   @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
@@ -133,9 +136,10 @@ class Wage {
   final int wageInCent;
 
   Wage({
+    required this.companyRef,
     required this.validFrom,
-    this.validTo,
     required this.wageInCent,
+    this.validTo,
   });
 
   factory Wage.fromSnapshot(DocumentSnapshot<DynamicMap> snapshot) {
