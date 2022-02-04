@@ -132,10 +132,8 @@ class TimeRecordingEntryWidget extends StatelessWidget {
         : null;
     String? compensation;
     if (duration != null && timeRecordingWithWage.wage != null) {
-      compensation = centToUserOutput(
-          (HoursMinutes.fromDuration(duration).durationDecimal *
-                  timeRecordingWithWage.wage!.wageInCent)
-              .round());
+      compensation = centToUserOutput(calculateWage(
+          HoursMinutes.fromDuration(duration), timeRecordingWithWage.wage!));
     }
     String? subtitle;
     if (duration != null) {

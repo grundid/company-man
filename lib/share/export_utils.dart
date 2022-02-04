@@ -89,13 +89,14 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
       .toLowerCase()
       .replaceAll(" ", "-");
   List<List<String>> summaryFile = [];
-  summaryFile.add(["Mitarbeiter", "Jahr", "Monat", "Arbeitszeit"]);
+  summaryFile.add(["Mitarbeiter", "Jahr", "Monat", "Arbeitszeit", "Vergütung"]);
   for (MonthlySummaryPerEmployee perEmployee in monthlySummary.employees) {
     summaryFile.add([
       perEmployee.employee.displayName(),
       monthlySummary.month.year.toString(),
       monthlySummary.month.month.toString(),
-      perEmployee.hoursMinutes.toCsv()
+      perEmployee.hoursMinutes.toCsv(),
+      centToUserOutput(perEmployee.totalWageInCent)!
     ]);
   }
   CsvExportArchive exportArchive = CsvExportArchive();
@@ -113,8 +114,8 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
       "Bis",
       "Arbeitszeit",
       "Pause",
-      "Stundensatz in EUR",
-      "Vergütung in EUR",
+      "Stundensatz",
+      "Vergütung",
       "Erfassung begonnen",
       "Erfassung beendet"
     ]);
@@ -134,9 +135,8 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
               ? centToUserOutput(timeRecordingWithWage.wage!.wageInCent)!
               : "",
           timeRecordingWithWage.wage != null
-              ? centToUserOutput((duration.durationDecimal *
-                      timeRecordingWithWage.wage!.wageInCent)
-                  .round())!
+              ? centToUserOutput(
+                  calculateWage(duration, timeRecordingWithWage.wage!))!
               : "",
           fullDateFormat.format(timeRecording.created),
           timeRecording.finalizedDate != null

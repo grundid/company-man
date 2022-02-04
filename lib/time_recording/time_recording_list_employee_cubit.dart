@@ -28,6 +28,7 @@ class TimeRecordingWithWage {
 class MonthlySummaryPerEmployee {
   final Employee employee;
   final HoursMinutes hoursMinutes = HoursMinutes.zero();
+  int totalWageInCent = 0;
   final List<TimeRecordingWithWage> timeRecordings = [];
 
   MonthlySummaryPerEmployee(this.employee);
@@ -36,7 +37,12 @@ class MonthlySummaryPerEmployee {
     timeRecordings.add(timeRecordingWithWage);
     Duration? duration = timeRecordingWithWage.timeRecording.duration();
     if (duration != null) {
-      hoursMinutes.add(HoursMinutes.fromDuration(duration));
+      HoursMinutes durationInHoursMinutes = HoursMinutes.fromDuration(duration);
+      hoursMinutes.add(durationInHoursMinutes);
+      if (timeRecordingWithWage.wage != null) {
+        totalWageInCent +=
+            calculateWage(durationInHoursMinutes, timeRecordingWithWage.wage!);
+      }
     }
   }
 }

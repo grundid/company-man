@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:smallbusiness/company/models.dart';
 
 extension TimeOfDayCalc on TimeOfDay {
   bool isBefore(TimeOfDay other) {
@@ -141,4 +142,8 @@ class HoursMinutes {
 
   @override
   int get hashCode => negative.hashCode ^ hours.hashCode ^ minutes.hashCode;
+}
+
+int calculateWage(HoursMinutes duration, Wage wage) {
+  return (duration.durationDecimal * wage.wageInCent).round();
 }
