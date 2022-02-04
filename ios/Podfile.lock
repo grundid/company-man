@@ -51,13 +51,13 @@ PODS:
     - nanopb (~> 2.30908.0)
   - FirebaseDynamicLinks (8.9.0):
     - FirebaseCore (~> 8.0)
-  - FirebaseFirestore (8.9.0):
-    - FirebaseFirestore/AutodetectLeveldb (= 8.9.0)
-  - FirebaseFirestore/AutodetectLeveldb (8.9.0):
+  - FirebaseFirestore (8.9.1):
+    - FirebaseFirestore/AutodetectLeveldb (= 8.9.1)
+  - FirebaseFirestore/AutodetectLeveldb (8.9.1):
     - FirebaseFirestore/Base
     - FirebaseFirestore/WithLeveldb
-  - FirebaseFirestore/Base (8.9.0)
-  - FirebaseFirestore/WithLeveldb (8.9.0):
+  - FirebaseFirestore/Base (8.9.1)
+  - FirebaseFirestore/WithLeveldb (8.9.1):
     - FirebaseFirestore/Base
   - FirebaseInstallations (8.9.0):
     - FirebaseCore (~> 8.0)
@@ -119,7 +119,7 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_dynamic_links (from `.symlinks/plugins/firebase_dynamic_links/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
-  - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `8.9.0`)
+  - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `8.9.1`)
   - Flutter (from `Flutter`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
@@ -157,7 +157,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   FirebaseFirestore:
     :git: https://github.com/invertase/firestore-ios-sdk-frameworks.git
-    :tag: 8.9.0
+    :tag: 8.9.1
   Flutter:
     :path: Flutter
   package_info_plus:
@@ -172,7 +172,7 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   FirebaseFirestore:
     :git: https://github.com/invertase/firestore-ios-sdk-frameworks.git
-    :tag: 8.9.0
+    :tag: 8.9.1
 
 SPEC CHECKSUMS:
   cloud_firestore: 338122a6149c14ca376ad363626b5bf3037a5056
@@ -186,7 +186,7 @@ SPEC CHECKSUMS:
   FirebaseCore: 599ee609343eaf4941bd188f85e3aa077ffe325b
   FirebaseCoreDiagnostics: 5daa63f1c1409d981a2d5007daa100b36eac6a34
   FirebaseDynamicLinks: 50980cbe21d2bbe8374afcdccd94dc2db20dffca
-  FirebaseFirestore: 7c22bff6c0e1f222920cd110e9da13a117b61fea
+  FirebaseFirestore: 8bdeeaa9050448e2693397c96d4e77882c0778ce
   FirebaseInstallations: caa7c8e0d3e2345b8829d2fa9ca1b4dfbf2fcc85
   FirebaseMessaging: 82c4a48638f53f7b184f3cc9f6cd2cbe533ab316
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
@@ -201,6 +201,6 @@ SPEC CHECKSUMS:
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
   url_launcher_ios: 02f1989d4e14e998335b02b67a7590fa34f971af
 
-PODFILE CHECKSUM: 793596c1f3e7b82d179747c1fe9e8416cae11019
+PODFILE CHECKSUM: 1435d1dee68441848b19fdb42db19e151a39bf86
 
 COCOAPODS: 1.10.2
