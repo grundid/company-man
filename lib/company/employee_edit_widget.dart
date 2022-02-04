@@ -71,7 +71,11 @@ class EmployeeEditWidget extends StatelessWidget {
           keyboardType: TextInputType.number,
           decoration: InputDecoration(label: Text("Mitarbeiternummer")),
           validator: FormBuilderValidators.compose(
-              [FormBuilderValidators.required(context)]),
+            [
+              FormBuilderValidators.required(context),
+              FormBuilderValidators.integer(context)
+            ],
+          ),
         ),
         Row(
           children: [

@@ -25,7 +25,7 @@ class CompanySaveAction extends UserAction<CompanySaveModel> {
 
     if (action.companyRef == null) {
       Employee employee = Employee(
-          employeeNo: "1",
+          employeeNo: 1,
           person: Person(firstName: "Ich", lastName: ""),
           address: Address(street: "", no: "", postalCode: "", city: ""),
           email: null,

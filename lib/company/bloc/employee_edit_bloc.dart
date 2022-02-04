@@ -18,7 +18,7 @@ class EmployeeEditBloc extends FormEditorBloc {
     DocumentSnapshot<Map<String, dynamic>> snapshot = await editingRef!.get();
     Employee employee = Employee.fromSnapshot(snapshot);
     DynamicMap result = {};
-    result["employeeNo"] = employee.employeeNo;
+    result["employeeNo"] = employee.employeeNo.toString();
     result["email"] = employee.email;
     result["phone"] = employee.phone;
     result["gender"] = employee.person.gender;
@@ -50,7 +50,7 @@ class EmployeeEditBloc extends FormEditorBloc {
         additional: value["additional"]);
 
     Employee employee = Employee(
-        employeeNo: value["employeeNo"],
+        employeeNo: int.parse(value["employeeNo"]),
         person: person,
         address: address,
         email: value["email"],

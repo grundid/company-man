@@ -43,7 +43,7 @@ Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
     };
 
 Employee _$EmployeeFromJson(Map<String, dynamic> json) => Employee(
-      employeeNo: json['employeeNo'] as String,
+      employeeNo: json['employeeNo'] as int,
       person: Person.fromJson(json['person'] as Map<String, dynamic>),
       address: Address.fromJson(json['address'] as Map<String, dynamic>),
       email: json['email'] as String?,

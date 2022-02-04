@@ -69,7 +69,7 @@ class Address {
 class Employee implements Comparable<Employee> {
   @JsonKey(ignore: true)
   DocumentReference? employeeRef;
-  final String employeeNo;
+  final int employeeNo;
   final Person person;
   final Address address;
   final String? email;
@@ -100,26 +100,10 @@ class Employee implements Comparable<Employee> {
   int compareTo(Employee other) {
     int c = person.compareTo(other.person);
     if (c == 0) {
-      int? no = int.tryParse(employeeNo);
-      int? otherNo = int.tryParse(employeeNo);
-      if (no != null && otherNo != null) {
-        c = no - otherNo;
-      }
+      c = employeeNo - other.employeeNo;
     }
     return c;
   }
-}
-
-@Deprecated("use compareTo on employee")
-sortEmployeeByName(Employee e1, Employee e2) {
-  int c = e1.person.lastName.compareTo(e2.person.lastName);
-  if (c == 0) {
-    c = e1.person.firstName.compareTo(e2.person.firstName);
-    if (c == 0) {
-      c = e1.employeeNo.compareTo(e2.employeeNo);
-    }
-  }
-  return c;
 }
 
 @JsonSerializable(explicitToJson: true)
