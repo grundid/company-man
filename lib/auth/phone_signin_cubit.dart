@@ -18,24 +18,28 @@ class PhoneSigninCubit extends Cubit<PhoneSignInState> {
     _signInWithPhoneNumber();
   }
 
-  _signInWithPhoneNumber() {
-    auth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        verificationCompleted: (phoneAuthCredential) {
-          _linkWithCredential(phoneAuthCredential);
-        },
-        verificationFailed: (error) {
-          log(error.toString());
-          emit(PhoneSignInError(error.toString()));
-        },
-        codeSent: (verificationId, forceResendingToken) {
-          this.forceResendingToken = forceResendingToken;
-          emit(PhoneSignInCodeSent(verificationId, forceResendingToken));
-        },
-        codeAutoRetrievalTimeout: (verificationId) {
-          log("codeAutoRetrievalTimeout");
-        },
-        forceResendingToken: forceResendingToken);
+  _signInWithPhoneNumber() async {
+    try {
+      await auth.verifyPhoneNumber(
+          phoneNumber: phoneNumber,
+          verificationCompleted: (phoneAuthCredential) {
+            _linkWithCredential(phoneAuthCredential);
+          },
+          verificationFailed: (error) {
+            log(error.toString());
+            emit(PhoneSignInError(error.toString()));
+          },
+          codeSent: (verificationId, forceResendingToken) {
+            this.forceResendingToken = forceResendingToken;
+            emit(PhoneSignInCodeSent(verificationId, forceResendingToken));
+          },
+          codeAutoRetrievalTimeout: (verificationId) {
+            log("codeAutoRetrievalTimeout");
+          },
+          forceResendingToken: forceResendingToken);
+    } on Exception catch (e) {
+      emit(PhoneSignInError(e.toString()));
+    }
   }
 
   void verifyCode(String verificationId, String code) {
