@@ -73,8 +73,8 @@ class PhoneSignInWidget extends StatelessWidget {
                                         ? _VerificationErrorWidget(
                                             message: state.message,
                                           )
-                                        : LoadingAnimationScreen(
-                                            timeout: Duration(seconds: 30),
+                                        : Center(
+                                            child: Text("Unknown state"),
                                           ),
                   );
           },
