@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -226,9 +229,18 @@ class FirebaseInitWidget extends StatelessWidget {
             );
           } else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
+            FirebaseApp app = snapshot.data!;
+            FirebaseAuth firebaseAuth = FirebaseAuth.instanceFor(app: app);
+            FirebaseFirestore firestore =
+                FirebaseFirestore.instanceFor(app: app);
+            if (kDebugMode) {
+              String host = Platform.isAndroid ? "10.0.2.2" : "localhost";
+              firebaseAuth.useAuthEmulator(host, 9099);
+              firestore.useFirestoreEmulator(host, 8080);
+            }
+
             SbmContext sbmContext =
                 Provider.of<SbmContext>(context, listen: false);
-            FirebaseFirestore firestore = FirebaseFirestore.instance;
             sbmContext.initFirestore(QueryBuilder(firestore: firestore));
 
             return AppStatusWidget(
@@ -236,7 +248,7 @@ class FirebaseInitWidget extends StatelessWidget {
               child: BlocProvider(
                 create: (context) => AuthCubit(
                     Provider.of<SbmContext>(context, listen: false),
-                    FirebaseAuth.instanceFor(app: snapshot.data!)),
+                    firebaseAuth),
                 child: BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, state) {
                     if (state is AuthInitialized) {
