@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/company/models.dart';
+import 'package:smallbusiness/reusable/model_utils.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
@@ -19,8 +20,8 @@ class MonthlySummary {
 }
 
 class TimeRecordingWithWage {
-  final TimeRecording timeRecording;
-  final Wage? wage;
+  final TimeRecordingHolder timeRecording;
+  final WageHolder? wage;
 
   TimeRecordingWithWage(this.timeRecording, this.wage);
 }

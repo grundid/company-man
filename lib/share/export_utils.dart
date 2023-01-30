@@ -6,6 +6,7 @@ import 'package:archive/archive.dart';
 import 'package:csv/csv.dart';
 import 'package:intl/intl.dart';
 import 'package:smallbusiness/reusable/formatters.dart';
+import 'package:smallbusiness/reusable/model_utils.dart';
 import 'package:smallbusiness/share/share_widget.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_employee_cubit.dart';
@@ -103,50 +104,9 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
   exportArchive.addCsvFile(
       "vergütung-mitarbeiter-gesamt-$monthLabel.csv", summaryFile);
 
-  DateFormat fullDateFormat = DateFormat.yMMMd().add_Hms();
-  DateFormat dateFormat = DateFormat.yMMMEd();
-  DateFormat hourFormat = DateFormat.Hm();
   for (MonthlySummaryPerEmployee perEmployee in monthlySummary.employees) {
-    List<List<String>> employeeFile = [];
-    employeeFile.add([
-      "Datum",
-      "Von",
-      "Bis",
-      "Arbeitszeit",
-      "Pause",
-      "Stundensatz",
-      "Vergütung",
-      "Erfassung begonnen",
-      "Erfassung beendet"
-    ]);
-    for (TimeRecordingWithWage timeRecordingWithWage
-        in perEmployee.timeRecordings) {
-      TimeRecording timeRecording = timeRecordingWithWage.timeRecording;
-      if (timeRecording.to != null) {
-        HoursMinutes duration =
-            HoursMinutes.fromDuration(timeRecording.duration!);
-        HoursMinutes pauseDuration =
-            HoursMinutes.fromDuration(timeRecording.pauseDuration);
-        employeeFile.add([
-          dateFormat.format(timeRecording.from),
-          hourFormat.format(timeRecording.from),
-          hourFormat.format(timeRecording.to!),
-          duration.toCsv(),
-          pauseDuration.toCsv(),
-          timeRecordingWithWage.wage != null
-              ? centToUserOutput(timeRecordingWithWage.wage!.wageInCent)!
-              : "",
-          timeRecordingWithWage.wage != null
-              ? centToUserOutput(
-                  calculateWage(duration, timeRecordingWithWage.wage!))!
-              : "",
-          fullDateFormat.format(timeRecording.created),
-          timeRecording.finalizedDate != null
-              ? fullDateFormat.format(timeRecording.finalizedDate!)
-              : ""
-        ]);
-      }
-    }
+    List<List<String>> employeeFile =
+        createEmployeeExport(perEmployee.timeRecordings);
     exportArchive.addCsvFile(
         "${perEmployee.employee.displayName().toLowerCase()}-$monthLabel.csv",
         employeeFile);
@@ -154,4 +114,57 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
 
   return ShareableContent("arbeitszeiten-export-$monthLabel.zip".toLowerCase(),
       exportArchive.getEncodedZip());
+}
+
+List<List<String>> createEmployeeExport(
+    Iterable<TimeRecordingWithWage> timeRecordings) {
+  DateFormat fullDateFormat = DateFormat.yMMMd().add_Hms();
+  DateFormat dateFormat = DateFormat.yMMMEd();
+  DateFormat hourFormat = DateFormat.Hm();
+
+  List<List<String>> employeeFile = [];
+  employeeFile.add([
+    "Datum",
+    "Von",
+    "Bis",
+    "Arbeitszeit",
+    "Pause",
+    "Pausezeiten",
+    "Stundensatz",
+    "Vergütung",
+    "Erfassung begonnen",
+    "Erfassung beendet"
+  ]);
+  for (TimeRecordingWithWage timeRecordingWithWage in timeRecordings) {
+    TimeRecordingHolder timeRecording = timeRecordingWithWage.timeRecording;
+    if (timeRecording.to != null) {
+      HoursMinutes duration =
+          HoursMinutes.fromDuration(timeRecording.duration!);
+      HoursMinutes pauseDuration =
+          HoursMinutes.fromDuration(timeRecording.pauseDuration);
+      employeeFile.add([
+        dateFormat.format(timeRecording.from),
+        hourFormat.format(timeRecording.from),
+        hourFormat.format(timeRecording.to!),
+        duration.toCsv(),
+        pauseDuration.toCsv(),
+        timeRecording.pauses
+            .map((pause) =>
+                "${hourFormat.format(pause.from)}-${hourFormat.format(pause.to)}")
+            .join(", "),
+        timeRecordingWithWage.wage != null
+            ? centToUserOutput(timeRecordingWithWage.wage!.wageInCent)!
+            : "",
+        timeRecordingWithWage.wage != null
+            ? centToUserOutput(
+                calculateWage(duration, timeRecordingWithWage.wage!))!
+            : "",
+        fullDateFormat.format(timeRecording.created),
+        timeRecording.finalizedDate != null
+            ? fullDateFormat.format(timeRecording.finalizedDate!)
+            : ""
+      ]);
+    }
+  }
+  return employeeFile;
 }

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:smallbusiness/reusable/converter.dart';
+import 'package:smallbusiness/reusable/model_utils.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 
 part 'models.g.dart';
@@ -34,7 +35,7 @@ class Pause implements Comparable<Pause> {
 }
 
 @JsonSerializable(explicitToJson: true)
-class TimeRecording {
+class TimeRecording extends TimeRecordingHolder {
   @JsonKey(ignore: true)
   DocumentReference<DynamicMap>? timeRecordingRef;
   @JsonKey(toJson: refConverter, fromJson: refConverter)
@@ -74,10 +75,4 @@ class TimeRecording {
   DynamicMap toJson() {
     return _$TimeRecordingToJson(this);
   }
-
-  Duration? get duration =>
-      to != null ? (to!.difference(from) - pauseDuration) : null;
-
-  Duration get pauseDuration => pauses.fold(Duration(minutes: 0),
-      (previousValue, element) => previousValue + element.duration);
 }

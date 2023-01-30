@@ -8,6 +8,7 @@ import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/formatters.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:smallbusiness/reusable/model_utils.dart';
 import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_cubit.dart';
@@ -120,7 +121,7 @@ class TimeRecordingEntryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TimeRecording timeRecording = timeRecordingWithWage.timeRecording;
+    TimeRecordingHolder timeRecording = timeRecordingWithWage.timeRecording;
     String dateLabel = _dateFormat.format(timeRecording.from);
     String fromLabel = _toDateFormat.format(timeRecording.from);
     String? toLabel = timeRecording.to != null

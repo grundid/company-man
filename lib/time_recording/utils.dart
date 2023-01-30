@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:smallbusiness/company/models.dart';
+import 'package:smallbusiness/reusable/model_utils.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 
 extension TimeOfDayCalc on TimeOfDay {
@@ -146,7 +147,7 @@ class HoursMinutes {
   int get hashCode => negative.hashCode ^ hours.hashCode ^ minutes.hashCode;
 }
 
-int calculateWage(HoursMinutes duration, Wage wage) {
+int calculateWage(HoursMinutes duration, WageHolder wage) {
   return (duration.durationDecimal * wage.wageInCent).round();
 }
 

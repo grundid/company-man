@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:smallbusiness/reusable/converter.dart';
+import 'package:smallbusiness/reusable/model_utils.dart';
 
 import 'package:smallbusiness/reusable/user_actions/models.dart';
 
@@ -107,7 +108,7 @@ class Employee implements Comparable<Employee> {
 }
 
 @JsonSerializable(explicitToJson: true)
-class Wage {
+class Wage implements WageHolder {
   @JsonKey(ignore: true)
   DocumentReference<DynamicMap>? wageRef;
 
@@ -117,6 +118,7 @@ class Wage {
   final DateTime validFrom;
   @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
   final DateTime? validTo;
+  @override
   final int wageInCent;
 
   Wage({
