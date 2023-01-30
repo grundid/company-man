@@ -127,18 +127,19 @@ class TimeRecordingEntryWidget extends StatelessWidget {
         ? _toDateFormat.format(timeRecording.to!)
         : null;
     String titleLabel = fromLabel + (toLabel != null ? (" - $toLabel") : "");
-    Duration? duration = timeRecording.to != null
-        ? timeRecording.to!.difference(timeRecording.from)
-        : null;
+    Duration? duration = timeRecording.duration;
     String? compensation;
     if (duration != null && timeRecordingWithWage.wage != null) {
       compensation = centToUserOutput(calculateWage(
           HoursMinutes.fromDuration(duration), timeRecordingWithWage.wage!));
     }
+    Duration pauseDuration = timeRecording.pauseDuration;
     String? subtitle;
     if (duration != null) {
-      TimeOfDay timeOfDay = fromDuration(duration);
-      subtitle = "Arbeitszeit: ${timeOfDay.getFormatted()}";
+      TimeOfDay workingTime = fromDuration(duration);
+      TimeOfDay pausingTime = fromDuration(pauseDuration);
+      subtitle =
+          "Arbeitszeit: ${workingTime.getFormatted()}, Pausezeit: ${pausingTime.getFormatted()}";
       if (compensation != null) {
         subtitle += ", Vergütung $compensation";
       }

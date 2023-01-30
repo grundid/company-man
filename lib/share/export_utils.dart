@@ -124,13 +124,15 @@ ShareableContent? exportMonthlySummary(MonthlySummary monthlySummary) {
       TimeRecording timeRecording = timeRecordingWithWage.timeRecording;
       if (timeRecording.to != null) {
         HoursMinutes duration =
-            HoursMinutes.fromDuration(timeRecording.duration()!);
+            HoursMinutes.fromDuration(timeRecording.duration!);
+        HoursMinutes pauseDuration =
+            HoursMinutes.fromDuration(timeRecording.pauseDuration);
         employeeFile.add([
           dateFormat.format(timeRecording.from),
           hourFormat.format(timeRecording.from),
           hourFormat.format(timeRecording.to!),
           duration.toCsv(),
-          "",
+          pauseDuration.toCsv(),
           timeRecordingWithWage.wage != null
               ? centToUserOutput(timeRecordingWithWage.wage!.wageInCent)!
               : "",

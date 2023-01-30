@@ -172,6 +172,13 @@ DateTime? createTo(DateTime fromDate, TimeOfDay from, TimeOfDay? to) {
   }
 }
 
+TimeOfDay createFromNow({int minuteStep = 5}) {
+  DateTime fromDate = DateTime.now();
+  int hour = fromDate.hour;
+  int minute = (fromDate.minute / minuteStep).floor() * minuteStep;
+  return TimeOfDay(hour: hour, minute: minute);
+}
+
 class WorkTimeState {
   final DateTime from;
   final DateTime? to;
@@ -218,6 +225,11 @@ class WorkTimeState {
   }
 
   String? validatePauses() {
+    for (Pause pause in pauses) {
+      if (pause.from.isBefore(from) || (to != null && pause.to.isAfter(to!))) {
+        return "Die Pause darf nicht außerhalb der Arbeitszeit liegen.";
+      }
+    }
     return null;
   }
 }

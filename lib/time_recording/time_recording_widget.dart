@@ -93,18 +93,28 @@ class TimeRecordingWidget extends StatelessWidget {
                             decoration: InputDecoration(label: Text("Datum")),
                           ),
                           FormBuilderTimeEditor(
-                              name: "fromTime",
-                              decoration:
-                                  InputDecoration(labelText: "Gekommen"),
-                              timeType: TimeType.from,
-                              validator: (value) {
-                                return WorkTimeState.fromFormBuilderState(
-                                        state.formKey.currentState!)
-                                    .validatePauses();
-                              }),
-                          FormBuilderPauseEditor(
-                            name: "pause",
-                            decoration: InputDecoration(labelText: "Pausen"),
+                            name: "fromTime",
+                            decoration: InputDecoration(labelText: "Gekommen"),
+                            timeType: TimeType.from,
+                          ),
+                          BlocBuilder<TimeRecordingStatusCubit, AppState>(
+                            builder: (context, statusState) {
+                              return statusState
+                                      is TimeRecordingStatusInitizalied
+                                  ? FormBuilderPauseEditor(
+                                      name: "pauses",
+                                      startingDate:
+                                          statusState.startingDateTime,
+                                      decoration:
+                                          InputDecoration(labelText: "Pausen"),
+                                      validator: (value) {
+                                        return WorkTimeState
+                                                .fromFormBuilderState(
+                                                    state.formKey.currentState!)
+                                            .validatePauses();
+                                      })
+                                  : Container();
+                            },
                           ),
                           FormBuilderTimeEditor(
                               name: "toTime",
@@ -121,8 +131,8 @@ class TimeRecordingWidget extends StatelessWidget {
                               return Text(
                                 state is TimeRecordingStatusInitizalied
                                     ? state.workingLabel
-                                    : "Arbeitszeit: -",
-                                style: Theme.of(context).textTheme.titleLarge!,
+                                    : "-",
+                                style: Theme.of(context).textTheme.bodyMedium!,
                               );
                             },
                           ),

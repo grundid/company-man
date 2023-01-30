@@ -7,7 +7,7 @@ import 'package:smallbusiness/reusable/user_actions/models.dart';
 part 'models.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class Pause {
+class Pause implements Comparable<Pause> {
   @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
   DateTime from;
   @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
@@ -23,6 +23,13 @@ class Pause {
 
   DynamicMap toJson() {
     return _$PauseToJson(this);
+  }
+
+  Duration get duration => to.difference(from);
+
+  @override
+  int compareTo(Pause other) {
+    return from.compareTo(other.from);
   }
 }
 
@@ -68,11 +75,9 @@ class TimeRecording {
     return _$TimeRecordingToJson(this);
   }
 
-  Duration? duration() {
-    if (to != null) {
-      return to!.difference(from);
-    } else {
-      return null;
-    }
-  }
+  Duration? get duration =>
+      to != null ? (to!.difference(from) - pauseDuration) : null;
+
+  Duration get pauseDuration => pauses.fold(Duration(minutes: 0),
+      (previousValue, element) => previousValue + element.duration);
 }

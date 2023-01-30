@@ -35,7 +35,7 @@ class MonthlySummaryPerEmployee {
 
   void addTimeRecording(TimeRecordingWithWage timeRecordingWithWage) {
     timeRecordings.add(timeRecordingWithWage);
-    Duration? duration = timeRecordingWithWage.timeRecording.duration();
+    Duration? duration = timeRecordingWithWage.timeRecording.duration;
     if (duration != null) {
       HoursMinutes durationInHoursMinutes = HoursMinutes.fromDuration(duration);
       hoursMinutes.add(durationInHoursMinutes);

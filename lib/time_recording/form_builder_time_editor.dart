@@ -4,16 +4,16 @@ import 'package:intl/intl.dart';
 
 enum TimeType { from, to }
 
-const int minuteStep = 5;
-
 class FormBuilderTimeEditor extends FormBuilderField<TimeOfDay> {
   final TimeType timeType;
+  final int minuteStep;
 
   FormBuilderTimeEditor(
       {super.key,
       required super.name,
       super.decoration,
       super.validator,
+      this.minuteStep = 5,
       required this.timeType})
       : super(builder: (field) {
           _FormBuilderPauseEditorState state =
@@ -60,7 +60,7 @@ class _FormBuilderPauseEditorState
 
   TimeOfDay _initTo() {
     DateTime now = DateTime.now();
-    int minute = (now.minute / minuteStep).ceil() * minuteStep;
+    int minute = (now.minute / widget.minuteStep).ceil() * widget.minuteStep;
     if (minute > 59) {
       return _incHour(TimeOfDay(hour: now.hour, minute: 0));
     } else {
@@ -100,7 +100,7 @@ class _FormBuilderPauseEditorState
 
   TimeOfDay _incMinute(TimeOfDay timeOfDay) {
     int minute = timeOfDay.minute;
-    minute += minuteStep;
+    minute += widget.minuteStep;
     if (minute > 59) {
       return _incHour(TimeOfDay(hour: timeOfDay.hour, minute: 0));
     } else {
@@ -110,9 +110,10 @@ class _FormBuilderPauseEditorState
 
   TimeOfDay _decMinute(TimeOfDay timeOfDay) {
     int minute = timeOfDay.minute;
-    minute -= minuteStep;
+    minute -= widget.minuteStep;
     if (minute < 0) {
-      return _decHour(TimeOfDay(hour: timeOfDay.hour, minute: 60 - minuteStep));
+      return _decHour(
+          TimeOfDay(hour: timeOfDay.hour, minute: 60 - widget.minuteStep));
     } else {
       return TimeOfDay(hour: timeOfDay.hour, minute: minute);
     }

@@ -54,9 +54,7 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
 
   void _initNew() {
     DateTime fromDate = DateTime.now();
-    int hour = fromDate.hour;
-    int minute = (fromDate.minute / 5).floor() * 5;
-    TimeOfDay from = TimeOfDay(hour: hour, minute: minute);
+    TimeOfDay from = createFromNow();
     formValues = {
       "fromDate": fromDate,
       "fromTime": from,
@@ -78,7 +76,8 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
       "message": timeRecording.message,
       "fromDate": fromDate,
       "fromTime": from,
-      "toTime": to
+      "toTime": to,
+      "pauses": timeRecording.pauses
     };
     emitInitialized();
     statusCubit.update(WorkTimeState.fromFormValues(formValues));

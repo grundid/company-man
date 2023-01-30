@@ -5,9 +5,9 @@ import 'package:smallbusiness/time_recording/utils.dart';
 
 class TimeRecordingStatusInitizalied extends Initialized {
   final String workingLabel;
-  final String? warning;
+  final DateTime startingDateTime;
 
-  TimeRecordingStatusInitizalied(this.workingLabel, this.warning);
+  TimeRecordingStatusInitizalied(this.workingLabel, this.startingDateTime);
 }
 
 class TimeRecordingStatusCubit extends Cubit<AppState> {
@@ -15,9 +15,17 @@ class TimeRecordingStatusCubit extends Cubit<AppState> {
 
   update(WorkTimeState workTimeState) {
     if (workTimeState.to != null) {
-      TimeOfDay workingTime = fromDuration(workTimeState.workDuration!);
+      Duration duration = workTimeState.workDuration!;
+      Duration pauseDuration = workTimeState.pauses.fold(
+          Duration(minutes: 0), (previous, pause) => previous + pause.duration);
+
+      TimeOfDay workingTime = fromDuration(duration - pauseDuration);
+      TimeOfDay pauseTime = fromDuration(pauseDuration);
       emit(TimeRecordingStatusInitizalied(
-          "Arbeitszeit: ${workingTime.getFormatted()}", null));
+          "Arbeitszeit: ${workingTime.getFormatted()}, Pausezeit: ${pauseTime.getFormatted()}",
+          workTimeState.from));
+    } else {
+      emit(TimeRecordingStatusInitizalied("-", workTimeState.from));
     }
   }
 }
