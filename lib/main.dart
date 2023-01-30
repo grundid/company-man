@@ -194,8 +194,11 @@ class MainWidget extends StatelessWidget {
           : ResponsiveBody(
               addPadding: false,
               child: NoRolesCardWidget(
-                onCreateCompany: () {
-                  Routemaster.of(context).push(RouteNames.companyEdit);
+                onCreateCompany: () async {
+                  await Routemaster.of(context)
+                      .push(RouteNames.companyEdit)
+                      .result;
+                  context.read<AuthCubit>().updateUser();
                 },
                 onJoinCompany: (inviteId) async {
                   bool? result = await Routemaster.of(context)
