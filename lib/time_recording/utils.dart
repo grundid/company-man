@@ -197,7 +197,7 @@ class WorkTimeState {
     List<Pause> pauses = currentState.fields["pauses"]?.value ?? [];
 
     DateTime from = createFrom(fromDate, fromTime);
-    DateTime to = createTo(fromDate, fromTime, toTime)!;
+    DateTime? to = createTo(fromDate, fromTime, toTime);
     return WorkTimeState(from, to, pauses);
   }
 
@@ -208,7 +208,7 @@ class WorkTimeState {
     List<Pause> pauses = formValues["pauses"] ?? [];
 
     DateTime from = createFrom(fromDate, fromTime);
-    DateTime to = createTo(fromDate, fromTime, toTime)!;
+    DateTime? to = createTo(fromDate, fromTime, toTime);
     return WorkTimeState(from, to, pauses);
   }
 

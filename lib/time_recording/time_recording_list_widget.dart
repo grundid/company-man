@@ -13,6 +13,7 @@ import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_cubit.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_employee_cubit.dart';
+import 'package:smallbusiness/time_recording/time_recording_widget.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
 
 final DateFormat _dateFormat = DateFormat.yMEd();
@@ -25,12 +26,14 @@ class TimeRecordingListWidget extends StatelessWidget {
       : super(key: key);
 
   _editTimeRecording(BuildContext context, {String? timeRecordingId}) async {
-    bool? result = await Routemaster.of(context)
-        .push<bool>(RouteNames.timeRecordingListEdit +
-            (timeRecordingId != null
-                ? "?timeRecordingId=$timeRecordingId"
-                : ""))
-        .result;
+    bool? result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => TimeRecordingWidget(
+          sbmContext: sbmContext,
+          timeRecordingId: timeRecordingId,
+        ),
+      ),
+    );
     log("result: $result");
     if (true == result) {
       context.read<TimeRecordingListCubit>().update();
@@ -84,6 +87,7 @@ class TimeRecordingListWidget extends StatelessWidget {
                                     children: e.timeRecordings
                                         .map((timeRecoding) =>
                                             TimeRecordingEntryWidget(
+                                                sbmContext: sbmContext,
                                                 timeRecordingWithWage:
                                                     TimeRecordingWithWage(
                                                         timeRecoding, null),
@@ -112,12 +116,16 @@ class TimeRecordingListWidget extends StatelessWidget {
 }
 
 class TimeRecordingEntryWidget extends StatelessWidget {
+  final SbmContext sbmContext;
   final TimeRecordingWithWage timeRecordingWithWage;
   final Function()? onEditTimeRecording;
 
-  const TimeRecordingEntryWidget(
-      {Key? key, required this.timeRecordingWithWage, this.onEditTimeRecording})
-      : super(key: key);
+  const TimeRecordingEntryWidget({
+    Key? key,
+    required this.sbmContext,
+    required this.timeRecordingWithWage,
+    this.onEditTimeRecording,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +150,7 @@ class TimeRecordingEntryWidget extends StatelessWidget {
       subtitle =
           "Arbeitszeit: ${workingTime.getFormatted()}, Pause: ${pausingTime.getFormatted()}";
       if (compensation != null) {
-        subtitle += " ($compensation)";
+        subtitle += "\nVergütung: $compensation";
       }
     }
     return ListTile(
@@ -156,9 +164,11 @@ class TimeRecordingEntryWidget extends StatelessWidget {
           )),
         ],
       ),
+      isThreeLine: true,
       subtitle: subtitle != null ? Text(subtitle) : null,
-      trailing: !timeRecording.finalized && onEditTimeRecording != null
-          ? IconButton(onPressed: onEditTimeRecording, icon: Icon(Icons.edit))
+      trailing: !timeRecording.finalized ? Icon(Icons.hourglass_bottom) : null,
+      onTap: !timeRecording.finalized || sbmContext.user.isManager
+          ? onEditTimeRecording
           : null,
     );
   }

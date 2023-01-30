@@ -48,6 +48,7 @@ class TimeRecording extends TimeRecordingHolder {
   DateTime? to;
   List<Pause> pauses;
   String? message;
+  String? managerMessage;
   bool finalized;
   @JsonKey(toJson: toTimeStamp, fromJson: fromTimeStamp)
   late DateTime created;
@@ -60,6 +61,7 @@ class TimeRecording extends TimeRecordingHolder {
     required this.to,
     required this.pauses,
     required this.message,
+    required this.managerMessage,
     required this.finalized,
     required this.created,
     required this.finalizedDate,
@@ -75,4 +77,7 @@ class TimeRecording extends TimeRecordingHolder {
   DynamicMap toJson() {
     return _$TimeRecordingToJson(this);
   }
+
+  @override
+  String get timeRecordingId => timeRecordingRef!.id;
 }

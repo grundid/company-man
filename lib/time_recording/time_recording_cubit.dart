@@ -74,6 +74,7 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
         : null;
     formValues = {
       "message": timeRecording.message,
+      "managerMessage": timeRecording.managerMessage,
       "fromDate": fromDate,
       "fromTime": from,
       "toTime": to,
@@ -98,6 +99,7 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
             formValues["toTime"]),
         pauses: formValues["pauses"] ?? [],
         message: formValues["message"],
+        managerMessage: formValues["managerMessage"],
         finalized: finalized,
         created: DateTime.now(),
         finalizedDate: finalized ? DateTime.now() : null);
@@ -115,5 +117,9 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
 
     await action.performAction(model);
     emit(TimeRecordingDone());
+  }
+
+  void reset(Map<String, dynamic> value) {
+    save(formValues, false);
   }
 }

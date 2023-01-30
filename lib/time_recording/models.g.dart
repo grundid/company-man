@@ -26,6 +26,7 @@ TimeRecording _$TimeRecordingFromJson(Map<String, dynamic> json) =>
           .map((e) => Pause.fromJson(e as Map<String, dynamic>))
           .toList(),
       message: json['message'] as String?,
+      managerMessage: json['managerMessage'] as String?,
       finalized: json['finalized'] as bool,
       created: fromTimeStamp(json['created']),
       finalizedDate: fromTimeStamp(json['finalizedDate']),
@@ -39,6 +40,7 @@ Map<String, dynamic> _$TimeRecordingToJson(TimeRecording instance) =>
       'to': toTimeStamp(instance.to),
       'pauses': instance.pauses.map((e) => e.toJson()).toList(),
       'message': instance.message,
+      'managerMessage': instance.managerMessage,
       'finalized': instance.finalized,
       'created': toTimeStamp(instance.created),
       'finalizedDate': toTimeStamp(instance.finalizedDate),

@@ -54,28 +54,31 @@ class TimeRecordingListEmployeeWidget extends StatelessWidget {
                                 ),
                                 body: Column(
                                   children: monthlySummary.employees
-                                      .map((perEmployee) => ListTile(
-                                            title: Text(perEmployee.employee
-                                                .displayName()),
-                                            subtitle: Text(perEmployee
-                                                .hoursMinutes
-                                                .toString()),
-                                            onTap: () {
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
+                                      .map(
+                                        (perEmployee) => ListTile(
+                                          title: Text(perEmployee.employee
+                                              .displayName()),
+                                          subtitle: Text(perEmployee
+                                              .hoursMinutes
+                                              .toString()),
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
                                                 builder: (context) =>
                                                     EmployeeTimeRecodingsWidget(
-                                                        employee: perEmployee
-                                                            .employee,
-                                                        monthYear:
-                                                            monthlySummary
-                                                                .month,
-                                                        timeRecordings:
-                                                            perEmployee
-                                                                .timeRecordings),
-                                              ));
-                                            },
-                                          ))
+                                                  sbmContext: sbmContext,
+                                                  employee:
+                                                      perEmployee.employee,
+                                                  monthYear:
+                                                      monthlySummary.month,
+                                                  timeRecordings: perEmployee
+                                                      .timeRecordings,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
                                       .toList(),
                                 ),
                               ),

@@ -31,7 +31,8 @@ class TimeRecordingWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => TimeRecordingCubit(
-              sbmContext, context.read<TimeRecordingStatusCubit>()),
+              sbmContext, context.read<TimeRecordingStatusCubit>(),
+              timeRecordingId: timeRecordingId),
         ),
       ],
       child: BlocConsumer<TimeRecordingCubit, TimeRecordingState>(
@@ -146,8 +147,43 @@ class TimeRecordingWidget extends StatelessWidget {
                                 helperText:
                                     "Diese Nachricht wird zusammen mit der Zeiterfassung an den Manager geschickt."),
                           ),
+                          Visibility(
+                            maintainState: true,
+                            visible: sbmContext.user.isManager,
+                            child: FormBuilderTextField(
+                              name: "managerMessage",
+                              decoration: InputDecoration(
+                                  label: Text(
+                                    "Manager-Nachricht",
+                                  ),
+                                  helperMaxLines: 3,
+                                  helperText:
+                                      "Diese Nachricht wird dem Mitarbeiter nach dem Zurücksetzen und in dem Export angezeigt."),
+                            ),
+                          ),
                           ButtonBar(
                             children: [
+                              if (sbmContext.user.isManager)
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red),
+                                  onPressed: () async {
+                                    if (state.formKey.currentState!
+                                        .saveAndValidate()) {
+                                      bool? result = await showQueryDialog(
+                                          context,
+                                          "Erfassung zurücksetzen",
+                                          "Nach dem Zurücksetzen kann der Mitarbeiter die Arbeitszeit korrigieren.");
+                                      if (true == result) {
+                                        context
+                                            .read<TimeRecordingCubit>()
+                                            .reset(state
+                                                .formKey.currentState!.value);
+                                      }
+                                    }
+                                  },
+                                  child: Text("Zurücksetzen"),
+                                ),
                               TextButton(
                                 onPressed: () {
                                   if (state.formKey.currentState!

@@ -55,10 +55,8 @@ class RouteNames {
   static String employeeWage = "/employees/:employeeId/wage";
   static String employeeUser = "/employees/:employeeId/user";
   static String invitation = "/invitation";
-  static String timeRecording = "/timeRecording";
   static String timeRecordingList = "/timeRecordingList";
   static String timeRecordingListEmployee = "/timeRecordingListEmployee";
-  static String timeRecordingListEdit = "/timeRecordingList/edit";
   static String signInWithPhoneNumber = "/signInWithPhoneNumber";
 }
 
@@ -108,11 +106,6 @@ class SmallBusinessApp extends StatelessWidget {
                   invitationId: routeData.queryParameters["invitationId"]!,
                 ),
               ),
-          RouteNames.timeRecording: (RouteData routeData) => MaterialPage(
-                child: TimeRecordingWidget(
-                  sbmContext: Provider.of<SbmContext>(context, listen: false),
-                ),
-              ),
           RouteNames.timeRecordingList: (RouteData routeData) => MaterialPage(
                 child: TimeRecordingListWidget(
                   sbmContext: Provider.of<SbmContext>(context, listen: false),
@@ -122,13 +115,6 @@ class SmallBusinessApp extends StatelessWidget {
               MaterialPage(
                 child: TimeRecordingListEmployeeWidget(
                   sbmContext: Provider.of<SbmContext>(context, listen: false),
-                ),
-              ),
-          RouteNames.timeRecordingListEdit: (RouteData routeData) =>
-              MaterialPage(
-                child: TimeRecordingWidget(
-                  sbmContext: Provider.of<SbmContext>(context, listen: false),
-                  timeRecordingId: routeData.queryParameters["timeRecordingId"],
                 ),
               ),
           RouteNames.signInWithPhoneNumber: (RouteData routeData) =>

@@ -5,6 +5,7 @@ abstract class WageHolder {
 }
 
 abstract class TimeRecordingHolder {
+  String get timeRecordingId;
   DateTime get from;
   DateTime? get to;
   List<Pause> get pauses;

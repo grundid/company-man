@@ -41,6 +41,9 @@ class DummyTimeRecording extends TimeRecordingHolder {
     required this.pauses,
     this.message,
   });
+
+  @override
+  String get timeRecordingId => "1";
 }
 
 void main() {
