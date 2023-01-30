@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:smallbusiness/company/models.dart';
+import 'package:smallbusiness/time_recording/models.dart';
 
 extension TimeOfDayCalc on TimeOfDay {
   bool isBefore(TimeOfDay other) {
@@ -146,4 +148,76 @@ class HoursMinutes {
 
 int calculateWage(HoursMinutes duration, Wage wage) {
   return (duration.durationDecimal * wage.wageInCent).round();
+}
+
+DateTime nextDay(DateTime date) {
+  DateTime lastHourOfDay = DateTime(date.year, date.month, date.day, 23);
+  return lastHourOfDay.add(Duration(hours: 1));
+}
+
+DateTime createFrom(DateTime fromDate, TimeOfDay from) {
+  return DateTime(
+      fromDate.year, fromDate.month, fromDate.day, from.hour, from.minute);
+}
+
+DateTime? createTo(DateTime fromDate, TimeOfDay from, TimeOfDay? to) {
+  if (to != null) {
+    DateTime myTo = DateTime(fromDate.year, fromDate.month, fromDate.day);
+    if (to.isBefore(from)) {
+      myTo = nextDay(myTo);
+    }
+    return DateTime(myTo.year, myTo.month, myTo.day, to.hour, to.minute);
+  } else {
+    return null;
+  }
+}
+
+class WorkTimeState {
+  final DateTime from;
+  final DateTime? to;
+  final List<Pause> pauses;
+
+  Duration? get workDuration => to?.difference(from);
+
+  WorkTimeState(this.from, this.to, this.pauses);
+
+  factory WorkTimeState.fromFormBuilderState(FormBuilderState currentState) {
+    // TODO put field values into a map and call fromFormValues
+    DateTime fromDate = currentState.fields["fromDate"]!.value;
+    TimeOfDay fromTime = currentState.fields["fromTime"]!.value;
+    TimeOfDay? toTime = currentState.fields["toTime"]!.value;
+    List<Pause> pauses = currentState.fields["pauses"]?.value ?? [];
+
+    DateTime from = createFrom(fromDate, fromTime);
+    DateTime to = createTo(fromDate, fromTime, toTime)!;
+    return WorkTimeState(from, to, pauses);
+  }
+
+  factory WorkTimeState.fromFormValues(Map<String, dynamic> formValues) {
+    DateTime fromDate = formValues["fromDate"];
+    TimeOfDay fromTime = formValues["fromTime"];
+    TimeOfDay? toTime = formValues["toTime"];
+    List<Pause> pauses = formValues["pauses"] ?? [];
+
+    DateTime from = createFrom(fromDate, fromTime);
+    DateTime to = createTo(fromDate, fromTime, toTime)!;
+    return WorkTimeState(from, to, pauses);
+  }
+
+  bool get finishable => to != null;
+
+  String? validateTo() {
+    if (to != null) {
+      if (to!.isAfter(DateTime.now().add(Duration(hours: 1)))) {
+        return "Die Ende-Zeit darf nicht mehr als 1h in der Zukunft liegen.";
+      } else if (workDuration!.inMinutes < 1) {
+        return "Die Arbeitszeit darf nicht weniger als 1 Minute betragen.";
+      }
+    }
+    return null;
+  }
+
+  String? validatePauses() {
+    return null;
+  }
 }

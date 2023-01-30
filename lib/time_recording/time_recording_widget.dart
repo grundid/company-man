@@ -6,8 +6,13 @@ import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'package:smallbusiness/reusable/responsive_body.dart';
+import 'package:smallbusiness/reusable/state.dart';
 import 'package:smallbusiness/reusable/utils.dart';
+import 'package:smallbusiness/time_recording/form_builder_pause_editor_widget.dart';
+import 'package:smallbusiness/time_recording/form_builder_time_editor.dart';
 import 'package:smallbusiness/time_recording/time_recording_cubit.dart';
+import 'package:smallbusiness/time_recording/time_recording_status_cubit.dart';
+import 'package:smallbusiness/time_recording/utils.dart';
 
 class TimeRecordingWidget extends StatelessWidget {
   final SbmContext sbmContext;
@@ -19,8 +24,16 @@ class TimeRecordingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TimeRecordingCubit(sbmContext),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => TimeRecordingStatusCubit(),
+        ),
+        BlocProvider(
+          create: (context) => TimeRecordingCubit(
+              sbmContext, context.read<TimeRecordingStatusCubit>()),
+        ),
+      ],
       child: BlocConsumer<TimeRecordingCubit, TimeRecordingState>(
         listener: (context, state) {
           if (state is TimeRecordingDone) {
@@ -39,17 +52,23 @@ class TimeRecordingWidget extends StatelessWidget {
                     actions: [
                       IconButton(
                           onPressed: () async {
-                            if (state.finishable) {
-                              bool? result = await showQueryDialog(
-                                  context,
-                                  "Zeiterfassung",
-                                  "Soll die Zeiterfassung abgeschlossen werden?",
-                                  yesNo: true);
-                              if (true == result) {
-                                context.read<TimeRecordingCubit>().finish();
+                            if (state.formKey.currentState!.saveAndValidate()) {
+                              if (WorkTimeState.fromFormValues(
+                                      state.formKey.currentState!.value)
+                                  .finishable) {
+                                bool? result = await showQueryDialog(
+                                    context,
+                                    "Zeiterfassung",
+                                    "Soll die Zeiterfassung abgeschlossen werden?",
+                                    yesNo: true);
+                                if (true == result) {
+                                  context.read<TimeRecordingCubit>().save(
+                                      state.formKey.currentState!.value, true);
+                                }
+                              } else {
+                                context.read<TimeRecordingCubit>().save(
+                                    state.formKey.currentState!.value, false);
                               }
-                            } else {
-                              context.read<TimeRecordingCubit>().save();
                             }
                           },
                           icon: Icon(Icons.check))
@@ -58,92 +77,55 @@ class TimeRecordingWidget extends StatelessWidget {
                   body: ResponsiveBody(
                     child: FormBuilder(
                       key: state.formKey,
+                      autovalidateMode: AutovalidateMode.always,
                       initialValue: state.formValues,
+                      onChanged: () {
+                        context.read<TimeRecordingStatusCubit>().update(
+                            WorkTimeState.fromFormBuilderState(
+                                state.formKey.currentState!));
+                      },
                       child: Column(
                         children: [
                           FormBuilderDateTimePicker(
                             name: "fromDate",
-                            initialValue: state.fromDate,
                             format: DateFormat.yMMMMEEEEd(),
                             inputType: InputType.date,
                             decoration: InputDecoration(label: Text("Datum")),
-                            onChanged: (value) {
-                              if (value != null) {
-                                context.read<TimeRecordingCubit>().fromDate =
-                                    value;
-                              }
+                          ),
+                          FormBuilderTimeEditor(
+                              name: "fromTime",
+                              decoration:
+                                  InputDecoration(labelText: "Gekommen"),
+                              timeType: TimeType.from,
+                              validator: (value) {
+                                return WorkTimeState.fromFormBuilderState(
+                                        state.formKey.currentState!)
+                                    .validatePauses();
+                              }),
+                          FormBuilderPauseEditor(
+                            name: "pause",
+                            decoration: InputDecoration(labelText: "Pausen"),
+                          ),
+                          FormBuilderTimeEditor(
+                              name: "toTime",
+                              decoration:
+                                  InputDecoration(labelText: "Gegangen"),
+                              timeType: TimeType.to,
+                              validator: (value) {
+                                return WorkTimeState.fromFormBuilderState(
+                                        state.formKey.currentState!)
+                                    .validateTo();
+                              }),
+                          BlocBuilder<TimeRecordingStatusCubit, AppState>(
+                            builder: (context, state) {
+                              return Text(
+                                state is TimeRecordingStatusInitizalied
+                                    ? state.workingLabel
+                                    : "Arbeitszeit: -",
+                                style: Theme.of(context).textTheme.titleLarge!,
+                              );
                             },
                           ),
-                          TimeEnterWidget(
-                            timeOfDay: state.from,
-                            label: "Gekommen",
-                            onHourDec: () {
-                              context
-                                  .read<TimeRecordingCubit>()
-                                  .decHour(TimeType.from);
-                            },
-                            onHourInc: () {
-                              context
-                                  .read<TimeRecordingCubit>()
-                                  .incHour(TimeType.from);
-                            },
-                            onMinuteDec: () {
-                              context
-                                  .read<TimeRecordingCubit>()
-                                  .decMinute(TimeType.from);
-                            },
-                            onMinuteInc: () {
-                              context
-                                  .read<TimeRecordingCubit>()
-                                  .incMinute(TimeType.from);
-                            },
-                          ),
-                          TimeEnterWidget(
-                            timeOfDay: state.to,
-                            label: "Gegangen",
-                            onHourDec: () {
-                              context
-                                  .read<TimeRecordingCubit>()
-                                  .decHour(TimeType.to);
-                            },
-                            onHourInc: () {
-                              context
-                                  .read<TimeRecordingCubit>()
-                                  .incHour(TimeType.to);
-                            },
-                            onMinuteDec: () {
-                              context
-                                  .read<TimeRecordingCubit>()
-                                  .decMinute(TimeType.to);
-                            },
-                            onMinuteInc: () {
-                              context
-                                  .read<TimeRecordingCubit>()
-                                  .incMinute(TimeType.to);
-                            },
-                          ),
-                          Text(
-                            "Arbeitszeit: ${state.workingTime}",
-                            style: Theme.of(context).textTheme.headline6!,
-                          ),
-/*                          FormBuilderTextField(
-                              name: "cash",
-                              textAlign: TextAlign.right,
-                              decoration: InputDecoration(
-                                  label: Text(
-                                    "Bargeld",
-                                  ),
-                                  suffixText: "EUR"),
-                            ),
-                            FormBuilderTextField(
-                              name: "mileage",
-                              textAlign: TextAlign.right,
-                              decoration: InputDecoration(
-                                  label: Text(
-                                    "Kilometerstand am Ende der Schicht",
-                                  ),
-                                  suffixText: "KM"),
-                            ),*/
                           FormBuilderTextField(
                             name: "message",
                             decoration: InputDecoration(
@@ -157,15 +139,27 @@ class TimeRecordingWidget extends StatelessWidget {
                           ButtonBar(
                             children: [
                               TextButton(
-                                  onPressed: () {
-                                    context.read<TimeRecordingCubit>().save();
-                                  },
-                                  child: Text("Speichern")),
+                                onPressed: () {
+                                  if (state.formKey.currentState!
+                                      .saveAndValidate()) {
+                                    context.read<TimeRecordingCubit>().save(
+                                        state.formKey.currentState!.value,
+                                        false);
+                                  }
+                                },
+                                child: Text("Speichern"),
+                              ),
                               ElevatedButton(
-                                  onPressed: () {
-                                    context.read<TimeRecordingCubit>().finish();
-                                  },
-                                  child: Text("Abschließen"))
+                                onPressed: () {
+                                  if (state.formKey.currentState!
+                                      .saveAndValidate()) {
+                                    context.read<TimeRecordingCubit>().save(
+                                        state.formKey.currentState!.value,
+                                        true);
+                                  }
+                                },
+                                child: Text("Abschließen"),
+                              )
                             ],
                           )
                         ],
@@ -176,101 +170,6 @@ class TimeRecordingWidget extends StatelessWidget {
               : LoadingAnimationScaffold();
         },
       ),
-    );
-  }
-}
-
-class TimeEnterWidget extends StatelessWidget {
-  final String label;
-  final TimeOfDay? timeOfDay;
-  final Function() onHourInc;
-  final Function() onHourDec;
-  final Function() onMinuteInc;
-  final Function() onMinuteDec;
-
-  TimeEnterWidget(
-      {Key? key,
-      required this.label,
-      required this.timeOfDay,
-      required this.onHourDec,
-      required this.onHourInc,
-      required this.onMinuteDec,
-      required this.onMinuteInc})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InputDecorator(
-      decoration: InputDecoration(label: Text(label), border: InputBorder.none),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _NumberWidget(
-            value: timeOfDay?.hour,
-            onDec: onHourDec,
-            onInc: onHourInc,
-          ),
-          Text(
-            ":",
-            style: Theme.of(context).textTheme.headline4!,
-          ),
-          _NumberWidget(
-            value: timeOfDay?.minute,
-            onDec: onMinuteDec,
-            onInc: onMinuteInc,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-final NumberFormat _numberFormat = NumberFormat("00");
-
-class _NumberWidget extends StatelessWidget {
-  final int? value;
-  final Function() onInc;
-  final Function() onDec;
-
-  const _NumberWidget({
-    Key? key,
-    required this.value,
-    required this.onInc,
-    required this.onDec,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextButton(
-          onPressed: onInc,
-          child: Text(
-            "+",
-            style: TextStyle(fontSize: 32),
-          ),
-        ),
-        Container(
-          alignment: Alignment.center,
-          width: 100,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade200),
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.all(Radius.circular(8))),
-          padding: EdgeInsets.all(8),
-          child: Text(
-            value != null ? _numberFormat.format(value) : "--",
-            style: Theme.of(context).textTheme.headline4!,
-          ),
-        ),
-        TextButton(
-          onPressed: onDec,
-          child: Text(
-            "-",
-            style: TextStyle(fontSize: 32),
-          ),
-        ),
-      ],
     );
   }
 }
