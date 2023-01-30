@@ -140,16 +140,20 @@ class TimeRecordingEntryWidget extends StatelessWidget {
       TimeOfDay workingTime = fromDuration(duration);
       TimeOfDay pausingTime = fromDuration(pauseDuration);
       subtitle =
-          "Arbeitszeit: ${workingTime.getFormatted()}, Pausezeit: ${pausingTime.getFormatted()}";
+          "Arbeitszeit: ${workingTime.getFormatted()}, Pause: ${pausingTime.getFormatted()}";
       if (compensation != null) {
-        subtitle += ", Vergütung $compensation";
+        subtitle += " ($compensation)";
       }
     }
     return ListTile(
       title: Row(
         children: [
           Expanded(child: Text(dateLabel)),
-          Expanded(child: Text(titleLabel)),
+          Expanded(
+              child: Text(
+            titleLabel,
+            textAlign: TextAlign.end,
+          )),
         ],
       ),
       subtitle: subtitle != null ? Text(subtitle) : null,
