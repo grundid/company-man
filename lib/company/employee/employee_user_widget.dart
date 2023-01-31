@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/company/employee/employee_user_cubit.dart';
 import 'package:provider/provider.dart';
@@ -151,19 +154,34 @@ class _InvitationAvailableWidget extends StatelessWidget {
           children: [
             Text(
               "Einladungs-ID: $inviteId",
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            ElevatedButton.icon(
-              label: Text("Kopieren"),
-              icon: Icon(Icons.copy),
-              onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: inviteId));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("In die Zwischenablage kopiert."),
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton.icon(
+                    label: Text("Kopieren"),
+                    icon: Icon(Icons.copy),
+                    onPressed: () async {
+                      await Clipboard.setData(ClipboardData(text: inviteId));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("In die Zwischenablage kopiert."),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
+                  ElevatedButton.icon(
+                    label: Text("Teilen"),
+                    icon: Icon(Platform.isIOS ? Icons.ios_share : Icons.share),
+                    onPressed: () async {
+                      Share.share(inviteId);
+                    },
+                  )
+                ],
+              ),
             )
           ],
         ),
