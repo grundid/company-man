@@ -221,10 +221,10 @@ class _NumberWidget extends StatelessWidget {
       onVerticalDragUpdate: (details) {
         deltaY += details.delta.dy;
         if (deltaY > minDeltaForAction) {
-          onInc();
+          onDec();
           deltaY = 0;
         } else if (deltaY < -minDeltaForAction) {
-          onDec();
+          onInc();
           deltaY = 0;
         }
       },
