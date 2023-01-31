@@ -14,7 +14,6 @@ class TimeRecordingStatusCubit extends Cubit<AppState> {
   TimeRecordingStatusCubit() : super(InProgress());
 
   update(WorkTimeState workTimeState) {
-    print(workTimeState);
     if (workTimeState.to != null) {
       Duration duration = workTimeState.workDuration!;
       Duration pauseDuration = workTimeState.pauses.fold(
