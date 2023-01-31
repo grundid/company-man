@@ -17,6 +17,7 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
   DocumentReference<DynamicMap>? timeRecordingRef;
   DynamicMap formValues = {};
   final TimeRecordingStatusCubit statusCubit;
+  TimeRecording? knownTimeRecording;
 
   TimeRecordingCubit(this.sbmContext, this.statusCubit,
       {String? timeRecordingId})
@@ -66,6 +67,7 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
       DocumentReference<DynamicMap> timeRecordingRef, DynamicMap data) {
     TimeRecording timeRecording =
         TimeRecording.fromSnapshot(timeRecordingRef, data);
+    knownTimeRecording = timeRecording;
     DateTime fromDate = DateTime(timeRecording.from.year,
         timeRecording.from.month, timeRecording.from.day);
     TimeOfDay from = TimeOfDay.fromDateTime(timeRecording.from);
@@ -93,7 +95,7 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
       Map<String, dynamic> formValues, bool finalized) {
     TimeRecording timeRecording = TimeRecording(
         companyRef: sbmContext.companyRef!,
-        employeeRef: sbmContext.employeeRef!,
+        employeeRef: knownTimeRecording?.employeeRef ?? sbmContext.employeeRef!,
         from: createFrom(formValues["fromDate"], formValues["fromTime"]),
         to: createTo(formValues["fromDate"], formValues["fromTime"],
             formValues["toTime"]),
