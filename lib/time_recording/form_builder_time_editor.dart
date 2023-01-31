@@ -177,6 +177,7 @@ class TimeEnterWidget extends StatelessWidget {
         children: [
           _NumberWidget(
             value: timeOfDay?.hour,
+            minDeltaForAction: 6,
             onDec: onHourDec,
             onInc: onHourInc,
           ),
@@ -186,6 +187,7 @@ class TimeEnterWidget extends StatelessWidget {
           ),
           _NumberWidget(
             value: timeOfDay?.minute,
+            minDeltaForAction: 2,
             onDec: onMinuteDec,
             onInc: onMinuteInc,
           )
@@ -197,50 +199,66 @@ class TimeEnterWidget extends StatelessWidget {
 
 final NumberFormat _numberFormat = NumberFormat("00");
 
+// ignore: must_be_immutable
 class _NumberWidget extends StatelessWidget {
   final int? value;
   final Function() onInc;
   final Function() onDec;
+  final double minDeltaForAction;
+  double deltaY = 0;
 
-  const _NumberWidget({
-    Key? key,
-    required this.value,
-    required this.onInc,
-    required this.onDec,
-  }) : super(key: key);
+  _NumberWidget(
+      {Key? key,
+      required this.value,
+      required this.onInc,
+      required this.onDec,
+      required this.minDeltaForAction})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextButton(
-          onPressed: onInc,
-          child: Text(
-            "+",
-            style: TextStyle(fontSize: 32),
+    return GestureDetector(
+      onVerticalDragUpdate: (details) {
+        deltaY += details.delta.dy;
+        if (deltaY > minDeltaForAction) {
+          onInc();
+          deltaY = 0;
+        } else if (deltaY < -minDeltaForAction) {
+          onDec();
+          deltaY = 0;
+        }
+      },
+      child: Column(
+        children: [
+          IconButton(
+            onPressed: onInc,
+            icon: Icon(
+              Icons.arrow_circle_up_outlined,
+              color: Theme.of(context).primaryColor,
+            ),
           ),
-        ),
-        Container(
-          alignment: Alignment.center,
-          width: 100,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade200),
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.all(Radius.circular(8))),
-          padding: EdgeInsets.all(8),
-          child: Text(
-            value != null ? _numberFormat.format(value) : "--",
-            style: Theme.of(context).textTheme.headlineMedium!,
+          Container(
+            alignment: Alignment.center,
+            width: 100,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade200),
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.all(Radius.circular(8))),
+            padding: EdgeInsets.all(8),
+            child: Text(
+              value != null ? _numberFormat.format(value) : "--",
+              style: Theme.of(context).textTheme.headlineMedium!,
+            ),
           ),
-        ),
-        TextButton(
-          onPressed: onDec,
-          child: Text(
-            "-",
-            style: TextStyle(fontSize: 32),
+          IconButton(
+            onPressed: onDec,
+            icon: Icon(
+              Icons.arrow_circle_down_outlined,
+              color: Theme.of(context).primaryColor,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
