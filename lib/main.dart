@@ -187,13 +187,11 @@ class MainWidget extends StatelessWidget {
                   context.read<AuthCubit>().updateUser();
                 },
                 onJoinCompany: (inviteId) async {
-                  bool? result = await Routemaster.of(context)
+                  await Routemaster.of(context)
                       .push<bool>(
                           RouteNames.invitation + "?invitationId=$inviteId")
                       .result;
-                  if (true == result) {
-                    context.read<AuthCubit>().updateUser();
-                  }
+                  context.read<AuthCubit>().updateUser();
                 },
               ),
             ),

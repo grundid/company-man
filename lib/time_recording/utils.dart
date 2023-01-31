@@ -180,14 +180,20 @@ TimeOfDay createFromNow({int minuteStep = 1}) {
   return TimeOfDay(hour: hour, minute: minute);
 }
 
-class WorkTimeState {
+class WorkTimeState extends TimeRecordingDuration {
+  @override
   final DateTime from;
+  @override
   final DateTime? to;
+  @override
   final List<Pause> pauses;
+  final DateTime now;
 
   Duration? get workDuration => to?.difference(from);
 
-  WorkTimeState(this.from, this.to, this.pauses);
+  WorkTimeState(
+      {required this.from, this.to, required this.pauses, DateTime? now})
+      : this.now = now ?? DateTime.now();
 
   factory WorkTimeState.fromFormBuilderState(FormBuilderState currentState) {
     // TODO put field values into a map and call fromFormValues
@@ -198,7 +204,7 @@ class WorkTimeState {
 
     DateTime from = createFrom(fromDate, fromTime);
     DateTime? to = createTo(fromDate, fromTime, toTime);
-    return WorkTimeState(from, to, pauses);
+    return WorkTimeState(from: from, to: to, pauses: pauses);
   }
 
   factory WorkTimeState.fromFormValues(Map<String, dynamic> formValues) {
@@ -209,14 +215,14 @@ class WorkTimeState {
 
     DateTime from = createFrom(fromDate, fromTime);
     DateTime? to = createTo(fromDate, fromTime, toTime);
-    return WorkTimeState(from, to, pauses);
+    return WorkTimeState(from: from, to: to, pauses: pauses);
   }
 
   bool get finishable => to != null;
 
   String? validateTo() {
     if (to != null) {
-      if (to!.isAfter(DateTime.now().add(Duration(hours: 1)))) {
+      if (to!.isAfter(now.add(Duration(hours: 1)))) {
         return "Die Ende-Zeit darf nicht mehr als 1h in der Zukunft liegen.";
       } else if (workDuration!.inMinutes < 1) {
         return "Die Arbeitszeit darf nicht weniger als 1 Minute betragen.";
@@ -231,6 +237,19 @@ class WorkTimeState {
         return "Die Pause darf nicht außerhalb der Arbeitszeit liegen.";
       }
     }
+
+    if (presenceDuration != null) {
+      int presenceInMinutes = presenceDuration!.inMinutes;
+      int pauseInMinutes = pauseDuration.inMinutes;
+
+      if (presenceInMinutes > 9 * 60 && pauseInMinutes < 45) {
+        return "Nach 9h Arbeit müssen mindestens 45 Minuten Pause erfasst werden.";
+      }
+      if (presenceInMinutes > 6 * 60 && pauseInMinutes < 30) {
+        return "Nach 6h Arbeit müssen mindestens 30 Minuten Pause erfasst werden.";
+      }
+    }
+
     return null;
   }
 }
