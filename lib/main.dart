@@ -222,11 +222,11 @@ class FirebaseInitWidget extends StatelessWidget {
             FirebaseAuth firebaseAuth = FirebaseAuth.instanceFor(app: app);
             FirebaseFirestore firestore =
                 FirebaseFirestore.instanceFor(app: app);
-            if (kDebugMode) {
+            /*if (kDebugMode) {
               String host = Platform.isAndroid ? "10.0.2.2" : "localhost";
               firebaseAuth.useAuthEmulator(host, 9099);
               firestore.useFirestoreEmulator(host, 8080);
-            }
+            }*/
 
             SbmContext sbmContext =
                 Provider.of<SbmContext>(context, listen: false);
