@@ -13,7 +13,7 @@ class FormBuilderTimeEditor extends FormBuilderField<TimeOfDay> {
       required super.name,
       super.decoration,
       super.validator,
-      this.minuteStep = 5,
+      this.minuteStep = 1,
       required this.timeType})
       : super(builder: (field) {
           _FormBuilderPauseEditorState state =

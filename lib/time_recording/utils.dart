@@ -173,7 +173,7 @@ DateTime? createTo(DateTime fromDate, TimeOfDay from, TimeOfDay? to) {
   }
 }
 
-TimeOfDay createFromNow({int minuteStep = 5}) {
+TimeOfDay createFromNow({int minuteStep = 1}) {
   DateTime fromDate = DateTime.now();
   int hour = fromDate.hour;
   int minute = (fromDate.minute / minuteStep).floor() * minuteStep;
