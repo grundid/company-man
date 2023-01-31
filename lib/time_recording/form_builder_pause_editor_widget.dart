@@ -9,12 +9,12 @@ import 'package:smallbusiness/time_recording/utils.dart';
 DateFormat hmFormat = DateFormat.Hm();
 
 class FormBuilderPauseEditor extends FormBuilderField<List<Pause>> {
-  final DateTime startingDate;
+  final DateTime workStartDate;
 
   FormBuilderPauseEditor(
       {super.key,
       required super.name,
-      required this.startingDate,
+      required this.workStartDate,
       super.decoration,
       super.validator})
       : super(builder: (FormFieldState field) {
@@ -95,9 +95,9 @@ class _FormBuilderPauseEditorState
                           TimeOfDay to = value;
 
                           DateTime fromDateTime =
-                              createFrom(widget.startingDate, from);
+                              createFrom(widget.workStartDate, from);
                           DateTime toDateTime =
-                              createTo(widget.startingDate, from, to)!;
+                              createTo(widget.workStartDate, from, to)!;
                           Duration workDuration =
                               toDateTime.difference(fromDateTime);
                           if (workDuration.inMinutes < 15) {
@@ -120,9 +120,9 @@ class _FormBuilderPauseEditorState
                     TimeOfDay to = formKey.currentState!.value["to"];
 
                     DateTime fromDateTime =
-                        createFrom(widget.startingDate, from);
+                        createFrom(widget.workStartDate, from);
                     DateTime toDateTime =
-                        createTo(widget.startingDate, from, to)!;
+                        createTo(widget.workStartDate, from, to)!;
 
                     Navigator.pop(
                         context, Pause(from: fromDateTime, to: toDateTime));

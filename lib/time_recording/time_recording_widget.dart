@@ -104,7 +104,7 @@ class TimeRecordingWidget extends StatelessWidget {
                                       is TimeRecordingStatusInitizalied
                                   ? FormBuilderPauseEditor(
                                       name: "pauses",
-                                      startingDate:
+                                      workStartDate:
                                           statusState.startingDateTime,
                                       decoration:
                                           InputDecoration(labelText: "Pausen"),

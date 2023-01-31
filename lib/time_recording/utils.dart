@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
+
 import 'package:smallbusiness/company/models.dart';
 import 'package:smallbusiness/reusable/model_utils.dart';
 import 'package:smallbusiness/time_recording/models.dart';
@@ -157,8 +158,14 @@ DateTime nextDay(DateTime date) {
 }
 
 DateTime createFrom(DateTime fromDate, TimeOfDay from) {
-  return DateTime(
+  DateTime result = DateTime(
       fromDate.year, fromDate.month, fromDate.day, from.hour, from.minute);
+  if (result.isBefore(fromDate)) {
+    result = nextDay(result);
+    result =
+        DateTime(result.year, result.month, result.day, from.hour, from.minute);
+  }
+  return result;
 }
 
 DateTime? createTo(DateTime fromDate, TimeOfDay from, TimeOfDay? to) {
@@ -193,7 +200,7 @@ class WorkTimeState extends TimeRecordingDuration {
 
   WorkTimeState(
       {required this.from, this.to, required this.pauses, DateTime? now})
-      : this.now = now ?? DateTime.now();
+      : now = now ?? DateTime.now();
 
   factory WorkTimeState.fromFormBuilderState(FormBuilderState currentState) {
     // TODO put field values into a map and call fromFormValues
@@ -251,5 +258,10 @@ class WorkTimeState extends TimeRecordingDuration {
     }
 
     return null;
+  }
+
+  @override
+  String toString() {
+    return 'WorkTimeState(from: $from, to: $to, pauses: $pauses)';
   }
 }

@@ -54,12 +54,14 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
   }
 
   void _initNew() {
-    DateTime fromDate = DateTime.now();
+    DateTime now = DateTime.now();
+    DateTime fromDate = DateTime(now.year, now.month, now.day);
     TimeOfDay from = createFromNow();
     formValues = {
       "fromDate": fromDate,
       "fromTime": from,
     };
+    statusCubit.update(WorkTimeState.fromFormValues(formValues));
     emitInitialized();
   }
 
