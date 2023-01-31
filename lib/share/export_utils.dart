@@ -133,7 +133,9 @@ List<List<String>> createEmployeeExport(
     "Stundensatz",
     "Vergütung",
     "Erfassung begonnen",
-    "Erfassung beendet"
+    "Erfassung beendet",
+    "Mitarbeiter Nachricht",
+    "Manager Nachricht"
   ]);
   for (TimeRecordingWithWage timeRecordingWithWage in timeRecordings) {
     TimeRecordingHolder timeRecording = timeRecordingWithWage.timeRecording;
@@ -162,7 +164,9 @@ List<List<String>> createEmployeeExport(
         fullDateFormat.format(timeRecording.created),
         timeRecording.finalizedDate != null
             ? fullDateFormat.format(timeRecording.finalizedDate!)
-            : ""
+            : "",
+        timeRecording.message ?? "",
+        timeRecording.managerMessage ?? "",
       ]);
     }
   }

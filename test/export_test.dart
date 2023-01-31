@@ -27,6 +27,8 @@ class DummyTimeRecording extends TimeRecordingHolder {
 
   @override
   final String? message;
+  @override
+  final String? managerMessage;
 
   @override
   final List<Pause> pauses;
@@ -40,6 +42,7 @@ class DummyTimeRecording extends TimeRecordingHolder {
     required this.to,
     required this.pauses,
     this.message,
+    this.managerMessage,
   });
 
   @override
@@ -84,5 +87,25 @@ void main() {
     expect(employeeLine[3], "10h");
     expect(employeeLine[4], "0h");
     expect(employeeLine[5], "");
+  });
+
+  test("export - messages", () {
+    List<List<String>> csvExport = createEmployeeExport([
+      TimeRecordingWithWage(
+          DummyTimeRecording(
+              from: DateTime(2023, 1, 30, 8),
+              to: DateTime(2023, 1, 30, 18),
+              pauses: [],
+              message: "Alles gut",
+              managerMessage: "Wurde korrigiert"),
+          DummyWage(2000))
+    ]);
+    List<String> employeeLine = csvExport.last;
+
+    expect(employeeLine[3], "10h");
+    expect(employeeLine[4], "0h");
+    expect(employeeLine[5], "");
+    expect(employeeLine[10], "Alles gut");
+    expect(employeeLine[11], "Wurde korrigiert");
   });
 }

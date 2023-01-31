@@ -21,6 +21,7 @@ abstract class TimeRecordingDuration {
 abstract class TimeRecordingHolder extends TimeRecordingDuration {
   String get timeRecordingId;
   String? get message;
+  String? get managerMessage;
   bool get finalized;
   DateTime get created;
   DateTime? get finalizedDate;
