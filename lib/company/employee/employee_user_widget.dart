@@ -177,7 +177,10 @@ class _InvitationAvailableWidget extends StatelessWidget {
                     label: Text("Teilen"),
                     icon: Icon(Platform.isIOS ? Icons.ios_share : Icons.share),
                     onPressed: () async {
-                      Share.share(inviteId);
+                      final box = context.findRenderObject() as RenderBox?;
+                      Share.share(inviteId,
+                          sharePositionOrigin:
+                              box!.localToGlobal(Offset.zero) & box.size);
                     },
                   )
                 ],

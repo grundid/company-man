@@ -34,7 +34,12 @@ class ShareWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ShareCubit(shareableBuilder),
-      child: BlocBuilder<ShareCubit, ShareState>(
+      child: BlocConsumer<ShareCubit, ShareState>(
+        listener: (context, state) {
+          if (state is ShareInitialized) {
+            shareOrSaveExport(context, state.shareableContent);
+          }
+        },
         builder: (context, state) {
           return IconButton(
               onPressed: () {
