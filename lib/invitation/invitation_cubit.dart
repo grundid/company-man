@@ -26,7 +26,7 @@ class InvitationCubit extends Cubit<InvitationState> {
         .where("inviteId", isEqualTo: invitationId)
         .get();
     if (snapshots.size == 0) {
-      emit(InvitationNotFound());
+      emit(InvitationNotFound(invitationId));
     } else {
       DocumentSnapshot<DynamicMap> invitationSnapshot = snapshots.docs.first;
       Invitation invitation = Invitation.fromJson(invitationSnapshot.data()!);

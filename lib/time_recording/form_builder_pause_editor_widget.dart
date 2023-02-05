@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:smallbusiness/time_recording/form_builder_time_editor.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 DateFormat hmFormat = DateFormat.Hm();
 
@@ -37,7 +38,8 @@ class FormBuilderPauseEditor extends FormBuilderField<List<Pause>> {
                       onPressed: () {
                         state.showAddDialog();
                       },
-                      child: Text("+ Pause erfassen")),
+                      child: Text(
+                          AppLocalizations.of(state.context)!.pauseErfassen)),
                 ],
               ),
             ]),
@@ -76,14 +78,16 @@ class _FormBuilderPauseEditorState
                 FormBuilderTimeEditor(
                   minuteStep: 1,
                   name: "from",
-                  decoration: InputDecoration(labelText: "Pause von"),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.pauseVon),
                   timeType: TimeType.from,
                 ),
                 FormBuilderTimeEditor(
                   minuteStep: 1,
                   name: "to",
-                  decoration:
-                      InputDecoration(labelText: "Pause bis", errorMaxLines: 2),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.pauseBis,
+                      errorMaxLines: 2),
                   timeType: TimeType.to,
                   validator: FormBuilderValidators.compose(
                     [
@@ -101,7 +105,8 @@ class _FormBuilderPauseEditorState
                           Duration workDuration =
                               toDateTime.difference(fromDateTime);
                           if (workDuration.inMinutes < 15) {
-                            return "Die Pause muss min. 15 Minuten betragen.";
+                            return AppLocalizations.of(context)!
+                                .diePauseMussMin15Minutenbetragen;
                           }
                         }
                         return null;
@@ -128,7 +133,7 @@ class _FormBuilderPauseEditorState
                         context, Pause(from: fromDateTime, to: toDateTime));
                   }
                 },
-                child: Text("Speichern"))
+                child: Text(AppLocalizations.of(context)!.speichern))
           ],
         );
       },

@@ -4,6 +4,7 @@ import 'package:smallbusiness/auth/anon_reminder_widget.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/time_recording/time_recording_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CompanyMainWidget extends StatelessWidget {
   final SbmContext sbmContext;
@@ -17,8 +18,8 @@ class CompanyMainWidget extends StatelessWidget {
       if (sbmContext.user.isManager)
         Card(
           child: ListTile(
-            title: Text("Mitarbeiterverwaltung"),
-            subtitle: Text("Erfassen und Verwalten Sie hier Ihre Mitarbeiter"),
+            title: Text(AppLocalizations.of(context)!.mitarbeiterverwaltung),
+            subtitle: Text(AppLocalizations.of(context)!.erfassenUndVerwaltenSieHierIhreMitarbeiter),
             onTap: () {
               Routemaster.of(context).push(RouteNames.employeeList);
             },
@@ -33,8 +34,10 @@ class CompanyMainWidget extends StatelessWidget {
             child: Column(
               children: [
                 ListTile(
-                  title: Text("Arbeitszeiterfassung"),
-                  subtitle: Text("Erfassen Sie Ihre Arbeitszeit"),
+                  title:
+                      Text(AppLocalizations.of(context)!.arbeitszeiterfassung),
+                  subtitle: Text(
+                      AppLocalizations.of(context)!.erfassenSieIhreArbeitszeit),
                 ),
                 ButtonBar(
                   alignment: MainAxisAlignment.spaceBetween,
@@ -46,7 +49,7 @@ class CompanyMainWidget extends StatelessWidget {
                             Routemaster.of(context)
                                 .push(RouteNames.timeRecordingList);
                           },
-                          child: Text("Historie"),
+                          child: Text(AppLocalizations.of(context)!.historie),
                         ),
                         if (sbmContext.user.isManager)
                           TextButton(
@@ -54,14 +57,15 @@ class CompanyMainWidget extends StatelessWidget {
                                 Routemaster.of(context)
                                     .push(RouteNames.timeRecordingListEmployee);
                               },
-                              child: Text("Mitarbeiter-Auswertungen")),
+                              child: Text(AppLocalizations.of(context)!
+                                  .mitarbeiterAuswertungen)),
                       ],
                     ),
                     TextButton(
                       onPressed: () {
                         _openTimeRecording(context);
                       },
-                      child: Text("Erfassen"),
+                      child: Text(AppLocalizations.of(context)!.erfassen),
                     ),
                   ],
                 )

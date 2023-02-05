@@ -4,6 +4,7 @@ import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/invitation/invitation_cubit.dart';
 import 'package:smallbusiness/reusable/loader.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InvitationWidget extends StatelessWidget {
   final SbmContext sbmContext;
@@ -16,7 +17,7 @@ class InvitationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Einladung annehmen"),
+        title: Text(AppLocalizations.of(context)!.einladungAnnehmen),
       ),
       body: BlocProvider(
         create: (context) => InvitationCubit(sbmContext, invitationId),
@@ -35,7 +36,9 @@ class InvitationWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Sie haben eine Einladung von ${state.invitation.companyLabel} erhalten.\nMöchten Sie die Einladung annehmen?",
+                            AppLocalizations.of(context)!
+                                .sieHabenEineEinladungVonCompanyLabelErhalten(
+                                    state.invitation.companyLabel),
                             textAlign: TextAlign.center,
                           ),
                           ButtonBar(
@@ -45,7 +48,8 @@ class InvitationWidget extends StatelessWidget {
                                   onPressed: () {
                                     context.read<InvitationCubit>().accept();
                                   },
-                                  child: Text("Annehmen"))
+                                  child: Text(
+                                      AppLocalizations.of(context)!.annehmen))
                             ],
                           )
                         ],
@@ -54,7 +58,9 @@ class InvitationWidget extends StatelessWidget {
                   )
                 : state is InvitationNotFound
                     ? Center(
-                        child: Text("Die Einladungs-ID wurde nicht gefunden"),
+                        child: Text(AppLocalizations.of(context)!
+                            .dieEinladungsIdWurdeNichtGefunden(
+                                state.enteredInvitationId)),
                       )
                     : LoadingAnimationScreen();
           },

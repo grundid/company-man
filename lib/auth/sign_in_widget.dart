@@ -3,6 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignInWidget extends StatelessWidget {
   final Function onSignIn;
@@ -119,7 +120,7 @@ class PhoneQueryFormWidget extends StatelessWidget {
                 : MainAxisAlignment.end,
             children: [
               if (onCancel != null)
-                TextButton(onPressed: onCancel, child: Text("Abbrechen")),
+                TextButton(onPressed: onCancel, child: Text(Localizations.of<MaterialLocalizations>(context, MaterialLocalizations)!.cancelButtonLabel)),
               ElevatedButton(onPressed: _submitForm, child: Text(buttonLabel))
             ],
           )
@@ -219,7 +220,7 @@ class _AnonSignInWidget extends StatelessWidget {
                           onSignIn();
                         }
                       },
-                      child: Text("Akzeptieren"))
+                      child: Text(AppLocalizations.of(context)!.akzeptieren,))
                 ],
               )
             ],

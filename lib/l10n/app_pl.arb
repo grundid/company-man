@@ -1,0 +1,77 @@
+{
+    "akzeptieren": "Zaakceptuj",
+    "einloggen": "Zaloguj się",
+    "einladungAnnehmen": "Przyjąć zaproszenie",
+    "annehmen": "Przyjąć",
+    "sieHabenEineEinladungVonCompanyLabelErhalten": "Otrzymałeś zaproszenie od {companyLabel}.\nCzy chcesz przyjąć zaproszenie?",
+    "@sieHabenEineEinladungVonCompanyLabelErhalten": {
+        "placeHolders": {
+            "companyLabel": {
+                "type": "String"
+            }
+        }
+    },
+    "arbeitszeiterfassung": "Ewidencja Czasu Pracy",
+    "erfassenSieIhreArbeitszeit": "Zapisz swoje godziny pracy",
+    "dieEinladungsIdWurdeNichtGefunden": "Nie znaleziono identyfikatora zaproszenia. Sprawdź, czy wszystkie znaki zostały wprowadzone poprawnie: {enteredInvitationId}",
+    "@dieEinladungsIdWurdeNichtGefunden": {
+        "placeHolders": {
+            "enteredInvitationId": {
+                "type": "String"
+            }
+        }
+    },
+    "historie": "Historia",
+    "mitarbeiterAuswertungen": "Zapisy pracowników",
+    "erfassen": "Wpisz",
+    "mitarbeiterverwaltung": "Zarządzanie pracownikami",
+    "erfassenUndVerwaltenSieHierIhreMitarbeiter": "Tutaj wprowadź i zarządzaj swoimi pracownikami",
+    "arbeitszeitPause": "Czas pracy: {workingTime}, przerwa: {pausingTime}",
+    "@arbeitszeitPause": {
+        "placeHolders": {
+            "workingTime": {
+                "type": "String"
+            },
+            "pausingTime": {
+                "type": "String"
+            }
+        }
+    },
+    "verguetung": "Zarobek: {compensation}",
+    "@verguetung": {
+        "placeHolders": {
+            "compensation": {
+                "compensation": {
+                    "type": "String"
+                }
+            }
+        }
+    },
+    "zeiterfassung": "Zapisywanie czasu",
+    "sollDieZeiterfassungAbgeschlossenWerden": "Czy zapisywanie czasu powinno zostać zakończone?",
+    "datum": "Data",
+    "gekommen": "Początek",
+    "pausen": "Przerwa",
+    "gegangen": "Koniec",
+    "nachricht": "Wiadomość",
+    "dieseNachrichtWirdZusammenMitDerZeiterfassungAnDenManagerGeschickt": "Ta wiadomość jest wysyłana do kierownika wraz z kartą czasu pracy.",
+    "managerNachricht": "Wiadomość kierownika",
+    "dieseNachrichtWirdDemMitarbeiterNachDemZuruecksetzenUndInDemExportangezeigt": "Ta wiadomość jest wyświetlana pracownikowi po resecie i w eksporcie.",
+    "erfassungZuruecksetzen": "Zresetować zapis",
+    "nachDemZuruecksetzenKannDerMitarbeiterDieArbeitszeitKorrigieren": "Po zresetowaniu pracownik może skorygować czas pracy.",
+    "zuruecksetzen": "Zresetuj",
+    "speichern": "Zapisz",
+    "abschliessen": "Zakończ",
+    "pauseErfassen": "+ Dodaj przerwe",
+    "pauseVon": "Przerwa od",
+    "pauseBis": "Przerwa do",
+    "diePauseMussMin15Minutenbetragen": "Przerwa musi wynosić co najmniej 15 minut.",
+    "arbeitszeiten": "Godziny pracy",
+    "keineMitarbeiterAuswertungenVerfuegbar": "Brak zapisów pracowników",
+    "dieEndeZeitDarfNichtMehrAls1hInDerZukunftLiegen": "Godzina zakończenia nie może być dalej jak 1 godzina w przyszłości.",
+    "dieArbeitszeitDarfNichtWenigerAls1MinuteBetragen": "Czas pracy nie może być krótszy niż 1 minuta.",
+    "diePauseDarfNichtAusserhalbDerArbeitszeitLiegen":  "Przerwa nie może być poza godzinami pracy.",
+    "nach9hArbeitMuessenMindestens45MinutenPauseerfasstWerden":"Po 9 godzinach pracy należy odnotować przerwę trwającą co najmniej 45 minut.",
+    "nach6hArbeitMuessenMindestens30MinutenPauseerfasstWerden": "Po 6 godzinach pracy należy odnotować przerwę trwającą co najmniej 30 minut."
+  
+}

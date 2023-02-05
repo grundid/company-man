@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:intl/intl.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
@@ -15,6 +16,7 @@ import 'package:smallbusiness/time_recording/time_recording_list_cubit.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_employee_cubit.dart';
 import 'package:smallbusiness/time_recording/time_recording_widget.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final DateFormat _dateFormat = DateFormat.yMEd();
 final DateFormat _toDateFormat = DateFormat.Hm();
@@ -147,10 +149,11 @@ class TimeRecordingEntryWidget extends StatelessWidget {
     if (duration != null) {
       TimeOfDay workingTime = fromDuration(duration);
       TimeOfDay pausingTime = fromDuration(pauseDuration);
-      subtitle =
-          "Arbeitszeit: ${workingTime.getFormatted()}, Pause: ${pausingTime.getFormatted()}";
+      subtitle = AppLocalizations.of(context)!.arbeitszeitPause(
+          pausingTime.getFormatted(), workingTime.getFormatted());
       if (compensation != null) {
-        subtitle += "\nVergütung: $compensation";
+        subtitle +=
+            "\n${AppLocalizations.of(context)!.verguetung(compensation)}";
       }
     }
     return ListTile(
@@ -164,7 +167,7 @@ class TimeRecordingEntryWidget extends StatelessWidget {
           )),
         ],
       ),
-      isThreeLine: true,
+      isThreeLine: subtitle != null,
       subtitle: subtitle != null ? Text(subtitle) : null,
       trailing: !timeRecording.finalized ? Icon(Icons.hourglass_bottom) : null,
       onTap: !timeRecording.finalized || sbmContext.user.isManager

@@ -1,0 +1,76 @@
+{
+  "akzeptieren": "Akzeptieren",
+  "einloggen": "Einloggen",
+  "einladungAnnehmen": "Einladung annehmen",
+  "annehmen": "Annehmen",
+  "sieHabenEineEinladungVonCompanyLabelErhalten": "Sie haben eine Einladung von {companyLabel} erhalten.\nMöchten Sie die Einladung annehmen?",
+  "@sieHabenEineEinladungVonCompanyLabelErhalten": {
+    "placeHolders": {
+      "companyLabel": {
+        "type": "String"
+      }
+    }
+  },
+  "arbeitszeiterfassung": "Arbeitszeiterfassung",
+  "erfassenSieIhreArbeitszeit": "Erfassen Sie Ihre Arbeitszeit",
+  "dieEinladungsIdWurdeNichtGefunden": "Die Einladungs-ID wurde nicht gefunden. Bitte prüfen Sie, ob Sie alle Zeichen korrekt eingegeben haben: {enteredInvitationId}",
+  "@dieEinladungsIdWurdeNichtGefunden": {
+    "placeHolders": {
+      "enteredInvitationId": {
+        "type": "String"
+      }
+    }
+  },
+  "historie": "Historie",
+  "mitarbeiterAuswertungen": "Mitarbeiter-Auswertungen",
+  "erfassen": "Erfassen",
+  "mitarbeiterverwaltung": "Mitarbeiterverwaltung",
+  "erfassenUndVerwaltenSieHierIhreMitarbeiter": "Erfassen und Verwalten Sie hier Ihre Mitarbeiter",
+  "arbeitszeitPause": "Arbeitszeit: {workingTime}, Pause: {pausingTime}",
+  "@arbeitszeitPause": {
+    "placeHolders": {
+      "workingTime": {
+        "type": "String"
+      },
+      "pausingTime": {
+        "type": "String"
+      }
+    }
+  },
+  "verguetung": "Vergütung: {compensation}",
+  "@verguetung": {
+    "placeHolders": {
+      "compensation": {
+        "compensation": {
+          "type": "String"
+        }
+      }
+    }
+  },
+  "zeiterfassung": "Zeiterfassung",
+  "sollDieZeiterfassungAbgeschlossenWerden": "Soll die Zeiterfassung abgeschlossen werden?",
+  "datum": "Datum",
+  "gekommen": "Gekommen",
+  "pausen": "Pausen",
+  "gegangen": "Gegangen",
+  "nachricht": "Nachricht",
+  "dieseNachrichtWirdZusammenMitDerZeiterfassungAnDenManagerGeschickt": "Diese Nachricht wird zusammen mit der Zeiterfassung an den Manager geschickt.",
+  "managerNachricht": "Manager-Nachricht",
+  "dieseNachrichtWirdDemMitarbeiterNachDemZuruecksetzenUndInDemExportangezeigt": "Diese Nachricht wird dem Mitarbeiter nach dem Zurücksetzen und in dem Export angezeigt.",
+  "erfassungZuruecksetzen": "Erfassung zurücksetzen",
+  "nachDemZuruecksetzenKannDerMitarbeiterDieArbeitszeitKorrigieren": "Nach dem Zurücksetzen kann der Mitarbeiter die Arbeitszeit korrigieren.",
+  "zuruecksetzen": "Zurücksetzen",
+  "speichern": "Speichern",
+  "abschliessen": "Abschließen",
+  "pauseErfassen": "+ Pause erfassen",
+  "pauseVon": "Pause von",
+  "pauseBis": "Pause bis",
+  "diePauseMussMin15Minutenbetragen": "Die Pause muss min. 15 Minuten betragen.",
+  "arbeitszeiten": "Arbeitszeiten",
+  "keineMitarbeiterAuswertungenVerfuegbar": "Keine Mitarbeiter-Auswertungen verfügbar",
+  "dieEndeZeitDarfNichtMehrAls1hInDerZukunftLiegen": "Die Ende-Zeit darf nicht mehr als 1h in der Zukunft liegen.",
+  "dieArbeitszeitDarfNichtWenigerAls1MinuteBetragen": "Die Arbeitszeit darf nicht weniger als 1 Minute betragen.",
+  "diePauseDarfNichtAusserhalbDerArbeitszeitLiegen":  "Die Pause darf nicht außerhalb der Arbeitszeit liegen.",
+  "nach9hArbeitMuessenMindestens45MinutenPauseerfasstWerden":"Nach 9h Arbeit müssen mindestens 45 Minuten Pause erfasst werden.",
+  "nach6hArbeitMuessenMindestens30MinutenPauseerfasstWerden": "Nach 6h Arbeit müssen mindestens 30 Minuten Pause erfasst werden."
+}

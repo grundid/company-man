@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 
-import 'package:smallbusiness/company/models.dart';
 import 'package:smallbusiness/reusable/model_utils.dart';
 import 'package:smallbusiness/time_recording/models.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 extension TimeOfDayCalc on TimeOfDay {
   bool isBefore(TimeOfDay other) {
@@ -227,21 +227,30 @@ class WorkTimeState extends TimeRecordingDuration {
 
   bool get finishable => to != null;
 
-  String? validateTo() {
+  String? validateTo([BuildContext? context]) {
     if (to != null) {
       if (to!.isAfter(now.add(Duration(hours: 1)))) {
-        return "Die Ende-Zeit darf nicht mehr als 1h in der Zukunft liegen.";
+        return context != null
+            ? AppLocalizations.of(context)!
+                .dieEndeZeitDarfNichtMehrAls1hInDerZukunftLiegen
+            : "Die Ende-Zeit darf nicht mehr als 1h in der Zukunft liegen.";
       } else if (workDuration!.inMinutes < 1) {
-        return "Die Arbeitszeit darf nicht weniger als 1 Minute betragen.";
+        return context != null
+            ? AppLocalizations.of(context)!
+                .dieArbeitszeitDarfNichtWenigerAls1MinuteBetragen
+            : "Die Arbeitszeit darf nicht weniger als 1 Minute betragen.";
       }
     }
     return null;
   }
 
-  String? validatePauses() {
+  String? validatePauses([BuildContext? context]) {
     for (Pause pause in pauses) {
       if (pause.from.isBefore(from) || (to != null && pause.to.isAfter(to!))) {
-        return "Die Pause darf nicht außerhalb der Arbeitszeit liegen.";
+        return context != null
+            ? AppLocalizations.of(context)!
+                .diePauseDarfNichtAusserhalbDerArbeitszeitLiegen
+            : "Die Pause darf nicht außerhalb der Arbeitszeit liegen.";
       }
     }
 
@@ -250,10 +259,16 @@ class WorkTimeState extends TimeRecordingDuration {
       int pauseInMinutes = pauseDuration.inMinutes;
 
       if (presenceInMinutes > 9 * 60 && pauseInMinutes < 45) {
-        return "Nach 9h Arbeit müssen mindestens 45 Minuten Pause erfasst werden.";
+        return context != null
+            ? AppLocalizations.of(context)!
+                .nach9hArbeitMuessenMindestens45MinutenPauseerfasstWerden
+            : "Nach 9h Arbeit müssen mindestens 45 Minuten Pause erfasst werden.";
       }
       if (presenceInMinutes > 6 * 60 && pauseInMinutes < 30) {
-        return "Nach 6h Arbeit müssen mindestens 30 Minuten Pause erfasst werden.";
+        return context != null
+            ? AppLocalizations.of(context)!
+                .nach6hArbeitMuessenMindestens30MinutenPauseerfasstWerden
+            : "Nach 6h Arbeit müssen mindestens 30 Minuten Pause erfasst werden.";
       }
     }
 

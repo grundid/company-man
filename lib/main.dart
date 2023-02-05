@@ -28,21 +28,32 @@ import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:smallbusiness/reusable/utils.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_employee_widget.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_widget.dart';
-import 'package:smallbusiness/time_recording/time_recording_widget.dart';
 import 'auth/cubit/auth_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const String appTitle = "Small Business App";
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  findSystemLocale().then((_) {
-    runApp(ChangeNotifierProvider<SbmContext>(
-      create: (context) => SbmContext(),
-      child: const SmallBusinessApp(),
-    ));
-  });
+  await findSystemLocale();
+  FirebaseApp app = await Firebase.initializeApp();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instanceFor(app: app);
+  FirebaseFirestore firestore = FirebaseFirestore.instanceFor(app: app);
+  if (kDebugMode) {
+    String host = Platform.isAndroid ? "10.0.2.2" : "localhost";
+    firebaseAuth.useAuthEmulator(host, 9099);
+    firestore.useFirestoreEmulator(host, 8080);
+  }
+
+  SbmContext sbmContext =
+      SbmContext(QueryBuilder(firestore: firestore), firebaseAuth);
+
+  runApp(ChangeNotifierProvider<SbmContext>(
+    create: (context) => sbmContext,
+    child: const SmallBusinessApp(),
+  ));
 }
 
 class RouteNames {
@@ -127,10 +138,11 @@ class SmallBusinessApp extends StatelessWidget {
         }),
       ),
       routeInformationParser: RoutemasterParser(),
-      supportedLocales: [Locale("de")],
-      locale: Locale("de"),
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: Locale("pl"),
       title: appTitle,
       localizationsDelegates: [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -204,72 +216,41 @@ class FirebaseInitWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<FirebaseApp>(
-        future: Firebase.initializeApp(),
-        builder: (context, AsyncSnapshot<FirebaseApp> snapshot) {
-          if (snapshot.hasError) {
-            return Scaffold(
-              body: Center(
-                child: Text('Error initializing Firebase\n${snapshot.error}',
-                    style: Theme.of(context).textTheme.bodyText1),
-              ),
-            );
-          } else if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasData) {
-            FirebaseApp app = snapshot.data!;
-            FirebaseAuth firebaseAuth = FirebaseAuth.instanceFor(app: app);
-            FirebaseFirestore firestore =
-                FirebaseFirestore.instanceFor(app: app);
-            /*if (kDebugMode) {
-              String host = Platform.isAndroid ? "10.0.2.2" : "localhost";
-              firebaseAuth.useAuthEmulator(host, 9099);
-              firestore.useFirestoreEmulator(host, 8080);
-            }*/
-
-            SbmContext sbmContext =
-                Provider.of<SbmContext>(context, listen: false);
-            sbmContext.initFirestore(QueryBuilder(firestore: firestore));
-
-            return AppStatusWidget(
-              sbmContext: sbmContext,
-              child: BlocProvider(
-                create: (context) => AuthCubit(
-                    Provider.of<SbmContext>(context, listen: false),
-                    firebaseAuth),
-                child: BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    if (state is AuthInitialized) {
-                      return MainWidget(
-                        sbmContext: state.sbmContext,
-                      );
-                    } else if (state is AuthNotLoggedIn) {
-                      return Scaffold(
-                        appBar: AppBar(
-                          title: Text(appTitle),
-                        ),
-                        body: SignInWidget(
-                          onSignIn: () {
-                            context.read<AuthCubit>().signIn();
-                          },
-                          onSignInWithPhoneNumber: (phoneNumber) {
-                            Routemaster.of(context).push(RouteNames
-                                    .signInWithPhoneNumber +
-                                "?phoneNumber=${Uri.encodeComponent(phoneNumber)}");
-                          },
-                        ),
-                      );
-                    } else {
-                      return LoadingAnimationScaffold(
-                        timeout: Duration(seconds: 30),
-                      );
-                    }
+    return AppStatusWidget(
+      sbmContext: Provider.of<SbmContext>(context, listen: false),
+      child: BlocProvider(
+        create: (context) =>
+            AuthCubit(Provider.of<SbmContext>(context, listen: false)),
+        child: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            if (state is AuthInitialized) {
+              return MainWidget(
+                sbmContext: state.sbmContext,
+              );
+            } else if (state is AuthNotLoggedIn) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text(appTitle),
+                ),
+                body: SignInWidget(
+                  onSignIn: () {
+                    context.read<AuthCubit>().signIn();
+                  },
+                  onSignInWithPhoneNumber: (phoneNumber) {
+                    Routemaster.of(context).push(
+                        RouteNames.signInWithPhoneNumber +
+                            "?phoneNumber=${Uri.encodeComponent(phoneNumber)}");
                   },
                 ),
-              ),
-            );
-          } else {
-            return LoadingAnimationScaffold();
-          }
-        });
+              );
+            } else {
+              return LoadingAnimationScaffold(
+                timeout: Duration(seconds: 30),
+              );
+            }
+          },
+        ),
+      ),
+    );
   }
 }

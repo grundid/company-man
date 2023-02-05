@@ -33,18 +33,16 @@ class SbmUser {
 
 class SbmContext extends ChangeNotifier {
   late SbmUser user;
-  late QueryBuilder queryBuilder;
-  SbmContext();
-
+  final QueryBuilder queryBuilder;
+  final FirebaseAuth auth;
+  
+  SbmContext(this.queryBuilder, this.auth);
+  
   DocumentReference<DynamicMap> get userRef => user.userRef;
   FirebaseFirestore get firestore => queryBuilder.firestore;
   DocumentReference<DynamicMap>? get companyRef => user.objectRole?.companyRef;
   DocumentReference<DynamicMap>? get employeeRef =>
       user.objectRole?.employeeRef;
-
-  initFirestore(QueryBuilder queryBuilder) {
-    this.queryBuilder = queryBuilder;
-  }
 
   init(SbmUser user) {
     this.user = user;

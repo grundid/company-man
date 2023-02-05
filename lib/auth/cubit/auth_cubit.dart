@@ -17,12 +17,11 @@ import 'package:smallbusiness/user_actions/sign_in_user.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  final FirebaseAuth auth;
   final SbmContext sbmContext;
   late StreamSubscription _authStateChanges;
 
-  AuthCubit(this.sbmContext, this.auth) : super(AuthInProgress()) {
-    _authStateChanges = auth.authStateChanges().listen((User? user) async {
+  AuthCubit(this.sbmContext) : super(AuthInProgress()) {
+    _authStateChanges = sbmContext.auth.authStateChanges().listen((User? user) async {
       log("User changed: uid: ${user?.uid}");
       if (user != null) {
         emit(AuthInProgress());
@@ -118,12 +117,12 @@ class AuthCubit extends Cubit<AuthState> {
 
   signIn() {
     emit(AuthInProgress());
-    auth.signInAnonymously();
+    sbmContext. auth.signInAnonymously();
   }
 
   signOut() {
     emit(AuthInProgress());
-    auth.signOut();
+    sbmContext.auth.signOut();
   }
 
   @override

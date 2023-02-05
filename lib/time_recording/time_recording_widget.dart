@@ -13,6 +13,7 @@ import 'package:smallbusiness/time_recording/form_builder_time_editor.dart';
 import 'package:smallbusiness/time_recording/time_recording_cubit.dart';
 import 'package:smallbusiness/time_recording/time_recording_status_cubit.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimeRecordingWidget extends StatelessWidget {
   final SbmContext sbmContext;
@@ -49,7 +50,7 @@ class TimeRecordingWidget extends StatelessWidget {
           return state is TimeRecordingInitialized
               ? Scaffold(
                   appBar: AppBar(
-                    title: Text("Zeiterfassung"),
+                    title: Text(AppLocalizations.of(context)!.zeiterfassung),
                     actions: [
                       IconButton(
                           onPressed: () async {
@@ -59,8 +60,9 @@ class TimeRecordingWidget extends StatelessWidget {
                                   .finishable) {
                                 bool? result = await showQueryDialog(
                                     context,
-                                    "Zeiterfassung",
-                                    "Soll die Zeiterfassung abgeschlossen werden?",
+                                    AppLocalizations.of(context)!.zeiterfassung,
+                                    AppLocalizations.of(context)!
+                                        .sollDieZeiterfassungAbgeschlossenWerden,
                                     yesNo: true);
                                 if (true == result) {
                                   context.read<TimeRecordingCubit>().save(
@@ -91,11 +93,15 @@ class TimeRecordingWidget extends StatelessWidget {
                             name: "fromDate",
                             format: DateFormat.yMMMMEEEEd(),
                             inputType: InputType.date,
-                            decoration: InputDecoration(label: Text("Datum")),
+                            decoration: InputDecoration(
+                                label:
+                                    Text(AppLocalizations.of(context)!.datum)),
                           ),
                           FormBuilderTimeEditor(
                             name: "fromTime",
-                            decoration: InputDecoration(labelText: "Gekommen"),
+                            decoration: InputDecoration(
+                                labelText:
+                                    AppLocalizations.of(context)!.gekommen),
                             timeType: TimeType.from,
                           ),
                           BlocBuilder<TimeRecordingStatusCubit, AppState>(
@@ -106,32 +112,37 @@ class TimeRecordingWidget extends StatelessWidget {
                                       name: "pauses",
                                       workStartDate:
                                           statusState.startingDateTime,
-                                      decoration:
-                                          InputDecoration(labelText: "Pausen"),
+                                      decoration: InputDecoration(
+                                          labelText:
+                                              AppLocalizations.of(context)!
+                                                  .pausen),
                                       validator: (value) {
                                         return WorkTimeState
                                                 .fromFormBuilderState(
                                                     state.formKey.currentState!)
-                                            .validatePauses();
+                                            .validatePauses(context);
                                       })
                                   : Container();
                             },
                           ),
                           FormBuilderTimeEditor(
                               name: "toTime",
-                              decoration:
-                                  InputDecoration(labelText: "Gegangen"),
+                              decoration: InputDecoration(
+                                  labelText:
+                                      AppLocalizations.of(context)!.gegangen),
                               timeType: TimeType.to,
                               validator: (value) {
                                 return WorkTimeState.fromFormBuilderState(
                                         state.formKey.currentState!)
-                                    .validateTo();
+                                    .validateTo(context);
                               }),
                           BlocBuilder<TimeRecordingStatusCubit, AppState>(
                             builder: (context, state) {
                               return Text(
                                 state is TimeRecordingStatusInitizalied
-                                    ? state.workingLabel
+                                    ? AppLocalizations.of(context)!
+                                        .arbeitszeitPause(
+                                            state.pauseTime, state.workingTime)
                                     : "-",
                                 style: Theme.of(context).textTheme.bodyMedium!,
                               );
@@ -141,11 +152,11 @@ class TimeRecordingWidget extends StatelessWidget {
                             name: "message",
                             decoration: InputDecoration(
                                 label: Text(
-                                  "Nachricht",
+                                  AppLocalizations.of(context)!.nachricht,
                                 ),
                                 helperMaxLines: 3,
-                                helperText:
-                                    "Diese Nachricht wird zusammen mit der Zeiterfassung an den Manager geschickt."),
+                                helperText: AppLocalizations.of(context)!
+                                    .dieseNachrichtWirdZusammenMitDerZeiterfassungAnDenManagerGeschickt),
                           ),
                           Visibility(
                             maintainState: true,
@@ -154,11 +165,12 @@ class TimeRecordingWidget extends StatelessWidget {
                               name: "managerMessage",
                               decoration: InputDecoration(
                                   label: Text(
-                                    "Manager-Nachricht",
+                                    AppLocalizations.of(context)!
+                                        .managerNachricht,
                                   ),
                                   helperMaxLines: 3,
-                                  helperText:
-                                      "Diese Nachricht wird dem Mitarbeiter nach dem Zurücksetzen und in dem Export angezeigt."),
+                                  helperText: AppLocalizations.of(context)!
+                                      .dieseNachrichtWirdDemMitarbeiterNachDemZuruecksetzenUndInDemExportangezeigt),
                             ),
                           ),
                           ButtonBar(
@@ -172,8 +184,10 @@ class TimeRecordingWidget extends StatelessWidget {
                                         .saveAndValidate()) {
                                       bool? result = await showQueryDialog(
                                           context,
-                                          "Erfassung zurücksetzen",
-                                          "Nach dem Zurücksetzen kann der Mitarbeiter die Arbeitszeit korrigieren.");
+                                          AppLocalizations.of(context)!
+                                              .erfassungZuruecksetzen,
+                                          AppLocalizations.of(context)!
+                                              .nachDemZuruecksetzenKannDerMitarbeiterDieArbeitszeitKorrigieren);
                                       if (true == result) {
                                         context
                                             .read<TimeRecordingCubit>()
@@ -182,7 +196,8 @@ class TimeRecordingWidget extends StatelessWidget {
                                       }
                                     }
                                   },
-                                  child: Text("Zurücksetzen"),
+                                  child: Text(AppLocalizations.of(context)!
+                                      .zuruecksetzen),
                                 ),
                               TextButton(
                                 onPressed: () {
@@ -193,18 +208,31 @@ class TimeRecordingWidget extends StatelessWidget {
                                         false);
                                   }
                                 },
-                                child: Text("Speichern"),
+                                child: Text(
+                                    AppLocalizations.of(context)!.speichern),
                               ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  if (state.formKey.currentState!
-                                      .saveAndValidate()) {
-                                    context.read<TimeRecordingCubit>().save(
-                                        state.formKey.currentState!.value,
-                                        true);
-                                  }
+                              BlocBuilder<TimeRecordingStatusCubit, AppState>(
+                                builder: (context, statusState) {
+                                  return ElevatedButton(
+                                    onPressed: statusState
+                                                is TimeRecordingStatusInitizalied &&
+                                            statusState.canFinish
+                                        ? () {
+                                            if (state.formKey.currentState!
+                                                .saveAndValidate()) {
+                                              context
+                                                  .read<TimeRecordingCubit>()
+                                                  .save(
+                                                      state.formKey
+                                                          .currentState!.value,
+                                                      true);
+                                            }
+                                          }
+                                        : null,
+                                    child: Text(AppLocalizations.of(context)!
+                                        .abschliessen),
+                                  );
                                 },
-                                child: Text("Abschließen"),
                               )
                             ],
                           )

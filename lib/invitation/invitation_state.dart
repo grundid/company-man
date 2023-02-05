@@ -5,7 +5,11 @@ abstract class InvitationState {}
 
 class InvitationInProgress extends InvitationState {}
 
-class InvitationNotFound extends InvitationState {}
+class InvitationNotFound extends InvitationState {
+  final String enteredInvitationId;
+
+  InvitationNotFound(this.enteredInvitationId);
+}
 
 class InvitationDone extends InvitationState {}
 
