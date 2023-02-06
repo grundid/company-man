@@ -194,26 +194,23 @@ class TimeRecordingWidget extends StatelessWidget {
                                   child: Text(AppLocalizations.of(context)!
                                       .zuruecksetzen),
                                 ),
-                              if (sbmContext.user.isManager)
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: Colors.red),
-                                  onPressed: () async {
-                                    bool? result = await showQueryDialog(
-                                        context,
-                                        AppLocalizations.of(context)!
-                                            .erfassungLoeschen,
-                                        AppLocalizations.of(context)!
-                                            .sollDieErfassteZeitFuerDenMitarbeiterGeloeschtWerden);
-                                    if (true == result) {
-                                      context
-                                          .read<TimeRecordingCubit>()
-                                          .delete();
-                                    }
-                                  },
-                                  child: Text(
-                                      AppLocalizations.of(context)!.loeschen),
-                                ),
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red),
+                                onPressed: () async {
+                                  bool? result = await showQueryDialog(
+                                      context,
+                                      AppLocalizations.of(context)!
+                                          .erfassungLoeschen,
+                                      AppLocalizations.of(context)!
+                                          .sollDieErfassteZeitFuerDenMitarbeiterGeloeschtWerden);
+                                  if (true == result) {
+                                    context.read<TimeRecordingCubit>().delete();
+                                  }
+                                },
+                                child: Text(
+                                    AppLocalizations.of(context)!.loeschen),
+                              ),
                               TextButton(
                                 onPressed: () {
                                   if (state.formKey.currentState!
