@@ -72,9 +72,7 @@ class TimeRecordingListEmployeeWidget extends StatelessWidget {
                                                           perEmployee.employee,
                                                       monthYear:
                                                           monthlySummary.month,
-                                                      timeRecordings:
-                                                          perEmployee
-                                                              .timeRecordings,
+                                                      
                                                     ),
                                                   ),
                                                 );

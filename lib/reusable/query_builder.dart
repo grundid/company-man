@@ -47,10 +47,22 @@ class QueryBuilder {
 
   Query<DynamicMap> timeRecordingForEmployeeRef(
       {required DocumentReference companyRef,
-      required DocumentReference employeeRef}) {
-    return timeRecordingsCollection()
+      required DocumentReference employeeRef,
+      DateTime? fromIsGreaterThanOrEqualTo,
+      DateTime? fromIsLessThan}) {
+    Query<DynamicMap> query = timeRecordingsCollection()
         .where("companyRef", isEqualTo: companyRef)
         .where("employeeRef", isEqualTo: employeeRef);
+    if (fromIsGreaterThanOrEqualTo != null) {
+      query = query.where("from",
+          isGreaterThanOrEqualTo:
+              Timestamp.fromDate(fromIsGreaterThanOrEqualTo));
+    }
+    if (fromIsLessThan != null) {
+      query =
+          query.where("from", isLessThan: Timestamp.fromDate(fromIsLessThan));
+    }
+    return query;
   }
 
   Query<DynamicMap> timeRecordingsForCompanyRef(

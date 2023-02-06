@@ -70,7 +70,16 @@
   "keineMitarbeiterAuswertungenVerfuegbar": "Keine Mitarbeiter-Auswertungen verfügbar",
   "dieEndeZeitDarfNichtMehrAls1hInDerZukunftLiegen": "Die Ende-Zeit darf nicht mehr als 1h in der Zukunft liegen.",
   "dieArbeitszeitDarfNichtWenigerAls1MinuteBetragen": "Die Arbeitszeit darf nicht weniger als 1 Minute betragen.",
-  "diePauseDarfNichtAusserhalbDerArbeitszeitLiegen":  "Die Pause darf nicht außerhalb der Arbeitszeit liegen.",
-  "nach9hArbeitMuessenMindestens45MinutenPauseerfasstWerden":"Nach 9h Arbeit müssen mindestens 45 Minuten Pause erfasst werden.",
-  "nach6hArbeitMuessenMindestens30MinutenPauseerfasstWerden": "Nach 6h Arbeit müssen mindestens 30 Minuten Pause erfasst werden."
+  "diePauseDarfNichtAusserhalbDerArbeitszeitLiegen": "Die Pause darf nicht außerhalb der Arbeitszeit liegen.",
+  "nach9hArbeitMuessenMindestens45MinutenPauseerfasstWerden": "Nach 9h Arbeit müssen mindestens 45 Minuten Pause erfasst werden.",
+  "nach6hArbeitMuessenMindestens30MinutenPauseerfasstWerden": "Nach 6h Arbeit müssen mindestens 30 Minuten Pause erfasst werden.",
+  "loeschen": "Löschen",
+  "erfassungLoeschen": "Erfassung löschen",
+  "sollDieErfassteZeitFuerDenMitarbeiterGeloeschtWerden": "Soll die erfasste Zeit für den Mitarbeiter gelöscht werden?",
+  "ja": "Ja",
+  "nein": "Nein",
+  "fehler": "Fehler",
+  "arbeitszeitverlauf": "Arbeitszeitverlauf",
+  "arbeitszeitErfassen": "Arbeitszeit erfassen",
+  "nochKeineZeitenErfasst": "Noch keine Zeiten erfasst"
 }

@@ -180,24 +180,39 @@ class TimeRecordingWidget extends StatelessWidget {
                                   style: TextButton.styleFrom(
                                       foregroundColor: Colors.red),
                                   onPressed: () async {
-                                    if (state.formKey.currentState!
-                                        .saveAndValidate()) {
-                                      bool? result = await showQueryDialog(
-                                          context,
-                                          AppLocalizations.of(context)!
-                                              .erfassungZuruecksetzen,
-                                          AppLocalizations.of(context)!
-                                              .nachDemZuruecksetzenKannDerMitarbeiterDieArbeitszeitKorrigieren);
-                                      if (true == result) {
-                                        context
-                                            .read<TimeRecordingCubit>()
-                                            .reset(state
-                                                .formKey.currentState!.value);
-                                      }
+                                    bool? result = await showQueryDialog(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .erfassungZuruecksetzen,
+                                        AppLocalizations.of(context)!
+                                            .nachDemZuruecksetzenKannDerMitarbeiterDieArbeitszeitKorrigieren);
+                                    if (true == result) {
+                                      context.read<TimeRecordingCubit>().reset(
+                                          state.formKey.currentState!.value);
                                     }
                                   },
                                   child: Text(AppLocalizations.of(context)!
                                       .zuruecksetzen),
+                                ),
+                              if (sbmContext.user.isManager)
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red),
+                                  onPressed: () async {
+                                    bool? result = await showQueryDialog(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .erfassungLoeschen,
+                                        AppLocalizations.of(context)!
+                                            .sollDieErfassteZeitFuerDenMitarbeiterGeloeschtWerden);
+                                    if (true == result) {
+                                      context
+                                          .read<TimeRecordingCubit>()
+                                          .delete();
+                                    }
+                                  },
+                                  child: Text(
+                                      AppLocalizations.of(context)!.loeschen),
                                 ),
                               TextButton(
                                 onPressed: () {
@@ -206,6 +221,8 @@ class TimeRecordingWidget extends StatelessWidget {
                                     context.read<TimeRecordingCubit>().save(
                                         state.formKey.currentState!.value,
                                         false);
+                                  } else {
+                                    _showFormError(context);
                                   }
                                 },
                                 child: Text(
@@ -226,6 +243,8 @@ class TimeRecordingWidget extends StatelessWidget {
                                                       state.formKey
                                                           .currentState!.value,
                                                       true);
+                                            } else {
+                                              _showFormError(context);
                                             }
                                           }
                                         : null,
@@ -245,5 +264,10 @@ class TimeRecordingWidget extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void _showFormError(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Formular enthält Fehler. Bitte korrigieren.")));
   }
 }

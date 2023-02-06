@@ -70,8 +70,16 @@
     "keineMitarbeiterAuswertungenVerfuegbar": "Brak zapisów pracowników",
     "dieEndeZeitDarfNichtMehrAls1hInDerZukunftLiegen": "Godzina zakończenia nie może być dalej jak 1 godzina w przyszłości.",
     "dieArbeitszeitDarfNichtWenigerAls1MinuteBetragen": "Czas pracy nie może być krótszy niż 1 minuta.",
-    "diePauseDarfNichtAusserhalbDerArbeitszeitLiegen":  "Przerwa nie może być poza godzinami pracy.",
-    "nach9hArbeitMuessenMindestens45MinutenPauseerfasstWerden":"Po 9 godzinach pracy należy odnotować przerwę trwającą co najmniej 45 minut.",
-    "nach6hArbeitMuessenMindestens30MinutenPauseerfasstWerden": "Po 6 godzinach pracy należy odnotować przerwę trwającą co najmniej 30 minut."
-  
+    "diePauseDarfNichtAusserhalbDerArbeitszeitLiegen": "Przerwa nie może być poza godzinami pracy.",
+    "nach9hArbeitMuessenMindestens45MinutenPauseerfasstWerden": "Po 9 godzinach pracy należy odnotować przerwę trwającą co najmniej 45 minut.",
+    "nach6hArbeitMuessenMindestens30MinutenPauseerfasstWerden": "Po 6 godzinach pracy należy odnotować przerwę trwającą co najmniej 30 minut.",
+    "loeschen": "Usuń",
+    "erfassungLoeschen": "Usuń zapis czasu",
+    "sollDieErfassteZeitFuerDenMitarbeiterGeloeschtWerden": "Czy zarejestrowany czas pracownika powinien zostać usunięty?",
+    "ja": "Tak",
+    "nein": "Nie",
+    "fehler": "Błąd",
+    "arbeitszeitverlauf": "Historia czasu pracy",
+    "arbeitszeitErfassen": "Wpisz czas pracy",
+    "nochKeineZeitenErfasst": "Nie zarejestrowano jeszcze czasów"
 }

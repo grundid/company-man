@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
@@ -27,6 +29,7 @@ class GroupedTimeRecording {
 class TimeRecordingListCubit extends Cubit<TimeRecordingListState> {
   final SbmContext sbmContext;
   late List<GroupedTimeRecording> groups;
+  StreamSubscription? subscription;
 
   TimeRecordingListCubit(this.sbmContext)
       : super(TimeRecordingListInProgress()) {
@@ -36,39 +39,42 @@ class TimeRecordingListCubit extends Cubit<TimeRecordingListState> {
   _init() async {
     emit(TimeRecordingListInProgress());
 
-    final querySnapshot = await sbmContext.queryBuilder
+    subscription = sbmContext.queryBuilder
         .timeRecordingForEmployeeRef(
             companyRef: sbmContext.companyRef!,
             employeeRef: sbmContext.employeeRef!)
-        .get();
+        .snapshots()
+        .listen((querySnapshot) {
+      List<TimeRecording> timeRecordings = querySnapshot.docs
+          .map((e) => TimeRecording.fromSnapshot(e.reference, e.data()))
+          .toList();
+      timeRecordings.sort((t1, t2) => t2.from.compareTo(t1.from));
 
-    List<TimeRecording> timeRecordings = querySnapshot.docs
-        .map((e) => TimeRecording.fromSnapshot(e.reference, e.data()))
-        .toList();
-    timeRecordings.sort((t1, t2) => t2.from.compareTo(t1.from));
+      DateFormat monthYear = DateFormat.yMMMM();
 
-    DateFormat monthYear = DateFormat.yMMMM();
+      Map<String, GroupedTimeRecording> perMonth = {};
+      groups = [];
+      int currentMonth = DateTime.now().month;
+      for (TimeRecording timeRecording in timeRecordings) {
+        String label = monthYear.format(timeRecording.from);
+        bool expanded = timeRecording.from.month == currentMonth;
+        GroupedTimeRecording groupedTimeRecording =
+            perMonth.putIfAbsent(label, () {
+          final result = GroupedTimeRecording(label, expanded, []);
+          groups.add(result);
+          return result;
+        });
+        groupedTimeRecording.addTimeRecording(timeRecording);
+      }
 
-    Map<String, GroupedTimeRecording> perMonth = {};
-    groups = [];
-    int currentMonth = DateTime.now().month;
-    for (TimeRecording timeRecording in timeRecordings) {
-      String label = monthYear.format(timeRecording.from);
-      bool expanded = timeRecording.from.month == currentMonth;
-      GroupedTimeRecording groupedTimeRecording =
-          perMonth.putIfAbsent(label, () {
-        final result = GroupedTimeRecording(label, expanded, []);
-        groups.add(result);
-        return result;
-      });
-      groupedTimeRecording.addTimeRecording(timeRecording);
-    }
-
-    emit(TimeRecordingListInitialized(groups));
+      emit(TimeRecordingListInitialized(groups));
+    });
   }
 
-  void update() {
-    _init();
+  @override
+  Future<void> close() async {
+    await subscription?.cancel();
+    return super.close();
   }
 
   void setExpanded(int panelIndex, bool isExpanded) {

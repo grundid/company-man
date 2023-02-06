@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<String> findSystemLocale() {
   try {
@@ -25,7 +26,7 @@ Future<void> showErrorMessage(BuildContext context, String message) {
     builder: (BuildContext context) {
       return AlertDialog(
         scrollable: true,
-        title: Text("Fehler"),
+        title: Text(AppLocalizations.of(context)!.fehler),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
           Text(message),
         ]),
@@ -34,7 +35,7 @@ Future<void> showErrorMessage(BuildContext context, String message) {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text("Ok"),
+            child: Text(Localizations.of<MaterialLocalizations>(context, MaterialLocalizations)!.okButtonLabel),
           )
         ],
       );
@@ -56,7 +57,7 @@ Future<void> showInfoDialog(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text("Ok"),
+            child: Text(Localizations.of<MaterialLocalizations>(context, MaterialLocalizations)!.okButtonLabel),
           )
         ],
       );
@@ -70,6 +71,7 @@ Future<bool?> showQueryDialog(
   return showDialog(
     context: context,
     builder: (BuildContext context) {
+      MaterialLocalizations localizations = Localizations.of<MaterialLocalizations>(context, MaterialLocalizations)!;
       return AlertDialog(
         scrollable: true,
         title: Text(title),
@@ -79,13 +81,13 @@ Future<bool?> showQueryDialog(
             onPressed: () {
               Navigator.pop(context, false);
             },
-            child: Text(yesNo ? "Nein" : "Abbrechen"),
+            child: Text(yesNo ? AppLocalizations.of(context)!.nein : localizations.cancelButtonLabel ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context, true);
             },
-            child: Text(yesNo ? "Ja" : "Ok"),
+            child: Text(yesNo ? AppLocalizations.of(context)!.ja : localizations.okButtonLabel),
           )
         ],
       );

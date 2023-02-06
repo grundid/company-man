@@ -7,6 +7,7 @@ import 'package:smallbusiness/reusable/user_actions/models.dart';
 import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_status_cubit.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
+import 'package:smallbusiness/user_actions/time_recording_delete.dart';
 import 'package:smallbusiness/user_actions/time_recording_save.dart';
 
 part 'time_recording_state.dart';
@@ -125,5 +126,21 @@ class TimeRecordingCubit extends Cubit<TimeRecordingState> {
 
   void reset(Map<String, dynamic> value) {
     save(formValues, false);
+  }
+
+  void delete() async {
+    emit(TimeRecordingInProgress());
+    try {
+      TimeRecordingDeleteModel model =
+          TimeRecordingDeleteModel(timeRecordingRef!);
+
+      TimeRecordingDeleteAction action =
+          TimeRecordingDeleteAction(sbmContext.firestore, sbmContext.userRef);
+
+      await action.performAction(model);
+      emit(TimeRecordingDone());
+    } on Exception catch (e) {
+      emitInitialized(errorMessage: "Fehler! ($e)");
+    }
   }
 }

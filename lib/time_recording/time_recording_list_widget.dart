@@ -28,7 +28,7 @@ class TimeRecordingListWidget extends StatelessWidget {
       : super(key: key);
 
   _editTimeRecording(BuildContext context, {String? timeRecordingId}) async {
-    bool? result = await Navigator.of(context).push<bool>(
+    await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (context) => TimeRecordingWidget(
           sbmContext: sbmContext,
@@ -36,10 +36,6 @@ class TimeRecordingListWidget extends StatelessWidget {
         ),
       ),
     );
-    log("result: $result");
-    if (true == result) {
-      context.read<TimeRecordingListCubit>().update();
-    }
   }
 
   @override
@@ -50,14 +46,14 @@ class TimeRecordingListWidget extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              title: Text("Arbeitszeitverlauf"),
+              title: Text(AppLocalizations.of(context)!.arbeitszeitverlauf),
             ),
             floatingActionButton: FloatingActionButton.extended(
                 onPressed: () {
                   _editTimeRecording(context);
                 },
                 icon: Icon(Icons.more_time),
-                label: Text("Arbeitszeit erfassen")),
+                label: Text(AppLocalizations.of(context)!.arbeitszeitErfassen)),
             body: state is TimeRecordingListInitialized
                 ? state.groups.isNotEmpty
                     ? ResponsiveBody(
@@ -107,7 +103,8 @@ class TimeRecordingListWidget extends StatelessWidget {
                               .toList(),
                         ))
                     : Center(
-                        child: Text("Noch keine Zeiten erfasst"),
+                        child: Text(AppLocalizations.of(context)!
+                            .nochKeineZeitenErfasst),
                       )
                 : LoadingAnimationScreen(),
           );

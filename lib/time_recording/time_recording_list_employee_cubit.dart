@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
@@ -52,6 +54,7 @@ class TimeRecordingListEmployeeCubit
     extends Cubit<TimeRecordingListEmployeeState> {
   final SbmContext sbmContext;
   List<MonthlySummary> monthlySummaries = [];
+  StreamSubscription? subscription;
 
   TimeRecordingListEmployeeCubit(this.sbmContext)
       : super(TimeRecordingListEmployeeInProgress()) {
@@ -62,75 +65,77 @@ class TimeRecordingListEmployeeCubit
     List<Employee> employees = await _readEmployees();
     Map<String, List<Wage>> wagesPerEmployeePath = await _readWages();
 
-    final queryTimeRecordings = await sbmContext.queryBuilder
+    subscription = sbmContext.queryBuilder
         .timeRecordingsForCompanyRef(companyRef: sbmContext.companyRef!)
-        .get();
-    List<TimeRecording> timeRecordings = queryTimeRecordings.docs
-        .map((e) => TimeRecording.fromSnapshot(e.reference, e.data()))
-        .toList();
+        .snapshots()
+        .listen((queryTimeRecordings) {
+      List<TimeRecording> timeRecordings = queryTimeRecordings.docs
+          .map((e) => TimeRecording.fromSnapshot(e.reference, e.data()))
+          .toList();
 
-    Map<String, Employee> employeePerPath =
-        Map.fromEntries(employees.map((e) => MapEntry(e.employeeRef!.path, e)));
+      Map<String, Employee> employeePerPath = Map.fromEntries(
+          employees.map((e) => MapEntry(e.employeeRef!.path, e)));
 
-    Map<DateTime, Map<String, List<TimeRecording>>> perMonthPerEmployee = {};
-    for (TimeRecording timeRecording in timeRecordings) {
-      String employeePath = timeRecording.employeeRef.path;
-      DateTime monthKey =
-          DateTime(timeRecording.from.year, timeRecording.from.month);
-      Map<String, List<TimeRecording>> monthlySummaryPerEmployee =
-          perMonthPerEmployee.putIfAbsent(monthKey, () => {});
+      Map<DateTime, Map<String, List<TimeRecording>>> perMonthPerEmployee = {};
+      for (TimeRecording timeRecording in timeRecordings) {
+        String employeePath = timeRecording.employeeRef.path;
+        DateTime monthKey =
+            DateTime(timeRecording.from.year, timeRecording.from.month);
+        Map<String, List<TimeRecording>> monthlySummaryPerEmployee =
+            perMonthPerEmployee.putIfAbsent(monthKey, () => {});
 
-      List<TimeRecording> employeeTimeRecordings =
-          monthlySummaryPerEmployee.putIfAbsent(employeePath, () => []);
-      employeeTimeRecordings.add(timeRecording);
-    }
-    monthlySummaries = [];
-    int currentMonth = DateTime.now().month;
-    for (MapEntry<DateTime, Map<String, List<TimeRecording>>> monthEntry
-        in perMonthPerEmployee.entries) {
-      DateTime dateKey = monthEntry.key;
-      MonthlySummary monthlySummary = MonthlySummary(
-          dateKey, monthYearFormatter.format(dateKey),
-          expanded: currentMonth == dateKey.month);
-      for (MapEntry<String, List<TimeRecording>> employeeEntry
-          in monthEntry.value.entries) {
-        Employee? employee = employeePerPath[employeeEntry.key];
-        if (employee != null) {
-          MonthlySummaryPerEmployee perEmployee =
-              MonthlySummaryPerEmployee(employee);
-          for (TimeRecording timeRecording in employeeEntry.value) {
-            Wage? wageForTimeRecording;
-            List<Wage>? employeeWages =
-                wagesPerEmployeePath[employee.employeeRef!.path];
-            if (employeeWages != null) {
-              for (Wage wage in employeeWages) {
-                if (wage.validFrom.isBefore(timeRecording.from) &&
-                    (wage.validTo == null ||
-                        wage.validTo!.isAfter(timeRecording.from))) {
-                  wageForTimeRecording = wage;
+        List<TimeRecording> employeeTimeRecordings =
+            monthlySummaryPerEmployee.putIfAbsent(employeePath, () => []);
+        employeeTimeRecordings.add(timeRecording);
+      }
+      monthlySummaries = [];
+      int currentMonth = DateTime.now().month;
+      for (MapEntry<DateTime, Map<String, List<TimeRecording>>> monthEntry
+          in perMonthPerEmployee.entries) {
+        DateTime dateKey = monthEntry.key;
+        MonthlySummary monthlySummary = MonthlySummary(
+            dateKey, monthYearFormatter.format(dateKey),
+            expanded: currentMonth == dateKey.month);
+        for (MapEntry<String, List<TimeRecording>> employeeEntry
+            in monthEntry.value.entries) {
+          Employee? employee = employeePerPath[employeeEntry.key];
+          if (employee != null) {
+            MonthlySummaryPerEmployee perEmployee =
+                MonthlySummaryPerEmployee(employee);
+            for (TimeRecording timeRecording in employeeEntry.value) {
+              Wage? wageForTimeRecording;
+              List<Wage>? employeeWages =
+                  wagesPerEmployeePath[employee.employeeRef!.path];
+              if (employeeWages != null) {
+                for (Wage wage in employeeWages) {
+                  if (wage.validFrom.isBefore(timeRecording.from) &&
+                      (wage.validTo == null ||
+                          wage.validTo!.isAfter(timeRecording.from))) {
+                    wageForTimeRecording = wage;
+                  }
                 }
               }
+              perEmployee.addTimeRecording(
+                  TimeRecordingWithWage(timeRecording, wageForTimeRecording));
             }
-            perEmployee.addTimeRecording(
-                TimeRecordingWithWage(timeRecording, wageForTimeRecording));
+            monthlySummary.employees.add(perEmployee);
           }
-          monthlySummary.employees.add(perEmployee);
+        }
+        monthlySummary.employees
+            .sort((m1, m2) => m1.employee.compareTo(m2.employee));
+        monthlySummaries.add(monthlySummary);
+      }
+
+      monthlySummaries.sort((m1, m2) => m2.month.compareTo(m1.month));
+      for (var monthlySummary in monthlySummaries) {
+        for (var employee in monthlySummary.employees) {
+          employee.timeRecordings.sort((tr1, tr2) =>
+              tr2.timeRecording.from.compareTo(tr1.timeRecording.from));
         }
       }
-      monthlySummary.employees
-          .sort((m1, m2) => m1.employee.compareTo(m2.employee));
-      monthlySummaries.add(monthlySummary);
-    }
 
-    monthlySummaries.sort((m1, m2) => m2.month.compareTo(m1.month));
-    for (var monthlySummary in monthlySummaries) {
-      for (var employee in monthlySummary.employees) {
-        employee.timeRecordings.sort((tr1, tr2) =>
-            tr2.timeRecording.from.compareTo(tr1.timeRecording.from));
-      }
-    }
-
-    emit(TimeRecordingListEmployeeInitialized(monthlySummaries));
+      emit(TimeRecordingListEmployeeInitialized(monthlySummaries));
+    });
   }
 
   Future<Map<String, List<Wage>>> _readWages() async {
