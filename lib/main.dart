@@ -34,6 +34,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const String appTitle = "Small Business App";
+const bool useEmulator = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +42,7 @@ void main() async {
   FirebaseApp app = await Firebase.initializeApp();
   FirebaseAuth firebaseAuth = FirebaseAuth.instanceFor(app: app);
   FirebaseFirestore firestore = FirebaseFirestore.instanceFor(app: app);
-  if (kDebugMode) {
+  if (kDebugMode && useEmulator) {
     String host = Platform.isAndroid ? "10.0.2.2" : "localhost";
     firebaseAuth.useAuthEmulator(host, 9099);
     firestore.useFirestoreEmulator(host, 8080);

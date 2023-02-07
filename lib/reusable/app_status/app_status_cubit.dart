@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -64,7 +65,12 @@ class AppStatusCubit extends Cubit<AppStatusState> {
       emit(AppStatusInitialized(appStatus, appVersion, false));
     }, onError: (error) {
       log(error.toString());
-      emit(AppStatusInitialized(null, error.toString(), false));
+      if (error is FirebaseException && error.code == "permission-denied") {
+        // this can happen after using the emulator. sign out the user 
+        sbmContext.auth.signOut();
+      } else {
+        emit(AppStatusInitialized(null, error.toString(), false));
+      }
     });
   }
 
