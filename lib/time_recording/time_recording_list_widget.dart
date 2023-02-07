@@ -1,17 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:intl/intl.dart';
-import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
-import 'package:smallbusiness/main.dart';
 import 'package:smallbusiness/reusable/formatters.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'package:smallbusiness/reusable/model_utils.dart';
 import 'package:smallbusiness/reusable/responsive_body.dart';
-import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_cubit.dart';
 import 'package:smallbusiness/time_recording/time_recording_list_employee_cubit.dart';
 import 'package:smallbusiness/time_recording/time_recording_widget.dart';
@@ -151,6 +145,13 @@ class TimeRecordingEntryWidget extends StatelessWidget {
       if (compensation != null) {
         subtitle +=
             "\n${AppLocalizations.of(context)!.verguetung(compensation)}";
+      }
+    }
+    if (isNotEmpty(timeRecording.managerMessage)) {
+      if (subtitle != null) {
+        subtitle += "\n${timeRecording.managerMessage}";
+      } else {
+        subtitle = timeRecording.managerMessage;
       }
     }
     return ListTile(

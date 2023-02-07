@@ -48,7 +48,7 @@
         }
     },
     "zeiterfassung": "Zapisywanie czasu",
-    "sollDieZeiterfassungAbgeschlossenWerden": "Czy zapisywanie czasu powinno zostać zakończone?",
+    "sollDieZeiterfassungAbgeschlossenWerden": "Czy zakończyć zapisywanie czasu?",
     "datum": "Data",
     "gekommen": "Początek",
     "pausen": "Przerwa",

@@ -312,3 +312,7 @@ bool isOverlapping(TimeRecordingDuration tr1, TimeRecordingDuration tr2) {
 
   return false;
 }
+
+bool isNotEmpty(String? value) {
+  return true == value?.trim().isNotEmpty;
+}

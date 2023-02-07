@@ -61,6 +61,12 @@ class TimeRecordingListEmployeeCubit
     _init();
   }
 
+  @override
+  Future<void> close() async {
+    await subscription?.cancel();
+    return super.close();
+  }
+
   _init() async {
     List<Employee> employees = await _readEmployees();
     Map<String, List<Wage>> wagesPerEmployeePath = await _readWages();
