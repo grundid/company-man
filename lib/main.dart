@@ -140,7 +140,6 @@ class SmallBusinessApp extends StatelessWidget {
       ),
       routeInformationParser: RoutemasterParser(),
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: Locale("pl"),
       title: appTitle,
       localizationsDelegates: [
         AppLocalizations.delegate,
