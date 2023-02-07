@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
-import 'package:routemaster/routemaster.dart';
 import 'package:smallbusiness/auth/app_context.dart';
 import 'package:smallbusiness/reusable/loader.dart';
 import 'package:smallbusiness/reusable/responsive_body.dart';
@@ -10,7 +9,9 @@ import 'package:smallbusiness/reusable/state.dart';
 import 'package:smallbusiness/reusable/utils.dart';
 import 'package:smallbusiness/time_recording/form_builder_pause_editor_widget.dart';
 import 'package:smallbusiness/time_recording/form_builder_time_editor.dart';
+import 'package:smallbusiness/time_recording/models.dart';
 import 'package:smallbusiness/time_recording/time_recording_cubit.dart';
+import 'package:smallbusiness/time_recording/time_recording_save_cubit.dart';
 import 'package:smallbusiness/time_recording/time_recording_status_cubit.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -28,53 +29,64 @@ class TimeRecordingWidget extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => TimeRecordingStatusCubit(),
+          create: (context) =>
+              TimeRecordingCubit(sbmContext, timeRecordingId: timeRecordingId),
         ),
         BlocProvider(
-          create: (context) => TimeRecordingCubit(
-              sbmContext, context.read<TimeRecordingStatusCubit>(),
-              timeRecordingId: timeRecordingId),
+          create: (context) =>
+              TimeRecordingStatusCubit(context.read<TimeRecordingCubit>()),
+        ),
+        BlocProvider(
+          create: (context) => TimeRecordingSaveCubit(
+              sbmContext, context.read<TimeRecordingCubit>()),
         ),
       ],
-      child: BlocConsumer<TimeRecordingCubit, TimeRecordingState>(
-        listener: (context, state) {
-          if (state is TimeRecordingDone) {
-            Routemaster.of(context).pop(true);
-          } else if (state is TimeRecordingInitialized &&
-              state.errorMessage != null) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-          }
-        },
+      child: BlocBuilder<TimeRecordingCubit, AppState>(
         builder: (context, state) {
           return state is TimeRecordingInitialized
               ? Scaffold(
                   appBar: AppBar(
                     title: Text(AppLocalizations.of(context)!.zeiterfassung),
                     actions: [
-                      IconButton(
-                          onPressed: () async {
-                            if (state.formKey.currentState!.saveAndValidate()) {
-                              if (WorkTimeState.fromFormValues(
-                                      state.formKey.currentState!.value)
-                                  .finishable) {
-                                bool? result = await showQueryDialog(
-                                    context,
-                                    AppLocalizations.of(context)!.zeiterfassung,
-                                    AppLocalizations.of(context)!
-                                        .sollDieZeiterfassungAbgeschlossenWerden,
-                                    yesNo: true);
-                                if (true == result) {
-                                  context.read<TimeRecordingCubit>().save(
-                                      state.formKey.currentState!.value, true);
-                                }
-                              } else {
-                                context.read<TimeRecordingCubit>().save(
-                                    state.formKey.currentState!.value, false);
-                              }
-                            }
-                          },
-                          icon: Icon(Icons.check))
+                      BlocBuilder<TimeRecordingSaveCubit, AppState>(
+                        builder: (context, actionState) {
+                          return IconButton(
+                              onPressed: actionState is Initialized
+                                  ? () async {
+                                      if (state.formKey.currentState!
+                                          .saveAndValidate()) {
+                                        if (WorkTimeState.fromFormValues(state
+                                                .formKey.currentState!.value)
+                                            .finishable) {
+                                          bool? result = await showQueryDialog(
+                                              context,
+                                              AppLocalizations.of(context)!
+                                                  .zeiterfassung,
+                                              AppLocalizations.of(context)!
+                                                  .sollDieZeiterfassungAbgeschlossenWerden,
+                                              yesNo: true);
+                                          if (true == result) {
+                                            context
+                                                .read<TimeRecordingSaveCubit>()
+                                                .save(
+                                                    state.formKey.currentState!
+                                                        .value,
+                                                    true);
+                                          }
+                                        } else {
+                                          context
+                                              .read<TimeRecordingSaveCubit>()
+                                              .save(
+                                                  state.formKey.currentState!
+                                                      .value,
+                                                  false);
+                                        }
+                                      }
+                                    }
+                                  : null,
+                              icon: Icon(Icons.check));
+                        },
+                      )
                     ],
                   ),
                   body: ResponsiveBody(
@@ -173,84 +185,119 @@ class TimeRecordingWidget extends StatelessWidget {
                                       .dieseNachrichtWirdDemMitarbeiterNachDemZuruecksetzenUndInDemExportangezeigt),
                             ),
                           ),
-                          ButtonBar(
-                            children: [
-                              if (sbmContext.user.isManager)
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: Colors.red),
-                                  onPressed: () async {
-                                    bool? result = await showQueryDialog(
-                                        context,
-                                        AppLocalizations.of(context)!
-                                            .erfassungZuruecksetzen,
-                                        AppLocalizations.of(context)!
-                                            .nachDemZuruecksetzenKannDerMitarbeiterDieArbeitszeitKorrigieren);
-                                    if (true == result) {
-                                      context.read<TimeRecordingCubit>().reset(
-                                          state.formKey.currentState!.value);
-                                    }
-                                  },
-                                  child: Text(AppLocalizations.of(context)!
-                                      .zuruecksetzen),
-                                ),
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                    foregroundColor: Colors.red),
-                                onPressed: () async {
-                                  bool? result = await showQueryDialog(
-                                      context,
-                                      AppLocalizations.of(context)!
-                                          .erfassungLoeschen,
-                                      AppLocalizations.of(context)!
-                                          .sollDieErfassteZeitFuerDenMitarbeiterGeloeschtWerden);
-                                  if (true == result) {
-                                    context.read<TimeRecordingCubit>().delete();
-                                  }
-                                },
-                                child: Text(
-                                    AppLocalizations.of(context)!.loeschen),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  if (state.formKey.currentState!
-                                      .saveAndValidate()) {
-                                    context.read<TimeRecordingCubit>().save(
-                                        state.formKey.currentState!.value,
-                                        false);
-                                  } else {
-                                    _showFormError(context);
-                                  }
-                                },
-                                child: Text(
-                                    AppLocalizations.of(context)!.speichern),
-                              ),
-                              BlocBuilder<TimeRecordingStatusCubit, AppState>(
-                                builder: (context, statusState) {
-                                  return ElevatedButton(
-                                    onPressed: statusState
-                                                is TimeRecordingStatusInitizalied &&
-                                            statusState.canFinish
-                                        ? () {
-                                            if (state.formKey.currentState!
-                                                .saveAndValidate()) {
-                                              context
-                                                  .read<TimeRecordingCubit>()
-                                                  .save(
-                                                      state.formKey
-                                                          .currentState!.value,
-                                                      true);
-                                            } else {
-                                              _showFormError(context);
-                                            }
-                                          }
-                                        : null,
+                          ActionBlocConsumer<TimeRecordingSaveCubit>(
+                            errorBuilder: (context, state) {
+                              if (state is TimeRecordingOverlappingError) {
+                                TimeRecording knownTimeRecording =
+                                    state.overlappingTimeRecording;
+                                DateFormat dateFormat =
+                                    DateFormat.yMd().add_Hm();
+
+                                String dateTimeRange = knownTimeRecording.to !=
+                                        null
+                                    ? "${dateFormat.format(knownTimeRecording.from)} - ${dateFormat.format(knownTimeRecording.to!)}"
+                                    : dateFormat
+                                        .format(knownTimeRecording.from);
+                                return AppLocalizations.of(context)!
+                                    .dieArbeitszeitUeberlapptSichMitBereitsErfassterArbeitszeit(
+                                        dateTimeRange);
+                              }
+                              return null;
+                            },
+                            builder: (context, actionState) {
+                              return ButtonBar(
+                                children: [
+                                  if (sbmContext.user.isManager)
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                          foregroundColor: Colors.red),
+                                      onPressed: () async {
+                                        bool? result = await showQueryDialog(
+                                            context,
+                                            AppLocalizations.of(context)!
+                                                .erfassungZuruecksetzen,
+                                            AppLocalizations.of(context)!
+                                                .nachDemZuruecksetzenKannDerMitarbeiterDieArbeitszeitKorrigieren);
+                                        if (true == result) {
+                                          state.formKey.currentState!.save();
+                                          context
+                                              .read<TimeRecordingSaveCubit>()
+                                              .reset(state
+                                                  .formKey.currentState!.value);
+                                        }
+                                      },
+                                      child: Text(AppLocalizations.of(context)!
+                                          .zuruecksetzen),
+                                    ),
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                        foregroundColor: Colors.red),
+                                    onPressed: () async {
+                                      bool? result = await showQueryDialog(
+                                          context,
+                                          AppLocalizations.of(context)!
+                                              .erfassungLoeschen,
+                                          AppLocalizations.of(context)!
+                                              .sollDieErfassteZeitFuerDenMitarbeiterGeloeschtWerden);
+                                      if (true == result) {
+                                        context
+                                            .read<TimeRecordingSaveCubit>()
+                                            .delete();
+                                      }
+                                    },
+                                    child: Text(
+                                        AppLocalizations.of(context)!.loeschen),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      if (state.formKey.currentState!
+                                          .saveAndValidate()) {
+                                        context
+                                            .read<TimeRecordingSaveCubit>()
+                                            .save(
+                                                state.formKey.currentState!
+                                                    .value,
+                                                false);
+                                      } else {
+                                        _showFormError(context);
+                                      }
+                                    },
                                     child: Text(AppLocalizations.of(context)!
-                                        .abschliessen),
-                                  );
-                                },
-                              )
-                            ],
+                                        .speichern),
+                                  ),
+                                  BlocBuilder<TimeRecordingStatusCubit,
+                                      AppState>(
+                                    builder: (context, statusState) {
+                                      return ElevatedButton(
+                                        onPressed: statusState
+                                                    is TimeRecordingStatusInitizalied &&
+                                                statusState.canFinish
+                                            ? () {
+                                                if (state.formKey.currentState!
+                                                    .saveAndValidate()) {
+                                                  context
+                                                      .read<
+                                                          TimeRecordingSaveCubit>()
+                                                      .save(
+                                                          state
+                                                              .formKey
+                                                              .currentState!
+                                                              .value,
+                                                          true);
+                                                } else {
+                                                  _showFormError(context);
+                                                }
+                                              }
+                                            : null,
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .abschliessen),
+                                      );
+                                    },
+                                  )
+                                ],
+                              );
+                            },
                           )
                         ],
                       ),

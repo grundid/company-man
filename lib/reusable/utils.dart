@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:smallbusiness/reusable/responsive_body.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -35,7 +36,9 @@ Future<void> showErrorMessage(BuildContext context, String message) {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text(Localizations.of<MaterialLocalizations>(context, MaterialLocalizations)!.okButtonLabel),
+            child: Text(Localizations.of<MaterialLocalizations>(
+                    context, MaterialLocalizations)!
+                .okButtonLabel),
           )
         ],
       );
@@ -49,15 +52,16 @@ Future<void> showInfoDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        scrollable: true,
         title: Text(title),
-        content: SingleChildScrollView(child: Text(content)),
+        content: ResponsiveBody(addPadding: false, child: Text(content)),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text(Localizations.of<MaterialLocalizations>(context, MaterialLocalizations)!.okButtonLabel),
+            child: Text(Localizations.of<MaterialLocalizations>(
+                    context, MaterialLocalizations)!
+                .okButtonLabel),
           )
         ],
       );
@@ -71,7 +75,9 @@ Future<bool?> showQueryDialog(
   return showDialog(
     context: context,
     builder: (BuildContext context) {
-      MaterialLocalizations localizations = Localizations.of<MaterialLocalizations>(context, MaterialLocalizations)!;
+      MaterialLocalizations localizations =
+          Localizations.of<MaterialLocalizations>(
+              context, MaterialLocalizations)!;
       return AlertDialog(
         scrollable: true,
         title: Text(title),
@@ -81,13 +87,17 @@ Future<bool?> showQueryDialog(
             onPressed: () {
               Navigator.pop(context, false);
             },
-            child: Text(yesNo ? AppLocalizations.of(context)!.nein : localizations.cancelButtonLabel ),
+            child: Text(yesNo
+                ? AppLocalizations.of(context)!.nein
+                : localizations.cancelButtonLabel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context, true);
             },
-            child: Text(yesNo ? AppLocalizations.of(context)!.ja : localizations.okButtonLabel),
+            child: Text(yesNo
+                ? AppLocalizations.of(context)!.ja
+                : localizations.okButtonLabel),
           )
         ],
       );

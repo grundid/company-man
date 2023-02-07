@@ -81,5 +81,6 @@
   "fehler": "Fehler",
   "arbeitszeitverlauf": "Arbeitszeitverlauf",
   "arbeitszeitErfassen": "Arbeitszeit erfassen",
-  "nochKeineZeitenErfasst": "Noch keine Zeiten erfasst"
+  "nochKeineZeitenErfasst": "Noch keine Zeiten erfasst",
+  "dieArbeitszeitUeberlapptSichMitBereitsErfassterArbeitszeit": "Die Arbeitszeit überlappt sich mit bereits erfasster Arbeitszeit ({dateTimeRange}).\nBitte prüfen Sie, ob die Arbeitszeit nicht bereits erfasst ist."
 }

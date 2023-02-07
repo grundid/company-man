@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smallbusiness/reusable/state.dart';
+import 'package:smallbusiness/time_recording/time_recording_cubit.dart';
 import 'package:smallbusiness/time_recording/utils.dart';
 
 class TimeRecordingStatusInitizalied extends Initialized {
@@ -14,7 +17,24 @@ class TimeRecordingStatusInitizalied extends Initialized {
 }
 
 class TimeRecordingStatusCubit extends Cubit<AppState> {
-  TimeRecordingStatusCubit() : super(InProgress());
+  StreamSubscription? streamSubscription;
+
+  TimeRecordingStatusCubit(TimeRecordingCubit cubit) : super(InProgress()) {
+    streamSubscription = cubit.stream.listen(onDependentStateChanged);
+    onDependentStateChanged(cubit.state);
+  }
+
+  onDependentStateChanged(AppState state) {
+    if (state is TimeRecordingInitialized) {
+      update(WorkTimeState.fromFormValues(state.formValues));
+    }
+  }
+
+  @override
+  Future<void> close() async {
+    await streamSubscription?.cancel();
+    return super.close();
+  }
 
   update(WorkTimeState workTimeState) {
     if (workTimeState.to != null) {

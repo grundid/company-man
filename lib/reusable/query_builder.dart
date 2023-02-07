@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smallbusiness/reusable/user_actions/models.dart';
+import 'package:smallbusiness/time_recording/models.dart';
 
 class QueryBuilder {
   final FirebaseFirestore firestore;

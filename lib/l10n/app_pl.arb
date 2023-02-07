@@ -81,5 +81,6 @@
     "fehler": "Błąd",
     "arbeitszeitverlauf": "Historia czasu pracy",
     "arbeitszeitErfassen": "Wpisz czas pracy",
-    "nochKeineZeitenErfasst": "Nie zarejestrowano jeszcze czasów"
+    "nochKeineZeitenErfasst": "Nie zarejestrowano jeszcze czasów",
+    "dieArbeitszeitUeberlapptSichMitBereitsErfassterArbeitszeit": "Czas pracy pokrywa się z już zarejestrowanym czasem pracy ({dateTimeRange}).\nSprawdź, czy czas pracy nie jest już zarejestrowany."
 }

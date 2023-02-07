@@ -280,3 +280,35 @@ class WorkTimeState extends TimeRecordingDuration {
     return 'WorkTimeState(from: $from, to: $to, pauses: $pauses)';
   }
 }
+
+bool isOverlapping(TimeRecordingDuration tr1, TimeRecordingDuration tr2) {
+  // tr2 starts with tr1
+  if (tr1.from.isAtSameMomentAs(tr2.from)) {
+    return true;
+  }
+  if (tr1.to != null) {
+    // tr2 from is within tr1
+    if (tr1.from.isBefore(tr2.from) && tr1.to!.isAfter(tr2.from)) {
+      return true;
+    }
+
+    if (tr2.to != null) {
+      // tr2 ends with tr1
+      if (tr1.to!.isAtSameMomentAs(tr2.to!)) {
+        return true;
+      }
+      // tr2 to is within tr1
+      if (tr1.from.isBefore(tr2.to!) && tr1.to!.isAfter(tr2.to!)) {
+        return true;
+      }
+    }
+  }
+  if (tr2.to != null) {
+    // tr1 from is within tr2
+    if (tr2.from.isBefore(tr1.from) && tr2.to!.isAfter(tr1.from)) {
+      return true;
+    }
+  }
+
+  return false;
+}
