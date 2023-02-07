@@ -120,7 +120,11 @@ class PhoneQueryFormWidget extends StatelessWidget {
                 : MainAxisAlignment.end,
             children: [
               if (onCancel != null)
-                TextButton(onPressed: onCancel, child: Text(Localizations.of<MaterialLocalizations>(context, MaterialLocalizations)!.cancelButtonLabel)),
+                TextButton(
+                    onPressed: onCancel,
+                    child: Text(Localizations.of<MaterialLocalizations>(
+                            context, MaterialLocalizations)!
+                        .cancelButtonLabel)),
               ElevatedButton(onPressed: _submitForm, child: Text(buttonLabel))
             ],
           )
@@ -149,7 +153,7 @@ class _AnonSignInWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Willkommen beim Small Business App"),
+              Text("Willkommen bei der Small Business App"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
@@ -220,7 +224,9 @@ class _AnonSignInWidget extends StatelessWidget {
                           onSignIn();
                         }
                       },
-                      child: Text(AppLocalizations.of(context)!.akzeptieren,))
+                      child: Text(
+                        AppLocalizations.of(context)!.akzeptieren,
+                      ))
                 ],
               )
             ],
